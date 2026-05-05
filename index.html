@@ -1,0 +1,388 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dan Alman CBCT Education</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="brand-wrap">
+      <img src="banner-white.png" alt="Dan Alman CBCT Education" class="brand-logo">
+      <div class="header-copy">
+        <p class="eyebrow">Evidence-informed CBCT support for general dentistry</p>
+        <h1>Clinical CBCT Decision Center</h1>
+      </div>
+    </div>
+    <nav class="tabs" aria-label="Website sections">
+      <a href="#calculator" class="tab is-active">ROI Calculator</a>
+      <a href="#modality" class="tab">Imaging Choice</a>
+      <a href="#navigation" class="tab">CS 3D Navigation</a>
+      <a href="#artifacts" class="tab">Artifacts</a>
+      <a href="#citations" class="tab">Citations</a>
+    </nav>
+  </header>
+
+  <main>
+    <section id="calculator" class="section hero-band">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Part 1</p>
+          <h2>CBCT Opportunity Calculator</h2>
+          <p class="lede">Estimate how often CBCT could meaningfully contribute to diagnosis or treatment planning in your clinic. All projected scan counts round up to the nearest whole scan.</p>
+        </div>
+        <div class="evidence-strip" aria-label="Evidence highlights">
+          <div><strong>21%</strong><span>of endodontic teeth had a different periapical diagnosis after CBCT was added in a guideline-based JADA clinic study.</span></div>
+          <div><strong>69%</strong><span>of evaluated teeth had a changed, established, or corrected treatment plan after CBCT information was reviewed.</span></div>
+          <div><strong>35%</strong><span>of teeth in a separate endodontic before-after study received a changed diagnosis after CBCT.</span></div>
+        </div>
+      </div>
+      <div class="example-callout">
+        <strong>What that means in a practice:</strong>
+        if a dentist sees 12 cases per month where symptoms, retreatment history, resorption, fracture concern, implant planning, or sinus findings make 2D imaging incomplete, the literature suggests several of those patients may leave with a different diagnosis or treatment plan once CBCT information is incorporated.
+      </div>
+
+      <div class="tool-grid">
+        <form class="panel" id="calculatorForm">
+          <h3>Monthly clinical presentation</h3>
+          <div class="presentation-list">
+            <div class="presentation-row">
+              <label>Contradictory or hard-to-localize pain<input type="number" min="0" step="1" value="6" data-case="pain"></label>
+              <div class="evidence-box"><strong>21%</strong><span>diagnosis change signal</span><small>AAE/AAOMR R2 pattern</small></div>
+            </div>
+            <div class="presentation-row">
+              <label>Nonhealing after endodontic treatment<input type="number" min="0" step="1" value="4" data-case="nonhealing"></label>
+              <div class="evidence-box"><strong>69%</strong><span>treatment-plan impact</span><small>common JADA indication</small></div>
+            </div>
+            <div class="presentation-row">
+              <label>Suspected vertical root fracture<input type="number" min="0" step="1" value="3" data-case="fracture"></label>
+              <div class="evidence-box"><strong>62%</strong><span>planning impact range</span><small>CBCT after inconclusive 2D</small></div>
+            </div>
+            <div class="presentation-row">
+              <label>Internal or external resorption concern<input type="number" min="0" step="1" value="2" data-case="resorption"></label>
+              <div class="evidence-box"><strong>69%</strong><span>treatment-plan impact</span><small>localization and prognosis</small></div>
+            </div>
+            <div class="presentation-row">
+              <label>Retreatment complication or missed anatomy<input type="number" min="0" step="1" value="3" data-case="retreatment"></label>
+              <div class="evidence-box"><strong>69%</strong><span>treatment-plan impact</span><small>separated file, perforation, anatomy</small></div>
+            </div>
+            <div class="presentation-row">
+              <label>Endodontic surgery planning<input type="number" min="0" step="1" value="1" data-case="surgery"></label>
+              <div class="evidence-box"><strong>69%</strong><span>treatment-plan impact</span><small>root apex and anatomy</small></div>
+            </div>
+            <div class="presentation-row">
+              <label>Implant site assessment<input type="number" min="0" step="1" value="4" data-case="implant"></label>
+              <div class="evidence-box"><strong>High</strong><span>3D planning value</span><small>ridge, sinus, nerve, restorative envelope</small></div>
+            </div>
+            <div class="presentation-row">
+              <label>Airway or sleep-disordered breathing exams<input type="number" min="0" step="1" value="5" data-case="airway"></label>
+              <div class="evidence-box"><strong>Selective</strong><span>defined-question use</span><small>not routine screening alone</small></div>
+            </div>
+            <div class="presentation-row">
+              <label>Sinus finding with possible odontogenic origin<input type="number" min="0" step="1" value="2" data-case="sinus"></label>
+              <div class="evidence-box"><strong>35%</strong><span>diagnosis change anchor</span><small>tooth-sinus relationship</small></div>
+            </div>
+            <div class="presentation-row">
+              <label>Impacted tooth or ectopic eruption assessment<input type="number" min="0" step="1" value="1" data-case="impaction"></label>
+              <div class="evidence-box"><strong>52%</strong><span>extraction decisions changed</span><small>impacted canine study</small></div>
+            </div>
+          </div>
+
+          <h3>Services you provide and current volume</h3>
+          <div class="toggle-grid">
+            <label class="switch"><input type="checkbox" data-service="endo" checked><span>Endodontics</span></label>
+            <label class="switch"><input type="checkbox" data-service="implants" checked><span>Implants</span></label>
+            <label class="switch"><input type="checkbox" data-service="airway"><span>Airway screening</span></label>
+            <label class="switch"><input type="checkbox" data-service="ortho"><span>Ortho or aligners</span></label>
+            <label class="switch"><input type="checkbox" data-service="surgery"><span>Oral surgery</span></label>
+          </div>
+          <div class="procedure-grid">
+            <label>Root canal, endo consult, or retreatment cases/month
+              <input type="number" min="0" step="1" value="18" data-procedure="endo">
+            </label>
+            <label>Implant consults or implant placements/month
+              <input type="number" min="0" step="1" value="8" data-procedure="implants">
+            </label>
+            <label>Airway exams/month
+              <input type="number" min="0" step="1" value="6" data-procedure="airway">
+            </label>
+            <label>Ortho, impaction, or surgical planning cases/month
+              <input type="number" min="0" step="1" value="4" data-procedure="ortho">
+            </label>
+          </div>
+
+          <h3>Scan pricing</h3>
+          <div class="procedure-grid">
+            <label>Pans taken/month
+              <input type="number" min="0" step="1" value="45" id="panCount">
+            </label>
+            <label>Fee charged for a pan
+              <input type="number" min="0" step="1" value="95" id="panFee">
+            </label>
+            <label>Fee charged for a CBCT
+              <input type="number" min="0" step="1" value="295" id="cbctFee">
+            </label>
+          </div>
+        </form>
+
+        <aside class="panel result-panel" aria-live="polite">
+          <h3>Projected CBCT use</h3>
+          <div class="big-number"><span id="monthlyScans">0</span><small>per month</small></div>
+          <div class="quarter-number"><span id="quarterScans">0</span> per quarter</div>
+          <div class="metric-list">
+            <div><span>Cases with likely treatment-plan impact</span><strong id="planImpact">0</strong></div>
+            <div><span>Cases with likely diagnosis impact</span><strong id="diagnosisImpact">0</strong></div>
+            <div><span>Added scans from enabled service volume</span><strong id="serviceScans">0</strong></div>
+            <div><span>Highest-yield category</span><strong id="topCategory">-</strong></div>
+          </div>
+          <div class="revenue-box">
+            <div><span>Monthly CBCT scan revenue</span><strong id="cbctRevenue">$0</strong></div>
+            <div><span>Monthly pan revenue</span><strong id="panRevenue">$0</strong></div>
+            <div class="total"><span>Total monthly imaging revenue</span><strong id="totalRevenue">$0</strong></div>
+          </div>
+          <p class="note">Assumption: each entered presentation is first screened with history, exam, and appropriate 2D imaging. The estimate applies evidence-based indication weights, then rounds up.</p>
+        </aside>
+      </div>
+    </section>
+
+    <section id="modality" class="section">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Part 2</p>
+          <h2>Is CBCT the Imaging Modality of Choice?</h2>
+          <p class="lede">Enter a short clinical scenario. The guide looks for indications reflected in AAE/AAOMR and ADA/AAOMR guidance and returns a documented recommendation.</p>
+        </div>
+      </div>
+
+      <div class="tool-grid">
+        <div class="panel">
+          <label class="scenario-label" for="scenarioInput">Clinical scenario</label>
+          <textarea id="scenarioInput" rows="8">A patient came in with persistent pain on tooth #14 four weeks following endodontic treatment. The periapical radiograph is inconclusive.</textarea>
+          <div class="button-row">
+            <button id="analyzeScenario" type="button">Analyze scenario</button>
+            <button class="secondary" id="clearScenario" type="button">Clear</button>
+          </div>
+        </div>
+        <aside class="panel recommendation" id="recommendationBox">
+          <p class="eyebrow">Recommendation</p>
+          <h3 id="recommendationTitle">Likely indicated after initial imaging</h3>
+          <p id="recommendationText"></p>
+          <div id="matchedIndications" class="chips"></div>
+          <p class="note" id="responsibleUse"></p>
+        </aside>
+      </div>
+    </section>
+
+    <section id="navigation" class="section muted">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Part 3</p>
+          <h2>Finding Common Clinical Answers in CS 3D Imaging</h2>
+          <p class="lede">Practical navigation patterns for general dentistry cases. Each card is independent, so a dentist can jump straight to the clinical question.</p>
+        </div>
+      </div>
+      <div class="card-grid">
+        <article class="guide-card">
+          <h3>Odontogenic sinus lesion</h3>
+          <ol>
+            <li>Open MPR and orient the axial slice through the maxillary sinus floor.</li>
+            <li>Follow the involved tooth roots in sagittal and coronal views.</li>
+            <li>Look for loss of sinus floor cortication, periapical rarefaction, mucosal thickening adjacent to the apex, or a visible tract from tooth to sinus.</li>
+            <li>Use thin slices and adjust contrast before concluding that a sinus finding is isolated from the dentition.</li>
+          </ol>
+        </article>
+        <article class="guide-card">
+          <h3>Internal vs external resorption</h3>
+          <ol>
+            <li>Center the tooth in MPR, then scroll axially from crown to apex.</li>
+            <li>Internal resorption tends to remain centered in the canal space as the canal path is followed.</li>
+            <li>External resorption usually begins on the root surface and may spare the canal until advanced.</li>
+            <li>Confirm in sagittal and coronal views before assigning prognosis.</li>
+          </ol>
+        </article>
+        <article class="guide-card">
+          <h3>External cervical resorption</h3>
+          <ol>
+            <li>Set a small field review around the cervical third of the tooth.</li>
+            <li>Scroll axial slices at the CEJ and slightly apical to it.</li>
+            <li>Map the portal of entry, circumferential spread, pulpal proximity, and bone communication.</li>
+            <li>Document restorability and whether surgical access is buccal, lingual, mesial, or distal.</li>
+          </ol>
+        </article>
+        <article class="guide-card">
+          <h3>Suspected crack or vertical root fracture</h3>
+          <ol>
+            <li>Reduce slice thickness and inspect the root in axial slices.</li>
+            <li>Do not rely only on seeing a fracture line, especially near posts or dense fillings.</li>
+            <li>Look for a narrow, isolated periodontal defect, J-shaped or halo bone loss, or localized buccal or lingual cortical breakout.</li>
+            <li>Correlate with probing, bite testing, transillumination, and the 2D image.</li>
+          </ol>
+        </article>
+        <article class="guide-card">
+          <h3>Missed canal or complex morphology</h3>
+          <ol>
+            <li>Start in axial view at the chamber floor and move apically in small increments.</li>
+            <li>Use canal tracking from the pulp chamber rather than searching randomly in the 3D volume.</li>
+            <li>Watch for sudden canal merging, C-shaped anatomy, MB2 anatomy, or calcified pathways.</li>
+            <li>Use the crosshair to keep the suspected canal synchronized across all three views.</li>
+          </ol>
+        </article>
+        <article class="guide-card">
+          <h3>Implant site planning</h3>
+          <ol>
+            <li>Trace the arch and open the curved slicing view.</li>
+            <li>Confirm ridge width, height, concavities, sinus floor, nasal floor, and nerve position.</li>
+            <li>Measure in the cross-sectional view, not on a panoramic reconstruction alone.</li>
+            <li>Keep the proposed implant inside the available restorative envelope.</li>
+          </ol>
+        </article>
+        <article class="guide-card">
+          <h3>Inferior alveolar nerve tracing</h3>
+          <ol>
+            <li>Use curved slicing to align the mandibular arch before tracing.</li>
+            <li>Identify the mandibular canal in cross-sectional slices, then confirm it on adjacent slices.</li>
+            <li>Check the mental foramen exit and anterior loop region before measuring implant clearance.</li>
+            <li>Record the nearest anatomy and the slice where the measurement was made.</li>
+          </ol>
+        </article>
+        <article class="guide-card">
+          <h3>TMJ screening findings</h3>
+          <ol>
+            <li>View both condyles in corrected sagittal and coronal orientation.</li>
+            <li>Compare right and left cortical outline, flattening, osteophytes, erosions, and joint space symmetry.</li>
+            <li>Remember CBCT shows hard tissue well but does not show the disc position directly.</li>
+            <li>Refer when symptoms and osseous findings suggest pathology beyond routine dental management.</li>
+          </ol>
+        </article>
+        <article class="guide-card">
+          <h3>Incidental pathology review</h3>
+          <ol>
+            <li>Systematically review the entire captured volume, not only the tooth or implant site.</li>
+            <li>Check sinuses, nasal cavity, mandibular canal, cortical borders, condyles, and airway space.</li>
+            <li>Separate dental findings from nonodontogenic findings in your notes.</li>
+            <li>Refer to an oral and maxillofacial radiologist when a finding is outside your interpretive comfort.</li>
+          </ol>
+        </article>
+        <article class="guide-card">
+          <h3>Periodontal defects and furcations</h3>
+          <ol>
+            <li>Orient the tooth long axis vertically in the sagittal and coronal views.</li>
+            <li>Scroll through buccal, lingual, mesial, and distal surfaces instead of relying on one slice.</li>
+            <li>Look for crater depth, furcation involvement, dehiscence, fenestration, and relationship to endodontic lesions.</li>
+            <li>Confirm periodontal findings clinically because thin bone can disappear from partial volume artifact.</li>
+          </ol>
+        </article>
+        <article class="guide-card">
+          <h3>Surgical extraction risk</h3>
+          <ol>
+            <li>Use cross-sectional slices to evaluate root shape, divergence, ankylosis signs, sinus proximity, and nerve proximity.</li>
+            <li>For mandibular third molars, trace the canal and inspect whether the cortical canal boundary is interrupted.</li>
+            <li>For maxillary posterior teeth, evaluate sinus floor relationship and septa.</li>
+            <li>Use the 3D rendering only as an orientation aid; make measurements in MPR views.</li>
+          </ol>
+        </article>
+        <article class="guide-card">
+          <h3>Endodontic working anatomy map</h3>
+          <ol>
+            <li>Center the tooth, then align the long axis in all three planes.</li>
+            <li>Map canal entrances, curvature, calcification, apical anatomy, and proximity to cortical plates.</li>
+            <li>Use axial scrolling to find missed anatomy, then verify the path in sagittal and coronal views.</li>
+            <li>Export key screenshots for the chart or referral conversation.</li>
+          </ol>
+        </article>
+      </div>
+    </section>
+
+    <section id="artifacts" class="section">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Part 4</p>
+          <h2>Artifact Pattern Guide</h2>
+          <p class="lede">A quick visual logic guide for deciding whether the finding is likely artifact, anatomy, or disease.</p>
+        </div>
+      </div>
+      <div class="artifact-intro">
+        <strong>Movement artifact comes first because it is widely recognized as the leading cause of artifacts in dental CBCT scans.</strong>
+        Patient motion can create duplicated borders, blur fine anatomy, and make small defects look larger or smaller than they are. Before diagnosing subtle fracture, resorption, dehiscence, or cortical interruption, first ask whether the whole volume shows motion.
+      </div>
+      <p class="machine-note">Same CBCT machine, different patients: the comparison below isolates patient movement as the practical difference dentists can look for when image quality changes from scan to scan.</p>
+      <div class="motion-comparison">
+        <figure class="motion-panel">
+          <img src="motion-artifact-clinical.png" alt="Clinical CBCT screenshot with movement artifact">
+          <figcaption><strong>Movement artifact example, same machine.</strong> The root outlines, canal borders, trabecular pattern, and cortical boundaries lose crispness together. That global softening is the clue.</figcaption>
+        </figure>
+        <figure class="motion-panel">
+          <img src="motion-held-still.png" alt="Clinical CBCT screenshot from a patient who held still">
+          <figcaption><strong>Patient held still, same machine.</strong> Even with restorative scatter present, the anatomic edges are easier to follow and the trabecular pattern is more interpretable.</figcaption>
+        </figure>
+      </div>
+      <div class="artifact-gallery">
+        <figure class="artifact-figure">
+          <img src="artifact-beam-hardening-clinical.png" alt="Clinical CBCT beam hardening example">
+          <figcaption><strong>Beam hardening.</strong> The black line in the canal can be mistaken for an underfilled canal. A key clue is that the dark line follows the curvature of the adjacent dense material that is blocking the x-rays.</figcaption>
+        </figure>
+        <figure class="artifact-figure">
+          <img src="artifact-scatter-clinical.png" alt="Clinical CBCT scatter artifact from a crown">
+          <figcaption><strong>Scatter from a crown.</strong> Crown scatter often presents as broad dark bands or streaks radiating away from the crown, lowering confidence in adjacent root and bone interpretation.</figcaption>
+        </figure>
+        <figure class="artifact-figure">
+          <img src="artifact-ring.png" alt="CBCT ring artifact example">
+          <figcaption><strong>Ring or detector artifact.</strong> Circular patterns cross air, teeth, and bone without respecting anatomy.</figcaption>
+        </figure>
+        <figure class="artifact-figure">
+          <img src="artifact-noise-clinical.png" alt="Clinical CBCT screenshot showing noise and limited fine-detail definition">
+          <figcaption><strong>Noise and limited fine-detail definition.</strong> Grainy texture and soft boundaries can make small root-surface or cortical findings look less certain.</figcaption>
+        </figure>
+      </div>
+      <div class="artifact-table">
+        <div class="artifact-row artifact-head">
+          <span>Pattern</span><span>Typical appearance</span><span>How to check it</span>
+        </div>
+        <div class="artifact-row">
+          <span>Movement</span><span>Double borders, blurred cortices, or repeated outlines across the volume. It is commonly described as the leading artifact source in dental CBCT.</span><span>Check the mandibular cortex and tooth outlines throughout the scan. Motion affects broad areas, not one isolated root surface.</span>
+        </div>
+        <div class="artifact-row">
+          <span>Beam hardening</span><span>Dark bands or black lines adjacent to dense materials such as root filling material, posts, crowns, or implants. In canals, the dark line may mimic an underfilled space.</span><span>Ask whether the dark line follows the curve or contour of the dense material. If it tracks the radiopaque material instead of anatomy, treat it as artifact until proven otherwise.</span>
+        </div>
+        <div class="artifact-row">
+          <span>Scatter from metal</span><span>Broad dark bands, bright streaks, or starburst effects radiating from crowns, posts, restorations, or implants.</span><span>Lower confidence near metal. Correlate with clinical tests and 2D images, and be cautious diagnosing cracks or bone loss directly inside the scatter path.</span>
+        </div>
+        <div class="artifact-row">
+          <span>Partial volume</span><span>Thin cortices or fine roots appear broken because the slice averages dense and non-dense structures.</span><span>Use thinner slices and inspect in multiple planes before calling dehiscence or fracture.</span>
+        </div>
+        <div class="artifact-row">
+          <span>Noise</span><span>Grainy texture that can mimic subtle trabecular change.</span><span>Adjust brightness and contrast, then decide only from findings that persist in adjacent slices.</span>
+        </div>
+        <div class="artifact-row">
+          <span>Ring or detector artifact</span><span>Circular or band-like pattern unrelated to anatomy.</span><span>Look for the same pattern crossing air, soft tissue, and bone. Anatomy respects anatomy; detector artifact does not.</span>
+        </div>
+      </div>
+    </section>
+
+    <section id="citations" class="section muted">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Evidence</p>
+          <h2>Citations Used in This Website</h2>
+        </div>
+      </div>
+      <div class="citation-list">
+        <p><strong>AAE/AAOMR 2025 update.</strong> AAE newsroom announcement, January 14, 2026: the update replaces the 2015 statement, condenses recommendations to 12, emphasizes training, ALADAIP, selective use, and patient-specific protocols. <a href="https://newsroom.aae.org/press-releases/aae-and-aaomr-release-joint-position-statement-on-the-use-of-cbct-in-endodontics/">Source</a></p>
+        <p><strong>ADA/AAOMR patient selection and ADA safety guidance.</strong> ADA Oral Health Topic on X-rays/Radiographs, updated March 26, 2026: imaging should follow clinical need, patient selection criteria, ALARA/ALADA principles, and CBCT should be used when lower-exposure imaging will not provide the needed diagnostic information. <a href="https://www.ada.org/resources/ada-library/oral-health-topics/x-rays-radiographs">Source</a></p>
+        <p><strong>Applying AAE/AAOMR guidelines in endodontics.</strong> JADA 2024 paper in the provided study folder: CBCT was prescribed for 12% of patients, changed periapical diagnosis in 21%, and changed treatment plans in 69% of evaluated cases.</p>
+        <p><strong>Impact on endodontic diagnosis.</strong> The provided study "The impact of cone beam computed tomography (CBCT) on the choice of endodontic diagnosis" reports diagnosis changes for at least one tooth in 41% of patients and 35% of teeth.</p>
+        <p><strong>Referral impact in endodontics.</strong> The provided study "CBCT assessment of referral reasons and impact on modifying treatment plan in endodontics" reports diagnosis changes in 34.45% and major treatment-plan changes in 62.02% of referred cases.</p>
+        <p><strong>Impacted canines.</strong> The provided 2025 Applied Sciences study reports that 51.5% of extraction decisions made with 2D data changed to orthodontic traction after CBCT review.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <span>Dan Alman CBCT Education</span>
+    <span>Educational support only. Final imaging decisions remain clinician and patient specific.</span>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
