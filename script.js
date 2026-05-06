@@ -1,71 +1,64 @@
 const indicationWeights = {
-  pain: { label: 'Nonspecific symptoms', weight: 0.85, services: ['endo'], impact: 0.21 },
-  nonhealing: { label: 'Nonhealing endodontic treatment', weight: 0.95, services: ['endo'], impact: 0.69 },
-  fracture: { label: 'Suspected vertical root fracture', weight: 0.75, services: ['endo'], impact: 0.62 },
-  resorption: { label: 'Resorption', weight: 0.9, services: ['endo'], impact: 0.69 },
-  retreatment: { label: 'Retreatment complication', weight: 0.8, services: ['endo'], impact: 0.69 },
-  surgery: { label: 'Endodontic surgery planning', weight: 0.92, services: ['endo', 'surgery'], impact: 0.69 },
-  implant: { label: 'Implant planning', weight: 0.95, services: ['implants', 'surgery'], impact: 0.69 },
-  airway: { label: 'Airway screening', weight: 0.35, services: ['airway'], impact: 0.21 },
-  sinus: { label: 'Odontogenic sinus question', weight: 0.7, services: ['endo', 'surgery'], impact: 0.35 },
-  impaction: { label: 'Impacted tooth', weight: 0.75, services: ['ortho', 'surgery'], impact: 0.52 }
-};
-
-const procedureModel = {
-  endo: { label: 'Endodontics', rate: 0.22, services: ['endo'], impact: 0.69 },
-  implants: { label: 'Implants', rate: 0.7, services: ['implants'], impact: 0.69 },
-  airway: { label: 'Airway', rate: 0.18, services: ['airway'], impact: 0.21 },
-  ortho: { label: 'Ortho or surgery', rate: 0.28, services: ['ortho', 'surgery'], impact: 0.52 }
+  pain: { label: 'Nonspecific symptoms', weight: 0.75, services: ['endo'], group: 'endo', planRate: 0.21, diagnosisRate: 0.21 },
+  nonhealing: { label: 'Nonhealing endodontic treatment', weight: 0.9, services: ['endo'], group: 'endo', planRate: 0.69, diagnosisRate: 0.21 },
+  fracture: { label: 'Suspected vertical root fracture', weight: 0.65, services: ['endo'], group: 'endo', planRate: 0.6202, diagnosisRate: 0.35 },
+  resorption: { label: 'Resorption', weight: 0.85, services: ['endo'], group: 'endo', planRate: 0.69, diagnosisRate: 0.21 },
+  retreatment: { label: 'Retreatment complication', weight: 0.75, services: ['endo'], group: 'endo', planRate: 0.69, diagnosisRate: 0.21 },
+  surgery: { label: 'Endodontic surgery planning', weight: 0.85, services: ['endo', 'surgery'], group: 'endo', planRate: 0.69, diagnosisRate: 0.21 },
+  implant: { label: 'Implant planning', weight: 0.85, services: ['implants', 'surgery'], group: 'implants', planRate: 0, diagnosisRate: 0 },
+  airway: { label: 'Airway screening', weight: 0.2, services: ['airway'], group: 'airway', planRate: 0, diagnosisRate: 0 },
+  sinus: { label: 'Odontogenic sinus question', weight: 0.55, services: ['endo', 'surgery'], group: 'endo', planRate: 0.35, diagnosisRate: 0.35 },
+  impaction: { label: 'Impacted tooth', weight: 0.65, services: ['ortho', 'surgery'], group: 'ortho', planRate: 0.515, diagnosisRate: 0 }
 };
 
 const scenarios = [
   {
     name: 'Persistent or nonhealing endodontic symptoms',
     terms: ['persistent', 'nonhealing', 'not healing', 'failed root canal', 'following endodontic', 'after endodontic', 'retreatment'],
-    title: 'CBCT is strongly supported when 2D imaging and exam are inconclusive.',
-    text: 'This scenario matches the AAE/AAOMR endodontic indication for evaluating nonhealing or previously treated teeth when the result will guide nonsurgical retreatment, surgery, or extraction. ADA/AAOMR patient-selection guidance still expects a clinical exam first and supports CBCT when lower-exposure imaging will not answer the diagnostic question.'
+    title: 'This scenario aligns with published CBCT-use considerations after inconclusive 2D imaging.',
+    text: 'This wording matches the AAE/AAOMR endodontic indication for evaluating nonhealing or previously treated teeth when three-dimensional information may clarify the clinical question. ADA/AAOMR patient-selection guidance still centers the clinical exam first and frames CBCT as a modality to consider when lower-exposure imaging will not provide the needed information.'
   },
   {
     name: 'Contradictory or nonspecific signs and symptoms',
     terms: ['cannot localize', 'hard to localize', 'nonspecific', 'contradictory', 'unclear pain', 'referred pain'],
-    title: 'CBCT can be appropriate after the initial exam and 2D radiographs.',
-    text: 'AAE/AAOMR guidance identifies limited-FOV CBCT as useful for contradictory or nonspecific clinical signs and symptoms associated with untreated or previously treated teeth. The scan should be limited to the region of interest and justified by the expected diagnostic benefit.'
+    title: 'This scenario may align with limited-FOV CBCT considerations after initial imaging.',
+    text: 'AAE/AAOMR guidance identifies contradictory or nonspecific clinical signs and symptoms associated with untreated or previously treated teeth as a context where limited-FOV CBCT may be considered. Field of view, exposure, and expected information gain remain clinician-specific decisions.'
   },
   {
     name: 'Suspected vertical root fracture',
     terms: ['vertical root fracture', 'vrf', 'crack', 'cracked', 'isolated probing', 'j shaped', 'halo'],
-    title: 'CBCT is reasonable when conventional findings are inconclusive.',
-    text: 'AAE/AAOMR guidance supports limited-FOV CBCT when exam and 2D radiography are inconclusive for vertical root fracture. Interpret cautiously near posts, crowns, and root filling materials because artifacts can mimic or obscure fracture signs.'
+    title: 'This scenario aligns with published considerations for inconclusive fracture assessment.',
+    text: 'AAE/AAOMR guidance discusses limited-FOV CBCT when the clinical exam and 2D radiography are inconclusive for suspected vertical root fracture. Interpretation calls for caution near posts, crowns, and root filling materials because artifacts can mimic or obscure fracture signs.'
   },
   {
     name: 'Resorption',
     terms: ['resorption', 'ecr', 'external cervical', 'internal resorption', 'external resorption'],
-    title: 'CBCT is commonly the modality of choice for localization and extent.',
-    text: 'AAE/AAOMR guidance supports CBCT for localizing and differentiating internal and external resorptive defects and for determining treatment and prognosis. ADA/AAOMR responsible-use principles still apply: use the smallest field and lowest exposure that answer the question.'
+    title: 'This scenario aligns with CBCT literature for localization and extent assessment.',
+    text: 'AAE/AAOMR guidance discusses CBCT for localizing and differentiating internal and external resorptive defects and for understanding treatment-planning context. ADA/AAOMR responsible-use principles still apply: use the smallest field and lowest exposure that answer the clinical question.'
   },
   {
     name: 'Implant planning',
     terms: ['implant', 'ridge', 'sinus lift', 'nerve', 'inferior alveolar', 'mental foramen'],
-    title: 'CBCT is usually appropriate for implant site planning.',
-    text: 'AAE/AAOMR endodontic recommendations include surgical implant placement as an indication, and ADA/AAOMR patient-selection guidance addresses CBCT as a 3D modality when anatomy, risk, and treatment planning require information not available from 2D imaging.'
+    title: 'This scenario aligns with three-dimensional anatomic assessment considerations.',
+    text: 'AAE/AAOMR endodontic guidance includes surgical implant placement as an indication, and ADA/AAOMR patient-selection guidance addresses CBCT as a 3D modality when anatomy, risk awareness, and planning context call for information not available from 2D imaging.'
   },
   {
     name: 'Trauma',
     terms: ['trauma', 'luxation', 'avulsion', 'alveolar fracture', 'root fracture', 'displacement'],
-    title: 'CBCT may be indicated for localized dentoalveolar trauma.',
-    text: 'AAE/AAOMR guidance supports limited-FOV CBCT for diagnosis and management of limited dentoalveolar trauma, including root fractures, luxation, displacement, or localized alveolar fracture, when it affects management.'
+    title: 'This scenario may align with localized dentoalveolar trauma imaging considerations.',
+    text: 'AAE/AAOMR guidance discusses limited-FOV CBCT in localized dentoalveolar trauma contexts, including root fractures, luxation, displacement, or localized alveolar fracture, when additional anatomic information may affect patient-care context.'
   },
   {
     name: 'Sinus or odontogenic source',
     terms: ['sinus', 'mucosal thickening', 'odontogenic sinusitis', 'maxillary sinus'],
-    title: 'CBCT can help determine whether the sinus finding is dental in origin.',
-    text: 'When 2D imaging cannot show the relationship between maxillary roots, periapical disease, cortical boundaries, and the sinus floor, limited-FOV CBCT may provide clinically necessary localization. Interpret with the clinical history and refer medical sinus disease when findings are not odontogenic.'
+    title: 'This scenario aligns with tooth-sinus relationship review considerations.',
+    text: 'When 2D imaging cannot show the relationship between maxillary roots, periapical findings, cortical boundaries, and the sinus floor, limited-FOV CBCT may provide localization context. Findings still require clinical history, full image interpretation, and referral when the pattern is not odontogenic.'
   },
   {
     name: 'Airway screening',
     terms: ['airway', 'sleep apnea', 'osa', 'snoring'],
-    title: 'CBCT is not a routine screening test by itself.',
-    text: 'Airway volume can be viewed on CBCT, but ADA/AAOMR responsible-use guidance requires a clear clinical benefit that outweighs radiation risk. Use CBCT only when the 3D information is needed for a defined dental or airway-related management question.'
+    title: 'Airway language alone does not create a routine CBCT screening indication.',
+    text: 'Airway volume can be viewed on CBCT, but ADA/AAOMR responsible-use guidance centers clinical benefit, radiation risk, and patient selection. CBCT context is strongest when the 3D information is needed for a defined dental or airway-related clinical question.'
   }
 ];
 
@@ -75,14 +68,25 @@ function activeServices() {
 
 function serviceMultiplier(item, services) {
   if (!item.services.length) return 1;
-  return item.services.some(service => services.includes(service)) ? 1 : 0.18;
+  return item.services.some(service => services.includes(service)) ? 1 : 0.15;
+}
+
+function procedureCaps() {
+  return {
+    endo: Math.max(0, Number(document.querySelector('[data-procedure="endo"]').value) || 0),
+    implants: Math.max(0, Number(document.querySelector('[data-procedure="implants"]').value) || 0),
+    airway: Math.max(0, Number(document.querySelector('[data-procedure="airway"]').value) || 0),
+    ortho: Math.max(0, Number(document.querySelector('[data-procedure="ortho"]').value) || 0)
+  };
 }
 
 function updateCalculator() {
   const services = activeServices();
+  const caps = procedureCaps();
   const rows = Array.from(document.querySelectorAll('[data-case]'));
-  let projected = 0;
-  let serviceProjected = 0;
+  const entries = [];
+  const groupTotals = {};
+  let uncappedProjected = 0;
   let planImpact = 0;
   let diagnosisImpact = 0;
   let top = { label: '-', value: 0 };
@@ -92,33 +96,32 @@ function updateCalculator() {
     const count = Math.max(0, Number(input.value) || 0);
     const item = indicationWeights[key];
     const adjusted = count * item.weight * serviceMultiplier(item, services);
-    projected += adjusted;
-    planImpact += adjusted * item.impact;
-    diagnosisImpact += adjusted * 0.35;
-
-    if (adjusted > top.value) {
-      top = { label: item.label, value: adjusted };
-    }
+    uncappedProjected += adjusted;
+    groupTotals[item.group] = (groupTotals[item.group] || 0) + adjusted;
+    entries.push({ item, adjusted });
   });
 
-  Array.from(document.querySelectorAll('[data-procedure]')).forEach(input => {
-    const key = input.dataset.procedure;
-    const count = Math.max(0, Number(input.value) || 0);
-    const item = procedureModel[key];
-    const enabled = item.services.some(service => services.includes(service));
-    const adjusted = enabled ? count * item.rate : 0;
+  const groupScales = {};
+  Object.keys(groupTotals).forEach(group => {
+    const total = groupTotals[group];
+    const cap = caps[group];
+    groupScales[group] = cap > 0 ? Math.min(1, cap / total) : 0;
+  });
+
+  let projected = 0;
+  entries.forEach(entry => {
+    const adjusted = entry.adjusted * groupScales[entry.item.group];
     projected += adjusted;
-    serviceProjected += adjusted;
-    planImpact += adjusted * item.impact;
-    diagnosisImpact += adjusted * 0.21;
+    planImpact += adjusted * entry.item.planRate;
+    diagnosisImpact += adjusted * entry.item.diagnosisRate;
 
     if (adjusted > top.value) {
-      top = { label: `${item.label} volume`, value: adjusted };
+      top = { label: entry.item.label, value: adjusted };
     }
   });
 
   const monthly = Math.ceil(projected);
-  const serviceMonthly = Math.ceil(serviceProjected);
+  const reducedScans = Math.ceil(Math.max(0, uncappedProjected - projected));
   const panCount = Math.max(0, Number(document.getElementById('panCount').value) || 0);
   const panFee = Math.max(0, Number(document.getElementById('panFee').value) || 0);
   const cbctFee = Math.max(0, Number(document.getElementById('cbctFee').value) || 0);
@@ -129,7 +132,7 @@ function updateCalculator() {
   document.getElementById('quarterScans').textContent = Math.ceil(monthly * 3);
   document.getElementById('planImpact').textContent = Math.ceil(planImpact);
   document.getElementById('diagnosisImpact').textContent = Math.ceil(diagnosisImpact);
-  document.getElementById('serviceScans').textContent = serviceMonthly;
+  document.getElementById('serviceScans').textContent = reducedScans;
   document.getElementById('topCategory').textContent = top.label;
   document.getElementById('cbctRevenue').textContent = formatCurrency(cbctRevenue);
   document.getElementById('panRevenue').textContent = formatCurrency(panRevenue);
@@ -162,9 +165,9 @@ function analyzeScenario() {
   }
 
   if (!matches.length) {
-    title.textContent = 'Start with exam and appropriate 2D imaging';
-    body.textContent = 'No specific CBCT indication was detected in the scenario text. ADA/AAOMR guidance favors imaging only when it is clinically necessary, and CBCT when lower-exposure options will not provide the diagnostic information needed.';
-    responsible.textContent = 'Add details such as nonhealing endodontic treatment, suspected fracture, resorption, trauma, implant planning, or inconclusive radiographs if they apply.';
+    title.textContent = 'No specific literature-alignment signal detected';
+    body.textContent = 'No specific CBCT indication language was detected in the scenario text. ADA/AAOMR guidance frames imaging around clinical need, patient selection, and whether lower-exposure options can provide the needed information.';
+    responsible.textContent = 'Add context such as nonhealing endodontic treatment, suspected fracture, resorption, trauma, implant planning, or inconclusive radiographs if those details apply.';
     return;
   }
 
@@ -175,7 +178,7 @@ function analyzeScenario() {
     chip.textContent = match.name;
     chips.appendChild(chip);
   });
-  responsible.textContent = 'Responsible-use reminder: document the clinical question, use limited FOV when possible, optimize exposure for the patient and indication, and discuss benefits and risks with the patient.';
+  responsible.textContent = 'Responsible-use reminder: document the clinical question, use limited FOV when possible, optimize exposure for the patient and indication, and interpret findings within the complete clinical context.';
 }
 
 function updateActiveTab() {
@@ -188,6 +191,76 @@ function updateActiveTab() {
 
   tabs.forEach(tab => {
     tab.classList.toggle('is-active', tab.getAttribute('href') === `#${current.id}`);
+  });
+}
+
+function setupArtifactExpansion() {
+  const supportsHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+  function closeAll() {
+    document.querySelectorAll('.artifact-expanded').forEach(panel => {
+      panel.hidden = true;
+      panel.innerHTML = '';
+    });
+  }
+
+  function openRow(row, detail, thumbs, pattern, frequency, appearance, check, why) {
+    closeAll();
+    const images = thumbs.map(thumb => {
+      const img = thumb.querySelector('img');
+      return `<img src="${img.getAttribute('src')}" alt="${img.getAttribute('alt')}">`;
+    }).join('');
+
+    detail.innerHTML = `
+      <div class="artifact-expanded-images">${images}</div>
+      <div class="artifact-expanded-copy">
+        <h3>${pattern}</h3>
+        <p><strong>How common?</strong> ${frequency}</p>
+        <p><strong>Typical appearance:</strong> ${appearance}</p>
+        ${why ? `<p><strong>Why it happens:</strong> ${why}</p>` : ''}
+        <p><strong>How to check it:</strong> ${check}</p>
+      </div>
+    `;
+    detail.hidden = false;
+  }
+
+  document.querySelectorAll('[data-artifact-row]').forEach(row => {
+    const thumbs = Array.from(row.querySelectorAll('.artifact-thumb'));
+    const detail = row.querySelector('.artifact-expanded');
+    const cells = Array.from(row.children).filter(child => child.tagName === 'SPAN');
+    const pattern = row.dataset.pattern || cells[1]?.textContent.trim() || 'Artifact';
+    const frequency = row.dataset.frequency || 'Varies';
+    const why = row.dataset.why || '';
+    const appearance = cells[2]?.textContent.trim() || '';
+    const check = cells[3]?.textContent.trim() || '';
+
+    if (supportsHover) {
+      thumbs.forEach(button => {
+        button.addEventListener('mouseenter', () => {
+          openRow(row, detail, thumbs, pattern, frequency, appearance, check, why);
+        });
+        button.addEventListener('mouseleave', () => {
+          detail.hidden = true;
+          detail.innerHTML = '';
+        });
+        button.addEventListener('click', event => {
+          event.preventDefault();
+        });
+      });
+    } else {
+      thumbs.forEach(button => {
+        button.addEventListener('click', () => {
+        const alreadyOpen = !detail.hidden;
+        closeAll();
+
+        if (alreadyOpen) {
+          return;
+        }
+
+          openRow(row, detail, thumbs, pattern, frequency, appearance, check, why);
+        });
+      });
+    }
   });
 }
 
@@ -208,3 +281,4 @@ window.addEventListener('resize', updateActiveTab);
 updateCalculator();
 analyzeScenario();
 updateActiveTab();
+setupArtifactExpansion();
