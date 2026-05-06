@@ -1,14 +1,14 @@
 const indicationWeights = {
-  pain: { label: 'Nonspecific symptoms', weight: 0.75, services: ['endo'], group: 'endo', planRate: 0.21, diagnosisRate: 0.21 },
-  nonhealing: { label: 'Nonhealing endodontic treatment', weight: 0.9, services: ['endo'], group: 'endo', planRate: 0.69, diagnosisRate: 0.21 },
-  fracture: { label: 'Suspected vertical root fracture', weight: 0.65, services: ['endo'], group: 'endo', planRate: 0.6202, diagnosisRate: 0.35 },
-  resorption: { label: 'Resorption', weight: 0.85, services: ['endo'], group: 'endo', planRate: 0.69, diagnosisRate: 0.21 },
-  retreatment: { label: 'Retreatment complication', weight: 0.75, services: ['endo'], group: 'endo', planRate: 0.69, diagnosisRate: 0.21 },
-  surgery: { label: 'Endodontic surgery planning', weight: 0.85, services: ['endo', 'surgery'], group: 'endo', planRate: 0.69, diagnosisRate: 0.21 },
-  implant: { label: 'Implant planning', weight: 0.85, services: ['implants', 'surgery'], group: 'implants', planRate: 0, diagnosisRate: 0 },
-  airway: { label: 'Airway screening', weight: 0.2, services: ['airway'], group: 'airway', planRate: 0, diagnosisRate: 0 },
-  sinus: { label: 'Odontogenic sinus question', weight: 0.55, services: ['endo', 'surgery'], group: 'endo', planRate: 0.35, diagnosisRate: 0.35 },
-  impaction: { label: 'Impacted tooth', weight: 0.65, services: ['ortho', 'surgery'], group: 'ortho', planRate: 0.515, diagnosisRate: 0 }
+  pain: { label: 'Nonspecific symptoms', scanFactor: 0.75, services: ['endo'], group: 'endo', planRate: 0, diagnosisRate: 0.21 },
+  nonhealing: { label: 'Nonhealing endodontic treatment', scanFactor: 0.9, services: ['endo'], group: 'endo', planRate: 0.69, diagnosisRate: 0.21 },
+  fracture: { label: 'Suspected vertical root fracture', scanFactor: 0.65, services: ['endo'], group: 'endo', planRate: 0.6202, diagnosisRate: 0.3445 },
+  resorption: { label: 'Resorption', scanFactor: 0.85, services: ['endo'], group: 'endo', planRate: 0.69, diagnosisRate: 0.21 },
+  retreatment: { label: 'Retreatment complication', scanFactor: 0.75, services: ['endo'], group: 'endo', planRate: 0.69, diagnosisRate: 0.21 },
+  surgery: { label: 'Endodontic surgery planning', scanFactor: 0.85, services: ['endo', 'surgery'], group: 'endo', planRate: 0.69, diagnosisRate: 0.21 },
+  implant: { label: 'Implant planning', scanFactor: 0.85, services: ['implants', 'surgery'], group: 'implants', planRate: 0, diagnosisRate: 0 },
+  airway: { label: 'Airway screening', scanFactor: 0.2, services: ['airway'], group: 'airway', planRate: 0, diagnosisRate: 0 },
+  sinus: { label: 'Odontogenic sinus question', scanFactor: 0.55, services: ['endo', 'surgery'], group: 'endo', planRate: 0.35, diagnosisRate: 0.35 },
+  impaction: { label: 'Impacted tooth', scanFactor: 0.65, services: ['ortho', 'surgery'], group: 'ortho', planRate: 0.515, diagnosisRate: 0 }
 };
 
 const scenarios = [
@@ -66,9 +66,9 @@ function activeServices() {
   return Array.from(document.querySelectorAll('[data-service]:checked')).map(input => input.dataset.service);
 }
 
-function serviceMultiplier(item, services) {
-  if (!item.services.length) return 1;
-  return item.services.some(service => services.includes(service)) ? 1 : 0.15;
+function serviceEnabled(item, services) {
+  if (!item.services.length) return true;
+  return item.services.some(service => services.includes(service));
 }
 
 function procedureCaps() {
@@ -85,8 +85,9 @@ function updateCalculator() {
   const caps = procedureCaps();
   const rows = Array.from(document.querySelectorAll('[data-case]'));
   const entries = [];
-  const groupTotals = {};
-  let uncappedProjected = 0;
+  const groupRawTotals = {};
+  const groupFinalTotals = {};
+  let potentialProjected = 0;
   let planImpact = 0;
   let diagnosisImpact = 0;
   let top = { label: '-', value: 0 };
@@ -95,23 +96,29 @@ function updateCalculator() {
     const key = input.dataset.case;
     const count = Math.max(0, Number(input.value) || 0);
     const item = indicationWeights[key];
-    const adjusted = count * item.weight * serviceMultiplier(item, services);
-    uncappedProjected += adjusted;
-    groupTotals[item.group] = (groupTotals[item.group] || 0) + adjusted;
-    entries.push({ item, adjusted });
+    const enabled = serviceEnabled(item, services);
+    const potentialRaw = count * item.scanFactor;
+    const raw = enabled ? count * item.scanFactor : 0;
+
+    potentialProjected += potentialRaw;
+    groupRawTotals[item.group] = (groupRawTotals[item.group] || 0) + raw;
+    entries.push({ item, count, raw, enabled });
   });
 
   const groupScales = {};
-  Object.keys(groupTotals).forEach(group => {
-    const total = groupTotals[group];
+  Object.keys(groupRawTotals).forEach(group => {
+    const total = groupRawTotals[group];
     const cap = caps[group];
-    groupScales[group] = cap > 0 ? Math.min(1, cap / total) : 0;
+    const roundedGroupTotal = Math.ceil(total);
+    const finalGroupTotal = cap > 0 ? Math.min(roundedGroupTotal, cap) : 0;
+
+    groupFinalTotals[group] = finalGroupTotal;
+    groupScales[group] = total > 0 ? finalGroupTotal / total : 0;
   });
 
   let projected = 0;
   entries.forEach(entry => {
-    const adjusted = entry.adjusted * groupScales[entry.item.group];
-    projected += adjusted;
+    const adjusted = entry.raw * groupScales[entry.item.group];
     planImpact += adjusted * entry.item.planRate;
     diagnosisImpact += adjusted * entry.item.diagnosisRate;
 
@@ -120,8 +127,9 @@ function updateCalculator() {
     }
   });
 
-  const monthly = Math.ceil(projected);
-  const reducedScans = Math.ceil(Math.max(0, uncappedProjected - projected));
+  projected = Object.values(groupFinalTotals).reduce((sum, value) => sum + value, 0);
+  const monthly = projected;
+  const reducedScans = Math.max(0, Math.ceil(potentialProjected) - monthly);
   const panCount = Math.max(0, Number(document.getElementById('panCount').value) || 0);
   const panFee = Math.max(0, Number(document.getElementById('panFee').value) || 0);
   const cbctFee = Math.max(0, Number(document.getElementById('cbctFee').value) || 0);
@@ -129,7 +137,7 @@ function updateCalculator() {
   const panRevenue = Math.ceil(panCount * panFee);
 
   document.getElementById('monthlyScans').textContent = monthly;
-  document.getElementById('quarterScans').textContent = Math.ceil(monthly * 3);
+  document.getElementById('quarterScans').textContent = monthly * 3;
   document.getElementById('planImpact').textContent = Math.ceil(planImpact);
   document.getElementById('diagnosisImpact').textContent = Math.ceil(diagnosisImpact);
   document.getElementById('serviceScans').textContent = reducedScans;
