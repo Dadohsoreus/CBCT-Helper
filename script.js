@@ -385,14 +385,7 @@ function scoreScenario(scenario, concepts, reducingConcepts) {
 }
 
 function matchScenarioText(text) {
-  const normalizedText = normalizeScenarioText(text);
-  const concepts = conceptsFromText(normalizedText);
-  const reducingConcepts = reducingConceptsFromText(normalizedText);
-
-  return scenarios
-    .map(scenario => scoreScenario(scenario, concepts, reducingConcepts))
-    .filter(match => match.score >= match.threshold)
-    .sort((a, b) => b.score - a.score);
+  return analyzeScenarioText(text).matches;
 }
 
 function analyzeScenarioText(text) {
@@ -413,6 +406,15 @@ function labelsForConcepts(concepts) {
     .filter(Boolean);
 }
 
+function escapeHtml(value) {
+  return String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 function renderAlignmentDetails(target, topMatch, concepts, reducingConcepts) {
   const supporting = topMatch
     ? labelsForConcepts(topMatch.matchedConcepts)
@@ -421,10 +423,10 @@ function renderAlignmentDetails(target, topMatch, concepts, reducingConcepts) {
   const limitation = topMatch?.limitation || 'Expected information gain depends on the clinical question, patient context, image quality, and whether the information cannot be reasonably obtained from lower-exposure imaging or clinical testing.';
 
   const supportingList = supporting.length
-    ? supporting.map(item => `<li>${item}</li>`).join('')
+    ? supporting.map(item => `<li>${escapeHtml(item)}</li>`).join('')
     : '<li>No specific supporting concept cluster was detected.</li>';
   const reducingList = reducing.length
-    ? reducing.map(item => `<li>${item}</li>`).join('')
+    ? reducing.map(item => `<li>${escapeHtml(item)}</li>`).join('')
     : '<li>No explicit reducing features detected in the note text.</li>';
 
   target.innerHTML = `
@@ -438,7 +440,7 @@ function renderAlignmentDetails(target, topMatch, concepts, reducingConcepts) {
     </section>
     <section>
       <h4>Educational limitation / expected information gain</h4>
-      <p>${limitation}</p>
+      <p>${escapeHtml(limitation)}</p>
     </section>
   `;
 }
@@ -462,8 +464,8 @@ function renderCdtScenarioReference(target, text) {
 
   const codeGroups = cdtMatches.map(match => `
     <div>
-      <span>${match.label}</span>
-      <strong>${match.codes.join(' or ')}</strong>
+      <span>${escapeHtml(match.label)}</span>
+      <strong>${escapeHtml(match.codes.join(' or '))}</strong>
     </div>
   `).join('');
 
@@ -667,17 +669,17 @@ function setupArtifactExpansion() {
     closeAll();
     const images = thumbs.map(thumb => {
       const img = thumb.querySelector('img');
-      return `<img src="${img.getAttribute('src')}" alt="${img.getAttribute('alt')}">`;
+      return `<img src="${escapeHtml(img.getAttribute('src'))}" alt="${escapeHtml(img.getAttribute('alt'))}">`;
     }).join('');
 
     detail.innerHTML = `
       <div class="artifact-expanded-images">${images}</div>
       <div class="artifact-expanded-copy">
-        <h3>${pattern}</h3>
-        <p><strong>How common?</strong> ${frequency}</p>
-        <p><strong>Typical appearance:</strong> ${appearance}</p>
-        ${why ? `<p><strong>Why it happens:</strong> ${why}</p>` : ''}
-        <p><strong>How to check it:</strong> ${check}</p>
+        <h3>${escapeHtml(pattern)}</h3>
+        <p><strong>How common?</strong> ${escapeHtml(frequency)}</p>
+        <p><strong>Typical appearance:</strong> ${escapeHtml(appearance)}</p>
+        ${why ? `<p><strong>Why it happens:</strong> ${escapeHtml(why)}</p>` : ''}
+        <p><strong>How to check it:</strong> ${escapeHtml(check)}</p>
       </div>
     `;
     detail.hidden = false;
@@ -709,12 +711,12 @@ function setupArtifactExpansion() {
     } else {
       thumbs.forEach(button => {
         button.addEventListener('click', () => {
-        const alreadyOpen = !detail.hidden;
-        closeAll();
+          const alreadyOpen = !detail.hidden;
+          closeAll();
 
-        if (alreadyOpen) {
-          return;
-        }
+          if (alreadyOpen) {
+            return;
+          }
 
           openRow(row, detail, thumbs, pattern, frequency, appearance, check, why);
         });
