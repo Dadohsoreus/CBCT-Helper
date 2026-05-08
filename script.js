@@ -1,15 +1,253 @@
-const indicationWeights = {
-  pain: { label: 'Nonspecific symptoms', scanFactor: 0.75, services: ['endo'], group: 'endo', planRate: 0, diagnosisRate: 0.21 },
-  nonhealing: { label: 'Nonhealing endodontic treatment', scanFactor: 0.9, services: ['endo'], group: 'endo', planRate: 0.69, diagnosisRate: 0.21 },
-  fracture: { label: 'Suspected vertical root fracture', scanFactor: 0.65, services: ['endo'], group: 'endo', planRate: 0.6202, diagnosisRate: 0.3445 },
-  resorption: { label: 'Resorption', scanFactor: 0.85, services: ['endo'], group: 'endo', planRate: 0.69, diagnosisRate: 0.21 },
-  retreatment: { label: 'Retreatment complication', scanFactor: 0.75, services: ['endo'], group: 'endo', planRate: 0.69, diagnosisRate: 0.21 },
-  surgery: { label: 'Endodontic surgery planning', scanFactor: 0.85, services: ['endo', 'surgery'], group: 'endo', planRate: 0.69, diagnosisRate: 0.21 },
-  implant: { label: 'Implant planning', scanFactor: 0.85, services: ['implants', 'surgery'], group: 'implants', planRate: 0, diagnosisRate: 0 },
-  airway: { label: 'Airway screening', scanFactor: 0.2, services: ['airway'], group: 'airway', planRate: 0, diagnosisRate: 0 },
-  sinus: { label: 'Odontogenic sinus question', scanFactor: 0.55, services: ['endo', 'surgery'], group: 'endo', planRate: 0.35, diagnosisRate: 0.35 },
-  impaction: { label: 'Impacted tooth', scanFactor: 0.65, services: ['ortho', 'surgery'], group: 'ortho', planRate: 0.515, diagnosisRate: 0 }
+const studies = {
+  jadaGuidelines2024: {
+    studyTitle: 'Applying AAE/AAOMR guidelines for CBCT prescription: Impact on endodontic clinical decisions',
+    studyUrl: '#cite-jada-guidelines',
+    doiUrl: 'https://doi.org/10.1016/j.adaj.2023.09.007',
+    populationContext: 'UCLA postgraduate endodontic clinic; 526 teeth evaluated by CBCT.',
+    applicabilityWarning: 'Endodontic specialty setting; not a broad general-dentistry rate.'
+  },
+  impactedCanines2025: {
+    studyTitle: 'The Influence of Three-Dimensional Cone Beam Computed Tomography (CBCT) Data on Decision-Making for Maxillary Impacted Canines',
+    studyUrl: '#cite-impacted-canines',
+    doiUrl: 'https://doi.org/10.3390/app152413061',
+    populationContext: '31 orthodontists evaluating impacted maxillary canine cases.',
+    applicabilityWarning: 'Orthodontic/specialty-specific; not a broad GP impaction rate.'
+  },
+  endoDiagnosis2015: {
+    studyTitle: 'The impact of cone beam computed tomography on the choice of endodontic diagnosis',
+    studyUrl: '#cite-endo-diagnosis',
+    doiUrl: 'https://doi.org/10.1111/iej.12350',
+    populationContext: 'Endodontic specialist clinics; 53 patients and 81 teeth.',
+    applicabilityWarning: 'Broad endodontic diagnosis-change context, not indication-specific.'
+  },
+  adaAaomrGuidance: {
+    studyTitle: 'ADA/AAOMR patient selection and ADA safety guidance',
+    studyUrl: '#cite-ada-aaomr',
+    doiUrl: '',
+    populationContext: 'Guideline context only.',
+    applicabilityWarning: 'No indication-specific decision-change percentage in the project sources.'
+  },
+  vrfDetection2009: {
+    studyTitle: 'Detection of Vertical Root Fractures in Endodontically Treated Teeth by a Cone Beam Computed Tomography Scan',
+    studyUrl: '#cite-vrf-detection',
+    doiUrl: 'https://doi.org/10.1016/j.joen.2009.01.022',
+    populationContext: 'Laboratory study of 80 endodontically prepared teeth evaluated by 4 observers.',
+    applicabilityWarning: 'Diagnostic-accuracy context only; not a treatment-planning rate and not a general GP clinical-outcome study.'
+  }
 };
+
+// scanFactor stays at 1 because every entered indication is counted as an estimated scan,
+// whether the case is treated in-office or referred. planRate and diagnosisRate values are
+// study-derived only when metricType names a published treatment-planning or diagnosis-change metric.
+const evidenceMap = {
+  pain: {
+    indicationId: 'pain',
+    label: 'Nonspecific symptoms',
+    displayPercent: '86%',
+    calculatorRate: { scanFactor: 1, planRate: 0.86, diagnosisRate: 0.54 },
+    metricType: 'Treatment-plan change / establishment / correction',
+    services: ['endo'],
+    group: 'endo',
+    ...studies.jadaGuidelines2024,
+    guidelineContext: 'Contradictory or nonspecific signs/symptoms after exam and 2D imaging.',
+    confidence: 'medium-high',
+    cardCopy: {
+      headline: 'treatment plan changed or was clarified in similar unclear-symptom cases',
+      detail: 'JADA endodontic study; these cases involved contradictory or hard-to-localize signs or symptoms after exam and 2D imaging.'
+    },
+    notes: 'R2-specific JADA figure-derived treatment-planning impact; diagnosisRate uses R2 periapical diagnosis change.'
+  },
+  nonhealing: {
+    indicationId: 'nonhealing',
+    label: 'Nonhealing endodontic treatment',
+    displayPercent: '93%',
+    calculatorRate: { scanFactor: 1, planRate: 0.93, diagnosisRate: 0.21 },
+    metricType: 'Treatment-plan change / establishment / correction',
+    services: ['endo'],
+    group: 'endo',
+    ...studies.jadaGuidelines2024,
+    guidelineContext: 'Nonhealing after previous endodontic treatment.',
+    confidence: 'medium-high',
+    cardCopy: {
+      headline: 'treatment plan changed or was clarified in nonhealing endodontic cases',
+      detail: 'JADA endodontic study; these cases involved nonhealing after previous endodontic treatment.'
+    },
+    notes: 'R7-specific JADA figure-derived treatment-planning impact.'
+  },
+  fracture: {
+    indicationId: 'fracture',
+    label: 'Suspected vertical root fracture',
+    displayPercent: '88%',
+    calculatorRate: { scanFactor: 1, planRate: 0.88, diagnosisRate: 0.23 },
+    metricType: 'Treatment-plan change / establishment / correction',
+    services: ['endo'],
+    group: 'endo',
+    ...studies.jadaGuidelines2024,
+    guidelineContext: 'Suspected VRF with inconclusive exam and 2D imaging.',
+    confidence: 'medium-high',
+    cardCopy: {
+      headline: 'treatment plan changed or was clarified when VRF was suspected',
+      detail: 'JADA endodontic study; these cases involved suspected VRF when clinical exam and 2D imaging were inconclusive.'
+    },
+    accuracy: {
+      studyId: 'vrfDetection2009',
+      metricType: 'Overall diagnostic accuracy for VRF detection',
+      twoDOnly: 0.66,
+      cbctAssisted: 0.86,
+      absoluteDifference: 0.2,
+      note: 'Specialty/laboratory diagnostic-accuracy context; not a treatment recommendation.'
+    },
+    notes: 'Replaces broad referred-endodontic-case rate with R6-specific JADA figure-derived rate.'
+  },
+  resorption: {
+    indicationId: 'resorption',
+    label: 'Resorption',
+    displayPercent: '52%',
+    calculatorRate: { scanFactor: 1, planRate: 0.52, diagnosisRate: 0.08 },
+    metricType: 'Treatment-plan change / establishment / correction',
+    services: ['endo'],
+    group: 'endo',
+    ...studies.jadaGuidelines2024,
+    guidelineContext: 'Internal/external resorption localization and differentiation.',
+    confidence: 'medium',
+    cardCopy: {
+      headline: 'treatment plan changed or was clarified in resorption cases',
+      detail: 'JADA endodontic study; these cases involved locating or differentiating internal and external resorption.'
+    },
+    notes: 'R12-specific JADA figure-derived treatment-planning impact.'
+  },
+  retreatment: {
+    indicationId: 'retreatment',
+    label: 'Retreatment complication',
+    displayPercent: 'No direct % used',
+    calculatorRate: { scanFactor: 1, planRate: 0, diagnosisRate: 0 },
+    metricType: 'Guideline context only',
+    services: ['endo'],
+    group: 'endo',
+    ...studies.jadaGuidelines2024,
+    guidelineContext: 'Nonsurgical retreatment complications.',
+    confidence: 'medium',
+    cardCopy: {
+      headline: 'retreatment or missed-anatomy question',
+      detail: 'Project sources support CBCT as a consideration for retreatment complications and missed anatomy, but no clean percentage was found for this exact group.'
+    },
+    notes: 'No clean indication-specific impact percentage found in project sources.'
+  },
+  surgery: {
+    indicationId: 'surgery',
+    label: 'Endodontic surgery planning',
+    displayPercent: '48%',
+    calculatorRate: { scanFactor: 1, planRate: 0.48, diagnosisRate: 0.12 },
+    metricType: 'Treatment-plan change / establishment / correction',
+    services: ['endo', 'surgery'],
+    group: 'endo',
+    ...studies.jadaGuidelines2024,
+    guidelineContext: 'Presurgical endodontic treatment planning.',
+    confidence: 'medium',
+    cardCopy: {
+      headline: 'treatment plan changed or was clarified in presurgical endodontic cases',
+      detail: 'JADA endodontic study; these cases involved presurgical planning to locate apices and nearby anatomy.'
+    },
+    notes: 'R9-specific JADA figure-derived treatment-planning impact.'
+  },
+  implant: {
+    indicationId: 'implant',
+    label: 'Implant planning',
+    displayPercent: 'No direct % used',
+    calculatorRate: { scanFactor: 1, planRate: 0, diagnosisRate: 0 },
+    metricType: 'Study-based use estimate',
+    services: ['implants', 'surgery'],
+    group: 'implants',
+    ...studies.adaAaomrGuidance,
+    guidelineContext: 'Use CBCT when 3D anatomy is needed and lower-exposure imaging is insufficient.',
+    confidence: 'high',
+    cardCopy: {
+      headline: '3D anatomy planning',
+      detail: 'No project source provides an implant-specific decision-change percentage. Entered implant-planning cases are counted as estimated scans whether treatment is in-office or referred.'
+    },
+    notes: 'Do not display a forced percentage.'
+  },
+  airway: {
+    indicationId: 'airway',
+    label: 'Airway screening',
+    displayPercent: 'No direct % used',
+    calculatorRate: { scanFactor: 1, planRate: 0, diagnosisRate: 0 },
+    metricType: 'Guideline context only',
+    services: ['airway'],
+    group: 'airway',
+    ...studies.adaAaomrGuidance,
+    guidelineContext: 'Defined clinical question and patient selection required.',
+    confidence: 'high',
+    cardCopy: {
+      headline: 'selective use for a defined question',
+      detail: 'No project source provides an airway-specific decision-change percentage. Responsible-use guidance emphasizes patient selection and a clear clinical question.'
+    },
+    notes: 'Avoid routine screening implication.'
+  },
+  sinus: {
+    indicationId: 'sinus',
+    label: 'Odontogenic sinus question',
+    displayPercent: 'No direct % used',
+    calculatorRate: { scanFactor: 1, planRate: 0, diagnosisRate: 0 },
+    metricType: 'Adjacent endodontic diagnostic context only',
+    services: ['endo', 'surgery'],
+    group: 'endo',
+    ...studies.endoDiagnosis2015,
+    guidelineContext: 'Tooth-sinus relationship may be reviewed when 2D imaging is insufficient.',
+    confidence: 'medium',
+    cardCopy: {
+      headline: 'tooth-sinus relationship',
+      detail: 'Project sources support broader endodontic diagnosis-change impact, but no sinus-specific decision-change percentage was identified.'
+    },
+    notes: 'Do not use 35% as sinus-specific.'
+  },
+  impaction: {
+    indicationId: 'impaction',
+    label: 'Impacted tooth',
+    displayPercent: '51.5%',
+    calculatorRate: { scanFactor: 1, planRate: 0.515, diagnosisRate: 0 },
+    metricType: 'Treatment decision / management change',
+    services: ['ortho', 'surgery'],
+    group: 'ortho',
+    ...studies.impactedCanines2025,
+    guidelineContext: 'Impacted or ectopic tooth localization when 2D position/proximity is unclear.',
+    confidence: 'high',
+    cardCopy: {
+      headline: '2D extraction decisions changed to orthodontic traction after CBCT review',
+      detail: 'Impacted maxillary canine study with orthodontists; this is not a general impaction or general dentistry percentage.'
+    },
+    notes: 'Direct for impacted maxillary canines; specialty-specific warning required.'
+  }
+};
+
+const indicationWeights = Object.fromEntries(
+  Object.entries(evidenceMap).map(([key, evidence]) => [key, {
+    label: evidence.label,
+    scanFactor: evidence.calculatorRate.scanFactor,
+    planRate: evidence.calculatorRate.planRate,
+    diagnosisRate: evidence.calculatorRate.diagnosisRate,
+    services: evidence.services,
+    group: evidence.group
+  }])
+);
+
+const evidenceHighlights = [
+  {
+    percent: '21%',
+    copy: 'In a JADA guideline-application endodontic clinic study, periapical diagnosis differed after CBCT review for 21% of evaluated teeth overall.',
+    link: studies.jadaGuidelines2024.doiUrl
+  },
+  {
+    percent: '69%',
+    copy: 'In that same JADA endodontic study, the recorded treatment plan was changed, established, or corrected after CBCT review in 69% of evaluated cases overall.',
+    link: studies.jadaGuidelines2024.doiUrl
+  },
+  {
+    percent: '35%',
+    copy: 'In a separate endodontic before-after study, CBCT information changed the selected endodontic diagnosis for 35% of evaluated teeth.',
+    link: studies.endoDiagnosis2015.doiUrl
+  }
+];
 
 const scenarios = [
   {
@@ -19,9 +257,9 @@ const scenarios = [
     requiresAny: [['priorEndo'], ['retreatment'], ['postEndoSymptoms'], ['nonhealingLesion'], ['periapicalFinding']],
     reducers: { paWnl: 2, noApicalLesion: 2, stableFinding: 1.5, noCurrentSymptoms: 1.5, uncertaintyMarker: 0.5 },
     threshold: 3,
-    title: 'This scenario aligns with published CBCT-use considerations after inconclusive 2D imaging.',
-    text: 'This wording matches the AAE/AAOMR endodontic indication for evaluating nonhealing or previously treated teeth when three-dimensional information may clarify the clinical question. ADA/AAOMR patient-selection guidance still centers the clinical exam first and frames CBCT as a modality to consider when lower-exposure imaging will not provide the needed information.',
-    limitation: 'Expected information gain is strongest when the note describes prior endodontic treatment, persistent or post-endodontic symptoms, or a persistent apical finding. Normal or noncontributory 2D findings reduce alignment with apical pathology categories.'
+    title: 'This scenario matches published guidance for previously treated or nonhealing teeth.',
+    text: 'AAE/AAOMR guidance discusses CBCT as a consideration for previously treated teeth that are not healing or remain symptomatic when 2D imaging does not answer the question. ADA/AAOMR guidance still starts with history, exam, and lower-exposure imaging when those provide enough information.',
+    limitation: 'The evidence is more directly relevant when the note describes prior endodontic treatment, persistent symptoms, post-endodontic symptoms, or a persistent apical finding. Normal or noncontributory 2D findings make apical pathology evidence less direct.'
   },
   {
     name: 'Contradictory or nonspecific signs and symptoms',
@@ -29,8 +267,8 @@ const scenarios = [
     comboBonus: [['nonspecificSymptoms', 'inconclusive2d'], ['nonspecificSymptoms', 'pulpTesting'], ['pulpTesting', 'percussionTenderness']],
     reducers: { paWnl: 1, uncertaintyMarker: 0.75 },
     threshold: 2.5,
-    title: 'This scenario may align with limited-FOV CBCT considerations after initial imaging.',
-    text: 'AAE/AAOMR guidance identifies contradictory or nonspecific clinical signs and symptoms associated with untreated or previously treated teeth as a context where limited-FOV CBCT may be considered. Field of view, exposure, and expected information gain remain clinician-specific decisions.'
+    title: 'This scenario matches published guidance for unclear signs or symptoms.',
+    text: 'AAE/AAOMR guidance discusses limited-FOV CBCT as a consideration when signs or symptoms are contradictory, hard to localize, or not answered by exam and 2D imaging. Field of view and exposure remain patient-specific clinical decisions.'
   },
   {
     name: 'Suspected vertical root fracture',
@@ -39,9 +277,9 @@ const scenarios = [
     requiresAny: [['verticalRootFracture'], ['jShapedLesion'], ['haloLesion'], ['isolatedProbing'], ['sinusTract'], ['postAssociatedConcern'], ['priorEndo', 'bitingPain']],
     reducers: { crackedToothPain: 1.5, largeRestoration: 0.75, paWnl: 0.5, uncertaintyMarker: 0.5 },
     threshold: 3,
-    title: 'This scenario aligns with published considerations for inconclusive fracture assessment.',
-    text: 'AAE/AAOMR guidance discusses limited-FOV CBCT when the clinical exam and 2D radiography are inconclusive for suspected vertical root fracture. Interpretation calls for caution near posts, crowns, and root filling materials because artifacts can mimic or obscure fracture signs.',
-    limitation: 'Expected information gain is stronger when structural pain is paired with VRF-specific language or supporting findings such as a J-shaped/halo lesion, isolated deep probing, sinus tract, prior RCT with localized biting pain, or post-associated concern. Cracked cusp or chewing pain alone is less specific.'
+    title: 'This scenario matches published guidance for suspected VRF when 2D imaging is inconclusive.',
+    text: 'AAE/AAOMR guidance discusses limited-FOV CBCT when clinical exam and 2D radiography are inconclusive for suspected vertical root fracture. Interpretation needs caution near posts, crowns, and root filling materials because artifacts can mimic or hide fracture signs.',
+    limitation: 'The evidence is more directly relevant when structural pain is paired with VRF-specific language or supporting findings such as a J-shaped or halo lesion, isolated deep probing, sinus tract, prior RCT with localized biting pain, or post-related fracture concern. Cracked cusp or chewing pain alone is less specific.'
   },
   {
     name: 'Suspected cracked tooth / structural tooth pain',
@@ -50,17 +288,17 @@ const scenarios = [
     reducers: { uncertaintyMarker: 0.25 },
     threshold: 2.5,
     maxAlignment: 'moderate',
-    title: 'This scenario has limited-to-moderate alignment with structural tooth-pain context.',
+    title: 'This scenario suggests cracked-tooth or structural tooth pain, but not necessarily VRF.',
     text: 'The note suggests cracked-tooth or structural tooth-pain language rather than a specific vertical root fracture pattern. This can be clinically relevant, but the wording alone is less specific than VRF language, isolated deep probing, sinus tract, J-shaped/halo bone loss, or prior RCT with localized biting pain.',
-    limitation: 'Expected information gain depends on whether the clinical question is about a visible/restorative crack, pulpal status, periodontal support, surrounding bone pattern, or another localized anatomic uncertainty. The guide does not determine whether CBCT would add enough information for this patient.'
+    limitation: 'What CBCT may add depends on whether the clinical question is about a visible or restorative crack, pulpal status, periodontal support, surrounding bone pattern, or another localized anatomic uncertainty. The guide does not determine whether CBCT would add enough information for this patient.'
   },
   {
     name: 'Resorption',
     conceptWeights: { resorption: 3, locationExtent: 1.5, trauma: 0.5, cervicalResorption: 1 },
     comboBonus: [['resorption', 'locationExtent']],
     threshold: 3,
-    title: 'This scenario aligns with CBCT literature for localization and extent assessment.',
-    text: 'AAE/AAOMR guidance discusses CBCT for localizing and differentiating internal and external resorptive defects and for understanding treatment-planning context. ADA/AAOMR responsible-use principles still apply: use the smallest field and lowest exposure that answer the clinical question.'
+    title: 'This scenario matches published guidance for mapping resorption.',
+    text: 'AAE/AAOMR guidance discusses CBCT for locating and differentiating internal and external resorption and understanding its extent. ADA/AAOMR responsible-use principles still apply: use the field size and exposure that answer the clinical question without unnecessary exposure.'
   },
   {
     name: 'Missed anatomy or retreatment evaluation',
@@ -68,8 +306,8 @@ const scenarios = [
     comboBonus: [['priorEndo', 'missedAnatomy'], ['missedAnatomy', 'inconclusive2d'], ['retreatment', 'missedAnatomy'], ['retreatment', 'complications']],
     reducers: { paWnl: 0.5, noCurrentSymptoms: 1.25, uncertaintyMarker: 0.25 },
     threshold: 3,
-    title: 'This scenario aligns with literature-supported context for retreatment or anatomy clarification.',
-    text: 'This wording suggests a retreatment or anatomy-clarification question, such as missed canal anatomy, calcification, perforation, or separated instrument context. CBCT information is framed here as literature-alignment context only and still requires clinical correlation and responsible-use selection.'
+    title: 'This scenario matches published guidance for retreatment or anatomy clarification.',
+    text: 'This wording suggests a retreatment or anatomy question, such as missed canal anatomy, calcification, perforation, or a separated instrument. CBCT information is framed here as educational context only and still requires clinical correlation and responsible-use selection.'
   },
   {
     name: 'Implant planning',
@@ -77,16 +315,16 @@ const scenarios = [
     comboBonus: [['implantPlanning', 'anatomicRisk'], ['implantPlanning', 'measurementNeed']],
     reducers: { uncertaintyMarker: 0.25 },
     threshold: 3,
-    title: 'This scenario aligns with three-dimensional anatomic assessment considerations.',
-    text: 'AAE/AAOMR endodontic guidance includes surgical implant placement as an indication, and ADA/AAOMR patient-selection guidance addresses CBCT as a 3D modality when anatomy, risk awareness, and planning context call for information not available from 2D imaging.'
+    title: 'This scenario matches published guidance for 3D anatomic assessment.',
+    text: 'AAE/AAOMR endodontic guidance includes surgical implant placement as a CBCT consideration, and ADA/AAOMR patient-selection guidance discusses CBCT when 3D anatomy is needed and 2D imaging does not provide enough information.'
   },
   {
     name: 'Trauma',
     conceptWeights: { trauma: 2.5, rootFracture: 1.5, displacement: 1, resorption: 0.5 },
     comboBonus: [['trauma', 'rootFracture'], ['trauma', 'resorption']],
     threshold: 2.5,
-    title: 'This scenario may align with localized dentoalveolar trauma imaging considerations.',
-    text: 'AAE/AAOMR guidance discusses limited-FOV CBCT in localized dentoalveolar trauma contexts, including root fractures, luxation, displacement, or localized alveolar fracture, when additional anatomic information may affect patient-care context.'
+    title: 'This scenario may match published guidance for localized dentoalveolar trauma.',
+    text: 'AAE/AAOMR guidance discusses limited-FOV CBCT for localized dentoalveolar trauma, including root fractures, luxation, displacement, or localized alveolar fracture, when additional anatomy may help clarify the clinical question.'
   },
   {
     name: 'Sinus or odontogenic source',
@@ -94,15 +332,15 @@ const scenarios = [
     comboBonus: [['sinusQuestion', 'periapicalFinding'], ['sinusQuestion', 'priorEndo']],
     reducers: { paWnl: 0.75, uncertaintyMarker: 0.25 },
     threshold: 2.5,
-    title: 'This scenario aligns with tooth-sinus relationship review considerations.',
-    text: 'When 2D imaging cannot show the relationship between maxillary roots, periapical findings, cortical boundaries, and the sinus floor, limited-FOV CBCT may provide localization context. Findings still require clinical history, full image interpretation, and referral when the pattern is not odontogenic.'
+    title: 'This scenario matches published guidance for reviewing the tooth-sinus relationship.',
+    text: 'When 2D imaging cannot show the relationship between maxillary roots, periapical findings, cortical boundaries, and the sinus floor, limited-FOV CBCT may help clarify the anatomy. Findings still require clinical history, full image interpretation, and referral when the pattern is not odontogenic.'
   },
   {
     name: 'Impacted or ectopic tooth position',
     conceptWeights: { impaction: 2.5, ectopicEruption: 2, anatomicRisk: 1.5, inconclusive2d: 1 },
     comboBonus: [['impaction', 'anatomicRisk'], ['ectopicEruption', 'inconclusive2d']],
     threshold: 2.5,
-    title: 'This scenario aligns with literature-supported context for impacted or ectopic tooth localization.',
+    title: 'This scenario matches published guidance for impacted or ectopic tooth localization.',
     text: 'This wording suggests an impacted or ectopic eruption localization question, such as root proximity or unclear position on 2D imaging. The guide frames this as evidence-informed context and does not determine whether imaging is required.'
   },
   {
@@ -111,7 +349,7 @@ const scenarios = [
     comboBonus: [],
     threshold: 2.5,
     title: 'Airway language alone does not create a routine CBCT screening indication.',
-    text: 'Airway volume can be viewed on CBCT, but ADA/AAOMR responsible-use guidance centers clinical benefit, radiation risk, and patient selection. CBCT context is strongest when the 3D information is needed for a defined dental or airway-related clinical question.'
+    text: 'Airway volume can be viewed on CBCT, but ADA/AAOMR responsible-use guidance centers clinical benefit, radiation risk, and patient selection. CBCT context is strongest when 3D information is needed for a defined dental or airway-related clinical question.'
   }
 ];
 
@@ -415,19 +653,69 @@ function escapeHtml(value) {
     .replace(/'/g, '&#39;');
 }
 
+function formatPercent(value) {
+  return `${Math.round(value * 100)}%`;
+}
+
+function evidenceLinkFor(evidence) {
+  return evidence.doiUrl || evidence.studyUrl;
+}
+
+function renderEvidenceCards() {
+  document.querySelectorAll('[data-evidence-card]').forEach(card => {
+    const evidence = evidenceMap[card.dataset.evidenceCard];
+    if (!evidence) return;
+
+    const linkText = evidence.doiUrl ? 'Study detail' : 'Evidence basis';
+    card.innerHTML = `
+      <strong>${escapeHtml(evidence.displayPercent)}</strong>
+      <span>${escapeHtml(evidence.cardCopy.headline)}</span>
+      <small>${escapeHtml(evidence.cardCopy.detail)}</small>
+      <a class="evidence-link" href="${escapeHtml(evidenceLinkFor(evidence))}">${linkText}</a>
+    `;
+  });
+}
+
+function renderEvidenceHighlights() {
+  const target = document.getElementById('evidenceHighlights');
+  if (!target) return;
+
+  target.innerHTML = evidenceHighlights.map(item => `
+    <div>
+      <strong>${escapeHtml(item.percent)}</strong>
+      <span>${escapeHtml(item.copy)}</span>
+      <a class="evidence-link" href="${escapeHtml(item.link)}">Evidence basis</a>
+    </div>
+  `).join('');
+}
+
+function calculateDecisionImpact(entries) {
+  return entries.reduce((totals, entry) => {
+    const planImpact = entry.adjusted * entry.item.planRate;
+    const diagnosisImpact = entry.adjusted * entry.item.diagnosisRate;
+
+    totals.planImpact += planImpact;
+    totals.diagnosisImpact += diagnosisImpact;
+    // Primary estimated decisions changed avoids adding treatment-planning and diagnosis rates together
+    // for the same case category, because those decisions may overlap within a study population.
+    totals.primaryImpact += Math.max(planImpact, diagnosisImpact);
+    return totals;
+  }, { planImpact: 0, diagnosisImpact: 0, primaryImpact: 0 });
+}
+
 function renderAlignmentDetails(target, topMatch, concepts, reducingConcepts) {
   const supporting = topMatch
     ? labelsForConcepts(topMatch.matchedConcepts)
     : labelsForConcepts(concepts);
   const reducing = labelsForConcepts(reducingConcepts);
-  const limitation = topMatch?.limitation || 'Expected information gain depends on the clinical question, patient context, image quality, and whether the information cannot be reasonably obtained from lower-exposure imaging or clinical testing.';
+  const limitation = topMatch?.limitation || 'What CBCT may add depends on the clinical question, patient context, image quality, and whether lower-exposure imaging or clinical testing can reasonably answer the question.';
 
   const supportingList = supporting.length
     ? supporting.map(item => `<li>${escapeHtml(item)}</li>`).join('')
-    : '<li>No specific supporting concept cluster was detected.</li>';
+    : '<li>No specific CBCT-related pattern was detected.</li>';
   const reducingList = reducing.length
     ? reducing.map(item => `<li>${escapeHtml(item)}</li>`).join('')
-    : '<li>No explicit reducing features detected in the note text.</li>';
+    : '<li>No limiting details were detected in the note text.</li>';
 
   target.innerHTML = `
     <section>
@@ -435,11 +723,11 @@ function renderAlignmentDetails(target, topMatch, concepts, reducingConcepts) {
       <ul>${supportingList}</ul>
     </section>
     <section>
-      <h4>Features that reduce alignment</h4>
+      <h4>Details that make the evidence less direct</h4>
       <ul>${reducingList}</ul>
     </section>
     <section>
-      <h4>Educational limitation / expected information gain</h4>
+      <h4>What this may or may not add</h4>
       <p>${escapeHtml(limitation)}</p>
     </section>
   `;
@@ -494,78 +782,33 @@ if (typeof module !== 'undefined') {
     matchScenarioText,
     normalizeScenarioText,
     labelsForConcepts,
-    conceptLabels
-  };
-}
-
-function activeServices() {
-  return Array.from(document.querySelectorAll('[data-service]:checked')).map(input => input.dataset.service);
-}
-
-function serviceEnabled(item, services) {
-  if (!item.services.length) return true;
-  return item.services.some(service => services.includes(service));
-}
-
-function procedureCaps() {
-  return {
-    endo: Math.max(0, Number(document.querySelector('[data-procedure="endo"]').value) || 0),
-    implants: Math.max(0, Number(document.querySelector('[data-procedure="implants"]').value) || 0),
-    airway: Math.max(0, Number(document.querySelector('[data-procedure="airway"]').value) || 0),
-    ortho: Math.max(0, Number(document.querySelector('[data-procedure="ortho"]').value) || 0)
+    conceptLabels,
+    evidenceMap,
+    studies,
+    calculateDecisionImpact
   };
 }
 
 function updateCalculator() {
-  const services = activeServices();
-  const caps = procedureCaps();
   const rows = Array.from(document.querySelectorAll('[data-case]'));
   const entries = [];
-  const groupRawTotals = {};
-  const groupFinalTotals = {};
-  let potentialProjected = 0;
-  let planImpact = 0;
-  let diagnosisImpact = 0;
   let top = { label: '-', value: 0 };
+  let projected = 0;
 
   rows.forEach(input => {
     const key = input.dataset.case;
-    const count = Math.max(0, Number(input.value) || 0);
+    const count = Math.ceil(Math.max(0, Number(input.value) || 0));
     const item = indicationWeights[key];
-    const enabled = serviceEnabled(item, services);
-    const potentialRaw = count * item.scanFactor;
-    const raw = enabled ? count * item.scanFactor : 0;
+    projected += count;
+    entries.push({ item, count, adjusted: count });
 
-    potentialProjected += potentialRaw;
-    groupRawTotals[item.group] = (groupRawTotals[item.group] || 0) + raw;
-    entries.push({ item, count, raw, enabled });
-  });
-
-  const groupScales = {};
-  Object.keys(groupRawTotals).forEach(group => {
-    const total = groupRawTotals[group];
-    const cap = caps[group];
-    const roundedGroupTotal = Math.ceil(total);
-    const finalGroupTotal = cap > 0 ? Math.min(roundedGroupTotal, cap) : 0;
-
-    groupFinalTotals[group] = finalGroupTotal;
-    groupScales[group] = total > 0 ? finalGroupTotal / total : 0;
-  });
-
-  let projected = 0;
-  entries.forEach(entry => {
-    const adjusted = entry.raw * groupScales[entry.item.group];
-    planImpact += adjusted * entry.item.planRate;
-    diagnosisImpact += adjusted * entry.item.diagnosisRate;
-
-    if (adjusted > top.value) {
-      top = { label: entry.item.label, value: adjusted };
+    if (count > top.value) {
+      top = { label: item.label, value: count };
     }
   });
 
-  projected = Object.values(groupFinalTotals).reduce((sum, value) => sum + value, 0);
+  const impact = calculateDecisionImpact(entries);
   const monthly = projected;
-  const reducedScans = Math.max(0, Math.ceil(potentialProjected) - monthly);
   const panCount = Math.max(0, Number(document.getElementById('panCount').value) || 0);
   const panFee = Math.max(0, Number(document.getElementById('panFee').value) || 0);
   const cbctFee = Math.max(0, Number(document.getElementById('cbctFee').value) || 0);
@@ -574,9 +817,12 @@ function updateCalculator() {
 
   document.getElementById('monthlyScans').textContent = monthly;
   document.getElementById('quarterScans').textContent = monthly * 3;
-  document.getElementById('planImpact').textContent = Math.ceil(planImpact);
-  document.getElementById('diagnosisImpact').textContent = Math.ceil(diagnosisImpact);
-  document.getElementById('serviceScans').textContent = reducedScans;
+  document.getElementById('planImpact').textContent = Math.ceil(impact.planImpact);
+  document.getElementById('diagnosisImpact').textContent = Math.ceil(impact.diagnosisImpact);
+  document.getElementById('decisionImpactMonthly').textContent = Math.ceil(impact.primaryImpact);
+  document.getElementById('decisionImpactQuarterly').textContent = Math.ceil(impact.primaryImpact) * 3;
+  document.getElementById('treatmentImpactMonthly').textContent = Math.ceil(impact.planImpact);
+  document.getElementById('diagnosticImpactMonthly').textContent = Math.ceil(impact.diagnosisImpact);
   document.getElementById('topCategory').textContent = top.label;
   document.getElementById('cbctRevenue').textContent = formatCurrency(cbctRevenue);
   document.getElementById('panRevenue').textContent = formatCurrency(panRevenue);
@@ -607,7 +853,7 @@ function analyzeScenario() {
   renderCdtScenarioReference(cdtReference, text);
 
   if (!text.trim()) {
-    title.textContent = 'Enter a scenario to assess';
+    title.textContent = 'Enter a scenario to review';
     body.textContent = 'Describe the patient presentation, prior treatment, exam findings, and whether 2D imaging is conclusive.';
     responsible.textContent = '';
     cdtReference.hidden = true;
@@ -616,8 +862,8 @@ function analyzeScenario() {
   }
 
   if (!matches.length) {
-    title.textContent = 'No specific literature-alignment signal detected';
-    body.textContent = 'No specific CBCT indication language was detected in the scenario text. ADA/AAOMR guidance frames imaging around clinical need, patient selection, and whether lower-exposure options can provide the needed information.';
+    title.textContent = 'No specific CBCT guidance pattern detected';
+    body.textContent = 'No specific CBCT-related language was detected in the scenario text. ADA/AAOMR guidance frames imaging around clinical need, patient selection, and whether lower-exposure options can provide the needed information.';
     renderAlignmentDetails(details, null, scenarioAnalysis.concepts, scenarioAnalysis.reducingConcepts);
     responsible.textContent = 'Add context such as nonhealing endodontic treatment, suspected fracture, resorption, trauma, implant planning, or inconclusive radiographs if those details apply.';
     return;
@@ -625,9 +871,9 @@ function analyzeScenario() {
 
   const topMatch = matches[0];
   const alignmentPrefix = {
-    strong: 'Strong literature-alignment context',
-    moderate: 'Moderate literature-alignment context',
-    limited: 'Limited literature-alignment context'
+    strong: 'Strong match to published CBCT scenarios',
+    moderate: 'Moderate match to published CBCT scenarios',
+    limited: 'Limited match to published CBCT scenarios'
   }[topMatch.alignmentLevel];
 
   title.textContent = `${alignmentPrefix}: ${topMatch.title}`;
@@ -727,8 +973,10 @@ function setupArtifactExpansion() {
 
 if (typeof window !== 'undefined') {
   window.cbctGuideSelfTestResults = runGuideSelfTests();
+  renderEvidenceHighlights();
+  renderEvidenceCards();
 
-  document.querySelectorAll('[data-case], [data-service], [data-procedure], #panCount, #panFee, #cbctFee').forEach(input => {
+  document.querySelectorAll('[data-case], #panCount, #panFee, #cbctFee').forEach(input => {
     input.addEventListener('input', updateCalculator);
     input.addEventListener('change', updateCalculator);
   });

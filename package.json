@@ -1,5 +1,6 @@
 {
   "scripts": {
-    "test:clinical": "node tests/run-clinical-scenarios.js"
+    "test:clinical": "node tests/run-clinical-scenarios.js",
+    "test:evidence": "node tests/run-evidence-calculator.js"
   }
 }

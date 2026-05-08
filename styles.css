@@ -490,6 +490,8 @@ textarea:focus {
 .result-panel h3,
 .result-panel .note,
 .result-panel .metric-list span,
+.result-panel .decision-impact-box span,
+.result-panel .decision-impact-box p,
 .result-panel .revenue-box span {
   color: rgba(255, 255, 255, 0.72);
 }
@@ -538,6 +540,37 @@ textarea:focus {
 }
 
 .metric-list strong {
+  color: #fff;
+  text-align: right;
+}
+
+.decision-impact-box {
+  display: grid;
+  gap: var(--space-2);
+  margin-bottom: var(--space-5);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-radius: var(--radius-md);
+  padding: var(--space-3);
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.decision-impact-box h4 {
+  margin: 0;
+  color: #fff;
+}
+
+.decision-impact-box p {
+  margin: 0 0 var(--space-2);
+  font-size: 0.88rem;
+}
+
+.decision-impact-box div {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.decision-impact-box strong {
   color: #fff;
   text-align: right;
 }
