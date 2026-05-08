@@ -228,6 +228,7 @@ h3 {
 .example-callout,
 .artifact-table,
 .artifact-intro,
+.fov-principle,
 .machine-note,
 .disclosure {
   border: 1px solid var(--line);
@@ -685,6 +686,138 @@ button.secondary {
   gap: var(--space-4);
 }
 
+.fov-principle {
+  margin-bottom: var(--space-5);
+}
+
+.fov-principle h3,
+.resolution-panel h3,
+.fov-note h3 {
+  margin-bottom: var(--space-3);
+}
+
+.fov-principle p,
+.fov-card p,
+.resolution-panel p,
+.fov-note p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.principle-grid,
+.resolution-grid,
+.fov-note-grid {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.principle-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin-top: var(--space-5);
+}
+
+.principle-grid div {
+  border-left: 4px solid var(--brand-dark);
+  border-radius: var(--radius-md);
+  padding: var(--space-3);
+  background: rgba(141, 67, 80, 0.055);
+}
+
+.principle-grid strong,
+.principle-grid span {
+  display: block;
+}
+
+.principle-grid strong {
+  color: var(--ink-strong);
+  font-size: 0.95rem;
+}
+
+.principle-grid span {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 0.88rem;
+  line-height: 1.45;
+}
+
+.fov-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-4);
+}
+
+.fov-card {
+  display: grid;
+  align-content: start;
+  gap: var(--space-3);
+}
+
+.fov-feature {
+  grid-column: span 2;
+}
+
+.fov-card h4,
+.resolution-grid h4 {
+  margin: 0;
+  color: var(--ink-strong);
+  font-size: 0.94rem;
+}
+
+.fov-card ul,
+.resolution-grid ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.fov-card li + li,
+.resolution-grid li + li {
+  margin-top: 7px;
+}
+
+.card-note {
+  border-left: 4px solid var(--brand-dark);
+  padding-left: var(--space-3);
+  font-weight: 850;
+}
+
+.resolution-panel {
+  margin-top: var(--space-5);
+}
+
+.resolution-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-top: var(--space-4);
+}
+
+.resolution-grid article {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  background: rgba(255, 255, 255, 0.68);
+}
+
+.resolution-grid article > * + * {
+  margin-top: var(--space-3);
+}
+
+.fov-note-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-top: var(--space-5);
+}
+
+.fov-note {
+  border-top: 4px solid var(--brand-dark);
+}
+
+.fov-note p + p {
+  margin-top: var(--space-3);
+}
+
+.fov-disclaimer {
+  margin-top: var(--space-5);
+  border-left: 5px solid var(--brand-dark);
+}
+
 .guide-card {
   border-radius: var(--radius-lg);
   padding: var(--space-5);
@@ -921,7 +1054,10 @@ button.secondary {
 }
 
 @media (max-width: 1100px) {
-  .card-grid {
+  .card-grid,
+  .fov-grid,
+  .principle-grid,
+  .resolution-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
@@ -947,8 +1083,16 @@ button.secondary {
   }
 
   .evidence-strip,
-  .card-grid {
+  .card-grid,
+  .fov-grid,
+  .principle-grid,
+  .resolution-grid,
+  .fov-note-grid {
     grid-template-columns: 1fr;
+  }
+
+  .fov-feature {
+    grid-column: auto;
   }
 
   .tool-grid {

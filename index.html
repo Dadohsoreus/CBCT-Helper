@@ -18,6 +18,7 @@
     <nav class="tabs" aria-label="Website sections">
       <a href="#calculator" class="tab is-active">CBCT Utilization Estimator</a>
       <a href="#modality" class="tab">CBCT Considerations</a>
+      <a href="#fov-resolution" class="tab">FOV &amp; Resolution</a>
       <a href="#navigation" class="tab">Navigation Guide</a>
       <a href="#artifacts" class="tab">Artifact Guide</a>
       <a href="#cdt" class="tab">CDT Codes</a>
@@ -179,6 +180,151 @@
           <div class="cdt-scenario-reference" id="cdtScenarioReference" hidden></div>
           <p class="note" id="responsibleUse"></p>
         </aside>
+      </div>
+    </section>
+
+    <section id="fov-resolution" class="section muted">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Scan selection context</p>
+          <h2>FOV &amp; Resolution Guidance</h2>
+          <p class="lede">Choose the scan size and resolution that match the diagnostic question, patient context, and level of detail needed.</p>
+        </div>
+      </div>
+
+      <div class="fov-principle panel">
+        <p class="eyebrow">Main principle</p>
+        <h3>Match the scan to the question</h3>
+        <p>CBCT selection should be indication-oriented and patient-specific, consistent with ALADA/ALADAIP principles. The goal is not simply to choose the smallest scan or the highest-resolution scan every time. The goal is to select the field of view and resolution that reasonably answer the clinical question while avoiding unnecessary exposure.</p>
+        <div class="principle-grid" aria-label="FOV and resolution selection principles">
+          <div><strong>Localized question</strong><span>Smaller fields of view are often appropriate when the clinical question is localized.</span></div>
+          <div><strong>Broader anatomy</strong><span>Broader coverage may be appropriate when the anatomy of interest extends beyond one focused region.</span></div>
+          <div><strong>Fine detail</strong><span>Higher resolution may be useful when subtle endodontic, root-surface, or cortical detail is clinically relevant.</span></div>
+          <div><strong>Structural context</strong><span>Standard or lower-dose protocols may fit broader anatomy when fine-detail visualization is not the primary objective.</span></div>
+        </div>
+      </div>
+
+      <div class="fov-grid">
+        <article class="guide-card fov-card">
+          <h3>Focus field</h3>
+          <p>Useful when the clinical question is highly localized and fine detail is important.</p>
+          <h4>May fit questions such as</h4>
+          <ul>
+            <li>Localized endodontic concern</li>
+            <li>Suspected vertical root fracture</li>
+            <li>Localized resorption evaluation</li>
+            <li>Focused periapical assessment</li>
+            <li>High-detail review of a limited anatomical region</li>
+            <li>Localized pre-surgical endodontic assessment</li>
+          </ul>
+        </article>
+        <article class="guide-card fov-card">
+          <h3>Single jaw</h3>
+          <p>A single-jaw scan often represents the practical minimum when implant planning, digital planning workflows, intraoral scan integration, or guide design require broader anatomical continuity.</p>
+          <h4>Worth considering when</h4>
+          <ul>
+            <li>Multiple teeth within one arch are being evaluated</li>
+            <li>Implant planning requires regional anatomical context</li>
+            <li>Intraoral scan overlay or surgical guide design is anticipated</li>
+            <li>The anatomy of interest extends beyond a focus field</li>
+            <li>Sinus or mandibular canal relationship must be evaluated within one arch</li>
+          </ul>
+        </article>
+        <article class="guide-card fov-card">
+          <h3>Dual jaw</h3>
+          <p>Dual-jaw imaging may help preserve anatomical relationship between arches while avoiding unnecessary expansion into a broader cranial scan.</p>
+          <h4>May be useful when</h4>
+          <ul>
+            <li>Both arches require evaluation together</li>
+            <li>Occlusal or opposing-tooth relationships are clinically relevant</li>
+            <li>Symptoms are difficult to localize between arches</li>
+            <li>Upper and lower anatomy together may improve interpretation</li>
+            <li>Broader restorative or functional relationships must be visualized</li>
+          </ul>
+        </article>
+        <article class="guide-card fov-card fov-feature">
+          <h3>5x8 regional scan</h3>
+          <p>A 5x8 FOV refers to approximately 5 cm width by 8 cm height, allowing upper and lower arch anatomy to be captured within a focused regional scan.</p>
+          <p>A 5x8 regional scan may be useful when the clinician needs focused anatomical detail while still capturing vertically related upper and lower anatomy within one localized region.</p>
+          <h4>Examples</h4>
+          <ul>
+            <li>Pain that radiates between upper and lower arches</li>
+            <li>Symptoms that are difficult to localize clinically</li>
+            <li>Evaluation involving opposing posterior teeth</li>
+            <li>Localized regional pathology involving both arches</li>
+            <li>A traditional focus field may be too restrictive vertically</li>
+            <li>Regional implant or surgical evaluation involving opposing anatomy</li>
+          </ul>
+          <p class="card-note">A 5x8 workflow may help preserve focused visualization while still including vertically related anatomy that may influence interpretation.</p>
+        </article>
+        <article class="guide-card fov-card">
+          <h3>Cranial scan</h3>
+          <p>Cranial scans are generally reserved for situations where the clinical question cannot reasonably be answered using a more limited field of view.</p>
+          <h4>May be considered when</h4>
+          <ul>
+            <li>Airway or broader craniofacial anatomy is relevant</li>
+            <li>Orthodontic evaluation requires broad relationships</li>
+            <li>Broader surgical planning is being evaluated</li>
+            <li>Trauma or larger pathology assessment requires larger coverage</li>
+            <li>Bilateral or multi-regional anatomy must be reviewed together</li>
+            <li>Full craniofacial relationships are clinically relevant</li>
+          </ul>
+        </article>
+      </div>
+
+      <div class="resolution-panel panel">
+        <p class="eyebrow">Image detail</p>
+        <h3>Resolution selection</h3>
+        <div class="resolution-grid">
+          <article>
+            <h4>High resolution</h4>
+            <p>May be useful when fine detail may affect interpretation.</p>
+            <ul>
+              <li>Fine endodontic detail</li>
+              <li>Suspected vertical root fracture</li>
+              <li>Resorption detail</li>
+              <li>Subtle periapical findings</li>
+              <li>Root morphology or canal anatomy</li>
+              <li>Pre-surgical endodontic planning</li>
+            </ul>
+          </article>
+          <article>
+            <h4>Standard resolution</h4>
+            <p>May be appropriate when the diagnostic question is not dependent on the smallest visible detail.</p>
+            <ul>
+              <li>Broader anatomy review</li>
+              <li>Implant planning that does not require ultra-fine endodontic detail</li>
+              <li>Sinus, airway, impaction, orthodontic, or larger structural questions</li>
+            </ul>
+          </article>
+          <article>
+            <h4>Lower-dose / lower-resolution protocols</h4>
+            <p>Often fit questions involving larger structures rather than subtle fine-detail interpretation.</p>
+            <ul>
+              <li>Larger anatomical structures</li>
+              <li>Broader anatomical orientation</li>
+              <li>Airway, sinus, orthodontic, craniofacial, or structural evaluation</li>
+              <li>Patient-specific dose considerations</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+
+      <div class="fov-note-grid">
+        <article class="panel fov-note">
+          <h3>High resolution is not limited to tiny focus fields</h3>
+          <p>Some CBCT systems restrict high-resolution imaging to very small focus fields. CSD CBCT systems can capture high-resolution datasets across field sizes larger than a traditional localized focus-field workflow. This may allow clinicians to maintain fine-detail visualization while still including enough surrounding anatomy to answer the clinical question.</p>
+        </article>
+        <article class="panel fov-note">
+          <h3>When high resolution may be too much</h3>
+          <p>High-resolution datasets from CSD CBCT systems may contain more detail and larger datasets than some labs prefer for routine guide fabrication or digital workflows.</p>
+          <p>Many labs prioritize manageable dataset size, sufficient anatomical coverage, workflow efficiency, and segmentation simplicity rather than maximum possible resolution.</p>
+          <p>A scan optimized for fine clinical interpretation may not always represent the ideal dataset for every laboratory workflow. Confirm preferred scan settings, export requirements, file formats, and workflow limitations before sending datasets.</p>
+        </article>
+      </div>
+
+      <div class="disclosure fov-disclaimer">
+        This guidance is educational and intended to help align scan selection with the clinical question and ALADA/ALADAIP radiation-safety principles. It does not diagnose, recommend treatment, replace clinician judgment, or determine the correct scan protocol for an individual patient.
       </div>
     </section>
 
