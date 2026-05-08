@@ -1,0 +1,5 @@
+{
+  "scripts": {
+    "test:clinical": "node tests/run-clinical-scenarios.js"
+  }
+}

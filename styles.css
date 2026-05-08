@@ -638,6 +638,44 @@ button.secondary {
   font-weight: 850;
 }
 
+.alignment-details {
+  display: grid;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+}
+
+.alignment-details:empty {
+  display: none;
+}
+
+.alignment-details section {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: var(--space-3);
+  background: rgba(255, 255, 255, 0.62);
+}
+
+.alignment-details h4 {
+  margin: 0 0 6px;
+  color: var(--ink-strong);
+  font-size: 0.92rem;
+}
+
+.alignment-details ul,
+.alignment-details p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+.alignment-details ul {
+  padding-left: 19px;
+}
+
+.alignment-details li + li {
+  margin-top: 4px;
+}
+
 .cdt-scenario-reference {
   display: grid;
   gap: var(--space-2);
