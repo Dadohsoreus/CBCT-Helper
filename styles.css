@@ -145,26 +145,29 @@ h3 {
 }
 
 .tabs {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
   gap: 8px;
   max-width: var(--max);
   margin: 0 auto;
   padding: 0 24px 10px;
-  overflow-x: auto;
-  scrollbar-width: thin;
 }
 
 .tab {
   position: relative;
-  flex: 0 0 auto;
-  min-height: 36px;
-  padding: 8px 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  padding: 8px 12px;
   border: 1px solid rgba(255, 255, 255, 0.16);
   border-radius: var(--radius-sm);
   color: rgba(255, 255, 255, 0.82);
   text-decoration: none;
   font-size: 0.84rem;
   font-weight: 800;
+  line-height: 1.18;
+  text-align: center;
   background: rgba(255, 255, 255, 0.06);
   transition: transform var(--transition), background var(--transition), color var(--transition), box-shadow var(--transition), border-color var(--transition);
 }
@@ -181,6 +184,10 @@ h3 {
 .section {
   scroll-margin-top: 118px;
   padding: 74px 24px;
+}
+
+.section[hidden] {
+  display: none;
 }
 
 .section > * {
@@ -1177,6 +1184,10 @@ button.secondary {
   .toggle-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  .tabs {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 700px) {
@@ -1206,6 +1217,14 @@ button.secondary {
   .tabs {
     padding-left: 16px;
     padding-right: 16px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 7px;
+  }
+
+  .tab {
+    min-height: 46px;
+    padding: 8px 9px;
+    font-size: 0.76rem;
   }
 
   .section {

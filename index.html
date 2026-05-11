@@ -16,18 +16,17 @@
       </div>
     </div>
     <nav class="tabs" aria-label="Website sections">
-      <a href="#calculator" class="tab is-active">CBCT Utilization Estimator</a>
-      <a href="#modality" class="tab">CBCT Considerations</a>
-      <a href="#fov-resolution" class="tab">FOV &amp; Resolution</a>
-      <a href="#navigation" class="tab">Navigation Guide</a>
-      <a href="#artifacts" class="tab">Artifact Guide</a>
-      <a href="#cdt" class="tab">CDT Codes</a>
-      <a href="#citations" class="tab">Citations</a>
+      <a href="#calculator" class="tab is-active" data-tab="home">Estimator + Should I CBCT?</a>
+      <a href="#fov-resolution" class="tab" data-tab="fov-resolution">FOV &amp; Resolution</a>
+      <a href="#navigation" class="tab" data-tab="navigation">Navigation Guide</a>
+      <a href="#artifacts" class="tab" data-tab="artifacts">Artifact Guide</a>
+      <a href="#cdt" class="tab" data-tab="cdt">CDT Codes</a>
+      <a href="#citations" class="tab" data-tab="citations">Citations</a>
     </nav>
   </header>
 
   <main>
-    <section id="calculator" class="section hero-band">
+    <section id="calculator" class="section hero-band" data-tab-panel="home">
       <div class="section-head">
         <div>
           <p class="eyebrow">Part 1</p>
@@ -137,11 +136,11 @@
       </div>
     </section>
 
-    <section id="modality" class="section">
+    <section id="modality" class="section" data-tab-panel="home">
       <div class="section-head">
         <div>
           <p class="eyebrow">Part 2</p>
-          <h2>CBCT Considerations Guide</h2>
+          <h2>CBCT Considerations / Should I CBCT?</h2>
           <p class="lede">Enter a short clinical scenario. The guide looks for common situations discussed in AAE/AAOMR and ADA/AAOMR guidance and returns educational context, not a diagnosis or treatment recommendation.</p>
         </div>
       </div>
@@ -167,7 +166,7 @@
       </div>
     </section>
 
-    <section id="fov-resolution" class="section muted">
+    <section id="fov-resolution" class="section muted" data-tab-panel="fov-resolution">
       <div class="section-head">
         <div>
           <p class="eyebrow">Scan selection</p>
@@ -312,7 +311,7 @@
       </div>
     </section>
 
-    <section id="navigation" class="section muted">
+    <section id="navigation" class="section muted" data-tab-panel="navigation">
       <div class="section-head">
         <div>
           <p class="eyebrow">Part 3</p>
@@ -396,7 +395,7 @@
       </div>
     </section>
 
-    <section id="artifacts" class="section">
+    <section id="artifacts" class="section" data-tab-panel="artifacts">
       <div class="section-head">
         <div>
           <p class="eyebrow">Part 4</p>
@@ -439,7 +438,7 @@
       </div>
     </section>
 
-    <section id="cdt" class="section muted">
+    <section id="cdt" class="section muted" data-tab-panel="cdt">
       <div class="section-head">
         <div>
           <p class="eyebrow">Reference</p>
@@ -464,7 +463,7 @@
       </div>
     </section>
 
-    <section id="citations" class="section muted">
+    <section id="citations" class="section muted" data-tab-panel="citations">
       <div class="section-head">
         <div>
           <p class="eyebrow">Evidence</p>

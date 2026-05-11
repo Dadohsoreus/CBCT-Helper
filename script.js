@@ -53,7 +53,7 @@ const evidenceMap = {
     confidence: 'medium-high',
     cardCopy: {
       headline: 'treatment plan changed or was clarified in similar unclear-symptom cases',
-      detail: 'JADA endodontic study; these cases involved contradictory or hard-to-localize signs or symptoms after exam and 2D imaging.'
+      detail: 'Enter how many cases you see with unclear or hard-to-localize symptoms per month, such as pain that does not match the exam, symptoms on more than one tooth, or 2D images that do not explain the complaint.'
     },
     notes: 'R2-specific JADA figure-derived treatment-planning impact; diagnosisRate uses R2 periapical diagnosis change.'
   },
@@ -70,7 +70,7 @@ const evidenceMap = {
     confidence: 'medium-high',
     cardCopy: {
       headline: 'treatment plan changed or was clarified in nonhealing endodontic cases',
-      detail: 'JADA endodontic study; these cases involved nonhealing after previous endodontic treatment.'
+      detail: 'Enter how many cases you see with nonhealing endodontic treatment per month, such as persistent symptoms, a sinus tract, or a lesion that remains after a prior root canal.'
     },
     notes: 'R7-specific JADA figure-derived treatment-planning impact.'
   },
@@ -87,7 +87,7 @@ const evidenceMap = {
     confidence: 'medium-high',
     cardCopy: {
       headline: 'treatment plan changed or was clarified when VRF was suspected',
-      detail: 'JADA endodontic study; these cases involved suspected VRF when clinical exam and 2D imaging were inconclusive.'
+      detail: 'Enter how many cases you see with suspected vertical root fracture per month, such as isolated deep probing, biting pain on a root-filled tooth, a J-shaped lesion, or a fracture concern that 2D images do not settle.'
     },
     accuracy: {
       studyId: 'vrfDetection2009',
@@ -112,7 +112,7 @@ const evidenceMap = {
     confidence: 'medium',
     cardCopy: {
       headline: 'treatment plan changed or was clarified in resorption cases',
-      detail: 'JADA endodontic study; these cases involved locating or differentiating internal and external resorption.'
+      detail: 'Enter how many cases you see with resorption concern per month, such as suspected internal resorption, external resorption, cervical resorption, or a case where the location and extent are unclear.'
     },
     notes: 'R12-specific JADA figure-derived treatment-planning impact.'
   },
@@ -129,7 +129,7 @@ const evidenceMap = {
     confidence: 'medium',
     cardCopy: {
       headline: 'retreatment or missed-anatomy question',
-      detail: 'Project sources support CBCT as a consideration for retreatment complications and missed anatomy, but no clean percentage was found for this exact group.'
+      detail: 'Enter how many cases you see with a retreatment or missed-anatomy question per month, such as a missed canal, separated instrument, blocked canal, ledge, perforation concern, or unusual root anatomy.'
     },
     notes: 'No clean indication-specific impact percentage found in project sources.'
   },
@@ -146,7 +146,7 @@ const evidenceMap = {
     confidence: 'medium',
     cardCopy: {
       headline: 'treatment plan changed or was clarified in presurgical endodontic cases',
-      detail: 'JADA endodontic study; these cases involved presurgical planning to locate apices and nearby anatomy.'
+      detail: 'Enter how many cases you see for endodontic surgery planning per month, such as apical surgery, root-end planning, or checking the relationship to the sinus, nerve canal, cortical plate, or nearby roots.'
     },
     notes: 'R9-specific JADA figure-derived treatment-planning impact.'
   },
@@ -163,7 +163,7 @@ const evidenceMap = {
     confidence: 'high',
     cardCopy: {
       headline: '3D anatomy planning',
-      detail: 'No project source provides an implant-specific decision-change percentage. Entered implant-planning cases are counted as estimated scans whether treatment is in-office or referred.'
+      detail: 'Enter how many cases you see for implant site planning per month, such as checking ridge width, bone height, sinus proximity, nerve proximity, graft needs, or whether the case will be treated in-office or referred.'
     },
     notes: 'Do not display a forced percentage.'
   },
@@ -180,7 +180,7 @@ const evidenceMap = {
     confidence: 'high',
     cardCopy: {
       headline: 'selective use for a defined question',
-      detail: 'No project source provides an airway-specific decision-change percentage. Responsible-use guidance emphasizes patient selection and a clear clinical question.'
+      detail: 'Enter how many cases you see with an airway or sleep-disordered breathing question per month, such as airway volume review, nasal obstruction concern, skeletal anatomy review, or referral planning for a defined airway question.'
     },
     notes: 'Avoid routine screening implication.'
   },
@@ -197,7 +197,7 @@ const evidenceMap = {
     confidence: 'medium',
     cardCopy: {
       headline: 'tooth-sinus relationship',
-      detail: 'Project sources support broader endodontic diagnosis-change impact, but no sinus-specific decision-change percentage was identified.'
+      detail: 'Enter how many cases you see with a possible tooth-sinus relationship per month, such as sinus mucosal thickening near a tooth, suspected odontogenic sinusitis, oroantral communication concern, or upper posterior infection near the sinus.'
     },
     notes: 'Do not use 35% as sinus-specific.'
   },
@@ -214,7 +214,7 @@ const evidenceMap = {
     confidence: 'high',
     cardCopy: {
       headline: '2D extraction decisions changed to orthodontic traction after CBCT review',
-      detail: 'Impacted maxillary canine study with orthodontists; this is not a general impaction or general dentistry percentage.'
+      detail: 'Enter how many cases you see with impacted or ectopic teeth per month, such as impacted canines, unclear buccal or palatal position, root proximity or resorption risk, or deciding between exposure, traction, extraction, or referral.'
     },
     notes: 'Direct for impacted maxillary canines; specialty-specific warning required.'
   }
@@ -888,16 +888,71 @@ function analyzeScenario() {
   responsible.textContent = 'Responsible-use reminder: document the clinical question, use limited FOV when possible, optimize exposure for the patient and indication, and interpret findings within the complete clinical context.';
 }
 
-function updateActiveTab() {
-  const sections = Array.from(document.querySelectorAll('main section'));
+function tabForHash(hash) {
+  if (!hash || hash === '#calculator' || hash === '#modality') {
+    return 'home';
+  }
+
+  const id = hash.slice(1);
+  if (id.startsWith('cite-')) {
+    return 'citations';
+  }
+
+  const panel = document.getElementById(id);
+  return panel?.dataset.tabPanel || 'home';
+}
+
+function setActiveTab(tabName, options = {}) {
   const tabs = Array.from(document.querySelectorAll('.tab'));
-  const current = sections.reduce((closest, section) => {
-    const offset = Math.abs(section.getBoundingClientRect().top - 180);
-    return offset < closest.offset ? { id: section.id, offset } : closest;
-  }, { id: sections[0].id, offset: Number.POSITIVE_INFINITY });
+  const panels = Array.from(document.querySelectorAll('[data-tab-panel]'));
+  const activeTab = tabs.find(tab => tab.dataset.tab === tabName) || tabs[0];
+  const activeName = activeTab?.dataset.tab || 'home';
+
+  panels.forEach(panel => {
+    panel.hidden = panel.dataset.tabPanel !== activeName;
+  });
 
   tabs.forEach(tab => {
-    tab.classList.toggle('is-active', tab.getAttribute('href') === `#${current.id}`);
+    const isActive = tab.dataset.tab === activeName;
+    tab.classList.toggle('is-active', isActive);
+    tab.setAttribute('aria-selected', String(isActive));
+  });
+
+  if (options.scroll !== false) {
+    const target = options.targetId ? document.getElementById(options.targetId) : document.querySelector(`[data-tab-panel="${activeName}"]`);
+    target?.scrollIntoView({ behavior: options.instant ? 'auto' : 'smooth', block: 'start' });
+  }
+}
+
+function setupTabs() {
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', event => {
+      event.preventDefault();
+      const tabName = tab.dataset.tab || tabForHash(tab.hash);
+      const targetId = tabName === 'home' ? 'calculator' : tabName;
+      history.pushState(null, '', `#${targetId}`);
+      setActiveTab(tabName, { targetId });
+    });
+  });
+
+  document.querySelectorAll('a[href^="#cite-"]').forEach(link => {
+    link.addEventListener('click', event => {
+      const targetId = link.hash.slice(1);
+      setActiveTab('citations', { targetId });
+    });
+  });
+
+  window.addEventListener('hashchange', () => {
+    setActiveTab(tabForHash(window.location.hash), {
+      targetId: window.location.hash.slice(1),
+      instant: true
+    });
+  });
+
+  setActiveTab(tabForHash(window.location.hash), {
+    targetId: window.location.hash.slice(1),
+    instant: true,
+    scroll: Boolean(window.location.hash)
   });
 }
 
@@ -987,12 +1042,9 @@ if (typeof window !== 'undefined') {
     analyzeScenario();
   });
 
-  document.addEventListener('scroll', updateActiveTab, { passive: true });
-  window.addEventListener('resize', updateActiveTab);
-
   updateCalculator();
   analyzeScenario();
-  updateActiveTab();
+  setupTabs();
   setupArtifactExpansion();
 }
 
