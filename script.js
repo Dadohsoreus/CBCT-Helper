@@ -235,17 +235,20 @@ const evidenceHighlights = [
   {
     percent: '21%',
     copy: 'In a JADA guideline-application endodontic clinic study, periapical diagnosis differed after CBCT review for 21% of evaluated teeth overall.',
-    link: studies.jadaGuidelines2024.doiUrl
+    link: studies.jadaGuidelines2024.doiUrl,
+    icon: '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 3h8l4 4v14H6V3Z"/><path d="M14 3v5h5"/><circle cx="11" cy="13" r="3"/><path d="m13.2 15.2 3.3 3.3"/></svg>'
   },
   {
     percent: '69%',
     copy: 'In that same JADA endodontic study, the recorded treatment plan was changed, established, or corrected after CBCT review in 69% of evaluated cases overall.',
-    link: studies.jadaGuidelines2024.doiUrl
+    link: studies.jadaGuidelines2024.doiUrl,
+    icon: '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 4h8v3H8V4Z"/><path d="M6 6H5v15h14V6h-1"/><path d="m8 12 1.5 1.5L12 11"/><path d="M14 12h3"/><path d="m8 17 1.5 1.5L12 16"/><path d="M14 17h3"/></svg>'
   },
   {
     percent: '35%',
     copy: 'In a separate endodontic before-after study, CBCT information changed the selected endodontic diagnosis for 35% of evaluated teeth.',
-    link: studies.endoDiagnosis2015.doiUrl
+    link: studies.endoDiagnosis2015.doiUrl,
+    icon: '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 4c-2-2-6-1-7.5 1.8C2.4 9.7 4 16 7.3 20c1 .9 2 .4 2.2-.8l.6-3.2c.2-1.2 1.6-1.2 1.8 0l.6 3.2c.2 1.2 1.2 1.7 2.2.8C18 16 19.6 9.7 17.5 5.8 16 3 14 2.8 12 4Z"/></svg>'
   }
 ];
 
@@ -682,6 +685,7 @@ function renderEvidenceHighlights() {
 
   target.innerHTML = evidenceHighlights.map(item => `
     <div>
+      <span class="evidence-icon">${item.icon}</span>
       <strong>${escapeHtml(item.percent)}</strong>
       <span>${escapeHtml(item.copy)}</span>
       <a class="evidence-link" href="${escapeHtml(item.link)}">Evidence basis</a>
