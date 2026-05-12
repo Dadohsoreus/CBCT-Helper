@@ -70,7 +70,8 @@ function summarize(analysis) {
     reducingConcepts: Array.from(analysis.reducingConcepts),
     topAlignment: analysis.matches[0]?.alignmentLevel || 'weak',
     inputCompleteness: analysis.entities.input_completeness.category,
-    entityConfidence: analysis.entities.confidence_level
+    entityConfidence: analysis.entities.confidence_level,
+    toothOrRegion: analysis.entities.tooth_or_region
   };
 }
 
@@ -111,6 +112,12 @@ function runCase(testCase) {
   const entityConfidenceMismatch = !testCase.expectedEntityConfidence || summary.entityConfidence === testCase.expectedEntityConfidence
     ? null
     : { expected: testCase.expectedEntityConfidence, actual: summary.entityConfidence };
+  const toothMismatch = !testCase.expectedToothOrRegion
+    ? null
+    : {
+      expected: testCase.expectedToothOrRegion,
+      missing: testCase.expectedToothOrRegion.filter(item => !summary.toothOrRegion.includes(item))
+    };
 
   return {
     id: testCase.id,
@@ -118,12 +125,14 @@ function runCase(testCase) {
       && incorrectlyIncludedConcepts.length === 0
       && !confidenceMismatch
       && !completenessMismatch
-      && !entityConfidenceMismatch,
+      && !entityConfidenceMismatch
+      && !(toothMismatch && toothMismatch.missing.length),
     missedExpectedConcepts,
     incorrectlyIncludedConcepts,
     confidenceMismatch,
     completenessMismatch,
     entityConfidenceMismatch,
+    toothMismatch,
     summary,
     notes: testCase.notes
   };
@@ -161,7 +170,12 @@ results.forEach(result => {
     console.log(`  entity confidence mismatch: expected ${result.entityConfidenceMismatch.expected}, got ${result.entityConfidenceMismatch.actual}`);
   }
 
+  if (result.toothMismatch?.missing.length) {
+    console.log(`  tooth/region mismatch: missing ${result.toothMismatch.missing.join(', ')}`);
+  }
+
   console.log(`  detected concepts: ${result.summary.concepts.join(', ') || 'none'}`);
+  console.log(`  tooth/region: ${result.summary.toothOrRegion.join(', ') || 'none'}`);
   console.log(`  input completeness: ${result.summary.inputCompleteness}; confidence: ${result.summary.entityConfidence}`);
   console.log(`  nuance: ${result.notes}`);
 });

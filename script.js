@@ -36,6 +36,12 @@ const studies = {
   }
 };
 
+const appVersion = {
+  version: 'clinical-scenario-2026-05-12-targeted-fixes',
+  buildDate: '2026-05-12',
+  source: 'local workspace'
+};
+
 // scanFactor stays at 1 because every entered indication is counted as an estimated scan,
 // whether the case is treated in-office or referred. planRate and diagnosisRate values are
 // study-derived only when metricType names a published treatment-planning or diagnosis-change metric.
@@ -487,13 +493,13 @@ const concepts = {
     field: 'clinical_tests_reported',
     label: 'Tenderness to percussion or palpation',
     normalized: 'percussion/palpation tenderness',
-    patterns: [/\b(ttp|tender to percussion|percussion \+|perc \+|vertical percussion|palpation \+|palp \+|vestibular tenderness|apical tenderness|buccal swelling)\b/]
+    patterns: [/\bttp\s*\+?|\btender to percussion\b|\bpercussion\s*\+|\bperc\s*\+|\bvertical percussion\b|\bpalpation\s*\+|\bpalp\s*\+|\bvestibular tenderness\b|\bapical tenderness\b|\bbuccal swelling\b/]
   },
   bitingPain: {
     field: 'clinical_tests_reported',
     label: 'Bite or chewing pain reported',
     normalized: 'bite/chewing pain',
-    patterns: [/\b(bite pain|biting pain|pain on biting|pain on release|chewing pain|pain chewing|tooth slooth|hard foods|nuts|popcorn|bite \+)\b/]
+    patterns: [/\bbite pain\b|\bbiting\s*\+|\bbiting pain\b|\bpain on biting\b|\bpain on release\b|\bchewing pain\b|\bpain chewing\b|\btooth slooth\s*\+?|\bhard foods\b|\bnuts\b|\bpopcorn\b|\bbite\s*\+/]
   },
   localizedBitingPain: {
     field: 'clinical_tests_reported',
@@ -505,7 +511,7 @@ const concepts = {
     field: 'suspected_condition',
     label: 'Crack or fractured cusp language',
     normalized: 'crack/fracture concern stated by user',
-    patterns: [/\b(crack suspected|suspect crack|crack\?|cracked tooth|crack line|fractured cusp|cusp fracture|split tooth concern|cracked cusp)\b/],
+    patterns: [/\b(crack|crack suspected|suspect crack|possible crack|cracked tooth|crack line|fractured cusp|cusp fracture|split tooth concern|cracked cusp)\b/],
     excludes: [/\b(no crack|crack not suspected)\b/]
   },
   verticalRootFracture: {
@@ -631,7 +637,7 @@ const concepts = {
     field: 'anatomic_risk',
     label: 'Anatomic proximity or risk structure mentioned',
     normalized: 'anatomic risk/proximity',
-    patterns: [/\b(ian|inferior alveolar|mandibular canal|mental foramen|max sinus|maxillary sinus|sinus floor|nasal floor|nerve|canal proximity|root proximity|close to canal|canal diversion|darkening of root|dehiscence|fenestration)\b/],
+    patterns: [/\b(ian|inferior alveolar|mandibular canal|mental foramen|max sinus|maxillary sinus|sinus floor|nasal floor|nerve|canal proximity|root proximity|canal overlap|ian overlap|mandibular canal overlap|panoramic overlap|close to canal|canal diversion|darkening of root|sinus proximity|dehiscence|fenestration)\b/],
     excludes: [/\b(no nerve|no .*nerve|no sinus question|no root proximity|no root proximity issue|clear of canal|no canal overlap)\b/]
   },
   measurementNeed: {
@@ -875,10 +881,23 @@ function normalizeScenarioText(text) {
 
 function extractToothOrRegion(normalizedText) {
   const teeth = new Set();
-  const toothMatches = normalizedText.matchAll(/(?:#\s*)?\b([1-9]|[12][0-9]|3[0-2])\b/g);
+
+  Array.from(normalizedText.matchAll(/#\s*([1-9]|[12][0-9]|3[0-2])\b/g)).forEach(match => {
+    teeth.add(`#${match[1]}`);
+  });
+
+  Array.from(normalizedText.matchAll(/\b([1-9]|[12][0-9]|3[0-2])\s*\/\s*([1-9]|[12][0-9]|3[0-2])\b/g)).forEach(match => {
+    const context = normalizedText.slice(Math.max(0, match.index - 18), Math.min(normalizedText.length, match.index + match[0].length + 18));
+    if (/#|tooth|teeth|incisor|canine|premolar|molar|implant|rct|ext|exo|endo|trauma|root/.test(context)) {
+      teeth.add(`#${match[1]}`);
+      teeth.add(`#${match[2]}`);
+    }
+  });
+
+  const toothMatches = normalizedText.matchAll(/\b([1-9]|[12][0-9]|3[0-2])\b/g);
   Array.from(toothMatches).forEach(match => {
-    const before = normalizedText.slice(Math.max(0, match.index - 2), match.index);
-    if (before.includes('#') || /\b(#|tooth|teeth|implant|rct|ext|exo|endo)\s*$/.test(normalizedText.slice(Math.max(0, match.index - 12), match.index))) {
+    const before = normalizedText.slice(Math.max(0, match.index - 14), match.index);
+        if (/\b(tooth|teeth|implant|ext|exo|#)\s*$/.test(before)) {
       teeth.add(`#${match[1]}`);
     }
   });
@@ -957,24 +976,27 @@ function reducingConceptsFromText(conceptSet) {
 }
 
 function assessInputCompleteness(conceptSet, entities) {
+  const planningContext = ['implantPlanning', 'extractionPlanning', 'impaction', 'thirdMolar', 'surgicalPlanningNeed'].some(concept => conceptSet.has(concept));
+  const planningNeed = planningContext
+    && ['anatomicRisk', 'measurementNeed', 'locationExtent', 'surgicalPlanningNeed', 'rootMorphologyUnclear', 'rootResorptionRisk'].some(concept => conceptSet.has(concept));
   const factors = [
     {
       key: 'symptoms',
       label: 'Symptoms described',
       missing: 'Symptoms',
-      present: entities.symptoms.length > 0 || ['persistentSymptoms', 'bitingPain', 'sinusTract', 'sourceUnclear'].some(concept => conceptSet.has(concept))
+      present: planningNeed || entities.symptoms.length > 0 || ['persistentSymptoms', 'bitingPain', 'sinusTract', 'sourceUnclear'].some(concept => conceptSet.has(concept))
     },
     {
       key: 'clinicalTesting',
       label: 'Clinical testing reported',
       missing: 'Clinical testing',
-      present: entities.clinical_tests_reported.length > 0
+      present: planningNeed || entities.clinical_tests_reported.length > 0
     },
     {
       key: 'testResults',
       label: 'Test results included',
       missing: 'Test results',
-      present: entities.clinical_test_results.length > 0
+      present: planningNeed || entities.clinical_test_results.length > 0
         || ['percussionTenderness', 'bitingPain', 'isolatedProbing', 'periodontalModifier'].some(concept => conceptSet.has(concept))
     },
     {
@@ -987,7 +1009,7 @@ function assessInputCompleteness(conceptSet, entities) {
       key: 'priorTreatment',
       label: 'Prior treatment status included',
       missing: 'Prior treatment status',
-      present: entities.prior_treatment_status.length > 0
+      present: planningNeed || entities.prior_treatment_status.length > 0
         || /\b(no prior rct|no prior endo|no previous rct|untreated tooth|no root canal)\b/.test(entities.normalized_text || '')
     },
     {
@@ -1451,7 +1473,8 @@ if (typeof module !== 'undefined') {
     conceptLabels,
     evidenceMap,
     studies,
-    calculateDecisionImpact
+    calculateDecisionImpact,
+    appVersion
   };
 }
 

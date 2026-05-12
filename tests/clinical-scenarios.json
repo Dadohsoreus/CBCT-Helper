@@ -857,5 +857,144 @@
     "expectedCompleteness": "Comprehensive",
     "expectedEntityConfidence": "High",
     "notes": "Completeness layer: symptoms, tests/results, imaging, prior treatment, localization, question, and anatomy detail."
+  },
+  {
+    "id": "CASE-080",
+    "input": "#30 pain",
+    "expectedToothOrRegion": [
+      "#30"
+    ],
+    "expectedExclude": [
+      "strong CBCT indication"
+    ],
+    "expectedCompleteness": "Minimal",
+    "expectedEntityConfidence": "Low",
+    "notes": "Targeted regression: short hash tooth number extraction with sparse note."
+  },
+  {
+    "id": "CASE-081",
+    "input": "#30 negative cold, perc +, PA WNL",
+    "expectedInclude": [
+      "pulpNoResponse",
+      "percussionTenderness"
+    ],
+    "expectedToothOrRegion": [
+      "#30"
+    ],
+    "expectedExclude": [
+      "strong CBCT indication"
+    ],
+    "expectedEntityConfidence": "Low",
+    "notes": "Targeted regression: plus-sign percussion and negative cold recognition."
+  },
+  {
+    "id": "CASE-082",
+    "input": "#30 crown, bite pain, crack?",
+    "expectedInclude": [
+      "suspected cracked tooth / structural tooth pain"
+    ],
+    "expectedToothOrRegion": [
+      "#30"
+    ],
+    "expectedExclude": [
+      "suspected vertical root fracture"
+    ],
+    "expectedConfidence": "limited-to-moderate",
+    "notes": "Targeted regression: crack question after punctuation normalization."
+  },
+  {
+    "id": "CASE-083",
+    "input": "#30 crown, bite pain, Tooth Slooth +, PA WNL, crack vs VRF?",
+    "expectedInclude": [
+      "suspected cracked tooth / structural tooth pain",
+      "suspected vertical root fracture"
+    ],
+    "expectedToothOrRegion": [
+      "#30"
+    ],
+    "expectedConfidence": "limited-to-moderate",
+    "notes": "Targeted regression: crack vs VRF language remains suspected concern, not diagnosis."
+  },
+  {
+    "id": "CASE-084",
+    "input": "#19 lingering cold, bite pain, PA WNL",
+    "expectedInclude": [
+      "pulpLingering",
+      "bitingPain"
+    ],
+    "expectedToothOrRegion": [
+      "#19"
+    ],
+    "expectedExclude": [
+      "strong CBCT indication"
+    ],
+    "expectedEntityConfidence": "Low",
+    "notes": "Targeted regression: tooth extraction with pulp and bite findings."
+  },
+  {
+    "id": "CASE-085",
+    "input": "#14 crown, no symptoms, PA WNL, monitor",
+    "expectedToothOrRegion": [
+      "#14"
+    ],
+    "expectedExclude": [
+      "strong CBCT indication"
+    ],
+    "expectedConfidence": "weak",
+    "expectedEntityConfidence": "Low",
+    "notes": "Targeted regression: routine/asymptomatic monitor note stays conservative."
+  },
+  {
+    "id": "CASE-086",
+    "input": "#8 trauma, mobility, root fx?",
+    "expectedInclude": [
+      "Trauma",
+      "rootFracture"
+    ],
+    "expectedToothOrRegion": [
+      "#8"
+    ],
+    "expectedEntityConfidence": "Low",
+    "notes": "Targeted regression: trauma/root fx shorthand with tooth extraction."
+  },
+  {
+    "id": "CASE-087",
+    "input": "#9 resorption? PA unclear",
+    "expectedInclude": [
+      "resorption localization"
+    ],
+    "expectedToothOrRegion": [
+      "#9"
+    ],
+    "expectedEntityConfidence": "Low",
+    "notes": "Targeted regression: resorption question with tooth extraction and unclear PA."
+  },
+  {
+    "id": "CASE-088",
+    "input": "impacted #17, canal overlap on pano",
+    "expectedInclude": [
+      "impacted tooth localization",
+      "anatomic measurement"
+    ],
+    "expectedToothOrRegion": [
+      "#17"
+    ],
+    "expectedConfidence": "strong",
+    "expectedEntityConfidence": "High",
+    "notes": "Targeted regression: third molar canal overlap on pano as anatomic risk."
+  },
+  {
+    "id": "CASE-089",
+    "input": "implant #30, need IAN location and guide planning",
+    "expectedInclude": [
+      "implant planning",
+      "anatomic measurement"
+    ],
+    "expectedToothOrRegion": [
+      "#30"
+    ],
+    "expectedConfidence": "strong",
+    "expectedEntityConfidence": "High",
+    "notes": "Targeted regression: implant planning completeness should not require symptoms or pulp testing."
   }
 ]
