@@ -1355,14 +1355,22 @@ button.secondary {
 @media (max-width: 700px) {
   .site-header {
     position: sticky;
-    box-shadow: 0 10px 22px rgba(7, 17, 18, 0.14);
+    border-bottom: 0;
+    background: transparent;
+    box-shadow: 0 8px 18px rgba(7, 17, 18, 0.10);
+    backdrop-filter: none;
   }
 
   .brand-wrap {
     display: grid;
     grid-template-columns: 42px minmax(0, 1fr);
     gap: 12px;
-    padding: 8px 16px 9px;
+    max-width: none;
+    padding: 8px 16px 7px;
+    background:
+      linear-gradient(180deg, rgba(11, 21, 23, 0.98), rgba(18, 31, 34, 0.97)),
+      var(--charcoal);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
   }
 
   .brand-logo {
@@ -1376,9 +1384,9 @@ button.secondary {
   }
 
   .site-header .eyebrow {
-    margin-bottom: 3px;
+    margin-bottom: 2px;
     font-size: 0.58rem;
-    line-height: 1.25;
+    line-height: 1.18;
   }
 
   .site-header h1,
@@ -1391,26 +1399,22 @@ button.secondary {
   }
 
   .tabs {
-    position: fixed;
-    top: calc(env(safe-area-inset-top) + 70px);
-    left: 12px;
-    right: 12px;
-    z-index: 20;
+    position: static;
     display: flex;
     gap: 6px;
     max-width: none;
     margin: 0;
-    padding: 7px;
+    padding: 8px 12px;
     overflow-x: auto;
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    border-radius: 999px;
-    background: rgba(11, 21, 23, 0.82);
-    box-shadow: 0 14px 28px rgba(7, 17, 18, 0.18);
-    backdrop-filter: blur(16px);
+    border: 0;
+    border-bottom: 1px solid var(--line);
+    border-radius: 0;
+    background: rgba(251, 252, 250, 0.94);
+    box-shadow: 0 8px 18px rgba(7, 17, 18, 0.08);
+    backdrop-filter: blur(14px);
     scrollbar-width: none;
     transform: translateY(0);
     opacity: 1;
-    transition: transform 220ms ease, opacity 220ms ease;
     -webkit-overflow-scrolling: touch;
   }
 
@@ -1419,9 +1423,9 @@ button.secondary {
   }
 
   .tabs.is-mobile-hidden {
-    transform: translateY(-18px);
-    opacity: 0;
-    pointer-events: none;
+    transform: none;
+    opacity: 1;
+    pointer-events: auto;
   }
 
   .tab {
@@ -1429,23 +1433,25 @@ button.secondary {
     min-height: 30px;
     min-width: max-content;
     padding: 6px 11px;
-    border-color: transparent;
+    border: 1px solid var(--line);
     border-radius: 999px;
+    color: var(--muted);
     font-size: 0.7rem;
     line-height: 1.1;
     white-space: nowrap;
-    background: transparent;
+    background: rgba(255, 255, 255, 0.78);
   }
 
   .tab.is-active,
   .tab:hover {
+    color: #fff;
     background: rgba(141, 67, 80, 0.82);
-    border-color: transparent;
+    border-color: rgba(141, 67, 80, 0.72);
   }
 
   .section {
-    scroll-margin-top: 128px;
-    padding: 48px 16px;
+    scroll-margin-top: 132px;
+    padding: 42px 16px 48px;
   }
 
   .presentation-row,
@@ -1459,7 +1465,7 @@ button.secondary {
   }
 
   .hero-band {
-    padding-top: 78px;
+    padding-top: 32px;
   }
 
   .evidence-section {
@@ -1476,7 +1482,12 @@ button.secondary {
   }
 
   .decision-statement {
+    margin: var(--space-3) 0 var(--space-2) !important;
     padding: var(--space-3) var(--space-4);
+  }
+
+  .decision-statement::before {
+    inset: 10px auto 10px 0;
   }
 
   .intro-points {
