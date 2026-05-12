@@ -1355,42 +1355,96 @@ button.secondary {
 @media (max-width: 700px) {
   .site-header {
     position: sticky;
+    box-shadow: 0 10px 22px rgba(7, 17, 18, 0.14);
   }
 
   .brand-wrap {
-    grid-template-columns: 56px minmax(0, 1fr);
-    gap: var(--space-3);
-    padding: 8px 16px 6px;
+    display: grid;
+    grid-template-columns: 42px minmax(0, 1fr);
+    gap: 12px;
+    padding: 8px 16px 9px;
   }
 
   .brand-logo {
-    width: 56px;
+    width: 42px;
+    max-height: 48px;
+    filter: drop-shadow(0 7px 14px rgba(0, 0, 0, 0.18));
+  }
+
+  .header-copy {
+    min-width: 0;
   }
 
   .site-header .eyebrow {
-    font-size: 0.63rem;
+    margin-bottom: 3px;
+    font-size: 0.58rem;
+    line-height: 1.25;
   }
 
   .site-header h1,
   h1 {
-    font-size: clamp(1.55rem, 8vw, 2.5rem);
+    font-size: clamp(1.35rem, 6vw, 1.85rem);
+  }
+
+  .site-header h1 {
+    line-height: 0.98;
   }
 
   .tabs {
-    padding-left: 16px;
-    padding-right: 16px;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 7px;
+    position: fixed;
+    top: calc(env(safe-area-inset-top) + 70px);
+    left: 12px;
+    right: 12px;
+    z-index: 20;
+    display: flex;
+    gap: 6px;
+    max-width: none;
+    margin: 0;
+    padding: 7px;
+    overflow-x: auto;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 999px;
+    background: rgba(11, 21, 23, 0.82);
+    box-shadow: 0 14px 28px rgba(7, 17, 18, 0.18);
+    backdrop-filter: blur(16px);
+    scrollbar-width: none;
+    transform: translateY(0);
+    opacity: 1;
+    transition: transform 220ms ease, opacity 220ms ease;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .tabs.is-mobile-hidden {
+    transform: translateY(-18px);
+    opacity: 0;
+    pointer-events: none;
   }
 
   .tab {
-    min-height: 46px;
-    padding: 8px 9px;
-    font-size: 0.76rem;
+    flex: 0 0 auto;
+    min-height: 30px;
+    min-width: max-content;
+    padding: 6px 11px;
+    border-color: transparent;
+    border-radius: 999px;
+    font-size: 0.7rem;
+    line-height: 1.1;
+    white-space: nowrap;
+    background: transparent;
+  }
+
+  .tab.is-active,
+  .tab:hover {
+    background: rgba(141, 67, 80, 0.82);
+    border-color: transparent;
   }
 
   .section {
-    scroll-margin-top: 126px;
+    scroll-margin-top: 128px;
     padding: 48px 16px;
   }
 
@@ -1405,7 +1459,7 @@ button.secondary {
   }
 
   .hero-band {
-    padding-top: 40px;
+    padding-top: 78px;
   }
 
   .evidence-section {

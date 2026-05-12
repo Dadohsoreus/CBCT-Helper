@@ -1030,6 +1030,44 @@ function setupArtifactExpansion() {
   });
 }
 
+function setupMobileNavBehavior() {
+  const tabs = document.querySelector('.tabs');
+  if (!tabs) return;
+
+  const mobileQuery = window.matchMedia('(max-width: 700px)');
+  let lastScrollY = window.scrollY;
+  let ticking = false;
+
+  function syncNav() {
+    const currentScrollY = window.scrollY;
+
+    if (!mobileQuery.matches || currentScrollY < 24) {
+      tabs.classList.remove('is-mobile-hidden');
+      lastScrollY = currentScrollY;
+      ticking = false;
+      return;
+    }
+
+    if (currentScrollY < lastScrollY - 6) {
+      tabs.classList.add('is-mobile-hidden');
+    } else if (currentScrollY > lastScrollY + 6) {
+      tabs.classList.remove('is-mobile-hidden');
+    }
+
+    lastScrollY = currentScrollY;
+    ticking = false;
+  }
+
+  window.addEventListener('scroll', () => {
+    if (ticking) return;
+    ticking = true;
+    window.requestAnimationFrame(syncNav);
+  }, { passive: true });
+
+  mobileQuery.addEventListener('change', syncNav);
+  syncNav();
+}
+
 if (typeof window !== 'undefined') {
   window.cbctGuideSelfTestResults = runGuideSelfTests();
   renderEvidenceHighlights();
@@ -1050,5 +1088,6 @@ if (typeof window !== 'undefined') {
   analyzeScenario();
   setupTabs();
   setupArtifactExpansion();
+  setupMobileNavBehavior();
 }
 
