@@ -252,13 +252,14 @@ const evidenceHighlights = [
   }
 ];
 
-const scenarios = [
+const guidanceScenarios = [
   {
     name: 'Persistent or nonhealing endodontic symptoms',
-    conceptWeights: { priorEndo: 2, postEndoSymptoms: 2, nonhealingLesion: 2, persistentSymptoms: 1, inconclusive2d: 1.5, periapicalFinding: 1, retreatment: 1, pulpNecrosis: 1, sinusTract: 1.5 },
+    guidanceCategory: 'Previously treated or nonhealing endodontic concern',
+    conceptWeights: { priorEndo: 2, postEndoSymptoms: 2, nonhealingLesion: 2, persistentSymptoms: 1, inconclusive2d: 1.5, periapicalFinding: 1, retreatment: 1, sinusTract: 1.5, sourceUnclear: 1 },
     comboBonus: [['priorEndo', 'persistentSymptoms'], ['persistentSymptoms', 'inconclusive2d'], ['priorEndo', 'periapicalFinding'], ['pulpNecrosis', 'periapicalFinding'], ['sinusTract', 'inconclusive2d']],
     requiresAny: [['priorEndo'], ['retreatment'], ['postEndoSymptoms'], ['nonhealingLesion'], ['periapicalFinding']],
-    reducers: { paWnl: 2, noApicalLesion: 2, stableFinding: 1.5, noCurrentSymptoms: 1.5, uncertaintyMarker: 0.5 },
+    reducers: { paWnl: 1.5, noApicalLesion: 1.5, stableFinding: 1.5, noCurrentSymptoms: 1.5, uncertaintyMarker: 0.5 },
     threshold: 3,
     title: 'This scenario matches published guidance for previously treated or nonhealing teeth.',
     text: 'AAE/AAOMR guidance discusses CBCT as a consideration for previously treated teeth that are not healing or remain symptomatic when 2D imaging does not answer the question. ADA/AAOMR guidance still starts with history, exam, and lower-exposure imaging when those provide enough information.',
@@ -266,8 +267,9 @@ const scenarios = [
   },
   {
     name: 'Contradictory or nonspecific signs and symptoms',
-    conceptWeights: { nonspecificSymptoms: 2, persistentSymptoms: 1, inconclusive2d: 1.5, pulpTesting: 0.75, percussionTenderness: 0.75 },
-    comboBonus: [['nonspecificSymptoms', 'inconclusive2d'], ['nonspecificSymptoms', 'pulpTesting'], ['pulpTesting', 'percussionTenderness']],
+    guidanceCategory: 'Contradictory, nonspecific, or hard-to-localize findings',
+    conceptWeights: { nonspecificSymptoms: 2, sourceUnclear: 1.5, persistentSymptoms: 1, inconclusive2d: 1.5, pulpTesting: 0.75, conflictingPulpTests: 1, percussionTenderness: 0.75, bitingPain: 0.5 },
+    comboBonus: [['nonspecificSymptoms', 'inconclusive2d'], ['sourceUnclear', 'inconclusive2d'], ['nonspecificSymptoms', 'pulpTesting'], ['conflictingPulpTests', 'percussionTenderness'], ['pulpTesting', 'percussionTenderness']],
     reducers: { paWnl: 1, uncertaintyMarker: 0.75 },
     threshold: 2.5,
     title: 'This scenario matches published guidance for unclear signs or symptoms.',
@@ -275,6 +277,7 @@ const scenarios = [
   },
   {
     name: 'Suspected vertical root fracture',
+    guidanceCategory: 'Possible vertical root fracture pattern when exam and 2D imaging are inconclusive',
     conceptWeights: { verticalRootFracture: 3, bitingPain: 0.75, localizedBitingPain: 1.25, isolatedProbing: 2, crownOrPost: 0.25, postAssociatedConcern: 1.5, jShapedLesion: 2, haloLesion: 1.5, sinusTract: 1.5, priorEndo: 1, inconclusive2d: 0.75 },
     comboBonus: [['bitingPain', 'isolatedProbing'], ['verticalRootFracture', 'isolatedProbing'], ['verticalRootFracture', 'jShapedLesion'], ['priorEndo', 'localizedBitingPain'], ['postAssociatedConcern', 'bitingPain']],
     requiresAny: [['verticalRootFracture'], ['jShapedLesion'], ['haloLesion'], ['isolatedProbing'], ['sinusTract'], ['postAssociatedConcern'], ['priorEndo', 'bitingPain']],
@@ -286,6 +289,7 @@ const scenarios = [
   },
   {
     name: 'Suspected cracked tooth / structural tooth pain',
+    guidanceCategory: 'Cracked-tooth or structural tooth-pain question',
     conceptWeights: { crackedToothPain: 2.5, structuralToothPain: 1.25, bitingPain: 1.25, largeRestoration: 1, crownOrPost: 0.5, pulpTesting: 0.5, paWnl: 0.25 },
     comboBonus: [['crackedToothPain', 'bitingPain'], ['largeRestoration', 'bitingPain']],
     reducers: { uncertaintyMarker: 0.25 },
@@ -297,7 +301,8 @@ const scenarios = [
   },
   {
     name: 'Resorption',
-    conceptWeights: { resorption: 3, locationExtent: 1.5, trauma: 0.5, cervicalResorption: 1 },
+    guidanceCategory: 'Resorption localization, type, and extent',
+    conceptWeights: { resorption: 3, locationExtent: 1.5, trauma: 0.5, cervicalResorption: 1, perforationConcern: 1 },
     comboBonus: [['resorption', 'locationExtent']],
     threshold: 3,
     title: 'This scenario matches published guidance for mapping resorption.',
@@ -305,6 +310,7 @@ const scenarios = [
   },
   {
     name: 'Missed anatomy or retreatment evaluation',
+    guidanceCategory: 'Retreatment, missed anatomy, or endodontic complication evaluation',
     conceptWeights: { priorEndo: 1.5, missedAnatomy: 2.5, retreatment: 2, complications: 1.5, calcifiedCanal: 1 },
     comboBonus: [['priorEndo', 'missedAnatomy'], ['missedAnatomy', 'inconclusive2d'], ['retreatment', 'missedAnatomy'], ['retreatment', 'complications']],
     reducers: { paWnl: 0.5, noCurrentSymptoms: 1.25, uncertaintyMarker: 0.25 },
@@ -313,9 +319,22 @@ const scenarios = [
     text: 'This wording suggests a retreatment or anatomy question, such as missed canal anatomy, calcification, perforation, or a separated instrument. CBCT information is framed here as educational context only and still requires clinical correlation and responsible-use selection.'
   },
   {
+    name: 'Endodontic surgery planning',
+    guidanceCategory: 'Presurgical endodontic anatomic assessment',
+    conceptWeights: { surgicalPlanningNeed: 2.5, anatomicRisk: 1.5, measurementNeed: 1, locationExtent: 1, priorEndo: 0.5, persistentSymptoms: 0.5, inconclusive2d: 1 },
+    comboBonus: [['surgicalPlanningNeed', 'anatomicRisk'], ['surgicalPlanningNeed', 'inconclusive2d'], ['surgicalPlanningNeed', 'locationExtent']],
+    requiresAny: [['surgicalPlanningNeed']],
+    reducers: { uncertaintyMarker: 0.25 },
+    threshold: 3,
+    title: 'This scenario may align with presurgical endodontic anatomy guidance.',
+    text: 'CBCT may help clarify root-end anatomy, cortical plate or sinus/nerve relationships, and other 3D relationships when endodontic surgery planning cannot be answered adequately with clinical findings and 2D imaging.'
+  },
+  {
     name: 'Implant planning',
-    conceptWeights: { implantPlanning: 2.5, anatomicRisk: 2, measurementNeed: 1.5, inconclusive2d: 0.5 },
-    comboBonus: [['implantPlanning', 'anatomicRisk'], ['implantPlanning', 'measurementNeed']],
+    guidanceCategory: 'Implant or surgical guide 3D anatomic planning',
+    conceptWeights: { implantPlanning: 2.5, anatomicRisk: 2, measurementNeed: 1.5, surgicalPlanningNeed: 1, inconclusive2d: 0.5 },
+    comboBonus: [['implantPlanning', 'anatomicRisk'], ['implantPlanning', 'measurementNeed'], ['implantPlanning', 'surgicalPlanningNeed']],
+    requiresAny: [['implantPlanning']],
     reducers: { uncertaintyMarker: 0.25 },
     threshold: 3,
     title: 'This scenario matches published guidance for 3D anatomic assessment.',
@@ -323,14 +342,16 @@ const scenarios = [
   },
   {
     name: 'Trauma',
-    conceptWeights: { trauma: 2.5, rootFracture: 1.5, displacement: 1, resorption: 0.5 },
-    comboBonus: [['trauma', 'rootFracture'], ['trauma', 'resorption']],
+    guidanceCategory: 'Localized dentoalveolar trauma assessment',
+    conceptWeights: { trauma: 2.5, rootFracture: 1.5, displacement: 1, alveolarFracture: 1.5, resorption: 0.5, inconclusive2d: 0.5 },
+    comboBonus: [['trauma', 'rootFracture'], ['trauma', 'alveolarFracture'], ['trauma', 'resorption'], ['trauma', 'inconclusive2d']],
     threshold: 2.5,
     title: 'This scenario may match published guidance for localized dentoalveolar trauma.',
     text: 'AAE/AAOMR guidance discusses limited-FOV CBCT for localized dentoalveolar trauma, including root fractures, luxation, displacement, or localized alveolar fracture, when additional anatomy may help clarify the clinical question.'
   },
   {
     name: 'Sinus or odontogenic source',
+    guidanceCategory: 'Tooth-sinus relationship when 2D imaging is limited',
     conceptWeights: { sinusQuestion: 2, periapicalFinding: 1.5, sinusTract: 1.5, priorEndo: 0.5 },
     comboBonus: [['sinusQuestion', 'periapicalFinding'], ['sinusQuestion', 'priorEndo']],
     reducers: { paWnl: 0.75, uncertaintyMarker: 0.25 },
@@ -340,14 +361,27 @@ const scenarios = [
   },
   {
     name: 'Impacted or ectopic tooth position',
-    conceptWeights: { impaction: 2.5, ectopicEruption: 2, anatomicRisk: 1.5, inconclusive2d: 1 },
-    comboBonus: [['impaction', 'anatomicRisk'], ['ectopicEruption', 'inconclusive2d']],
+    guidanceCategory: 'Impacted, ectopic, or supernumerary tooth localization',
+    conceptWeights: { impaction: 2.5, ectopicEruption: 2, supernumerary: 1.5, anatomicRisk: 1.5, rootResorptionRisk: 1.5, inconclusive2d: 1 },
+    comboBonus: [['impaction', 'anatomicRisk'], ['impaction', 'rootResorptionRisk'], ['ectopicEruption', 'inconclusive2d']],
     threshold: 2.5,
     title: 'This scenario matches published guidance for impacted or ectopic tooth localization.',
     text: 'This wording suggests an impacted or ectopic eruption localization question, such as root proximity or unclear position on 2D imaging. The guide frames this as evidence-informed context and does not determine whether imaging is required.'
   },
   {
+    name: 'Extraction or third molar anatomic risk',
+    guidanceCategory: 'Extraction or third-molar relationship to vital anatomy',
+    conceptWeights: { extractionPlanning: 2, thirdMolar: 2, anatomicRisk: 1.5, rootMorphologyUnclear: 1.5, inconclusive2d: 1, ankylosis: 1 },
+    comboBonus: [['thirdMolar', 'anatomicRisk'], ['extractionPlanning', 'rootMorphologyUnclear'], ['thirdMolar', 'inconclusive2d']],
+    reducers: { noCurrentSymptoms: 0.5, uncertaintyMarker: 0.25 },
+    threshold: 3,
+    title: 'This scenario may match guidance for extraction-related anatomic clarification.',
+    text: 'CBCT may be considered when 2D imaging suggests proximity to vital anatomy or root/anatomic relationships are unclear. This does not imply that every extraction or third molar case needs CBCT.',
+    limitation: 'The evidence is more direct when the note describes canal or sinus proximity, unclear root morphology, ankylosis, dilaceration, or another 3D relationship that 2D imaging does not settle.'
+  },
+  {
     name: 'Airway screening',
+    guidanceCategory: 'Airway language without a defined dental 3D question',
     conceptWeights: { airway: 2.5, measurementNeed: 0.5 },
     comboBonus: [],
     threshold: 2.5,
@@ -356,103 +390,368 @@ const scenarios = [
   }
 ];
 
-const shorthandExpansions = [
-  { pattern: /\bparl\b/, phrase: ' periapical radiolucency periapical finding ' },
-  { pattern: /\bpa\b(?!\s*(wnl|normal|looks normal))/, phrase: ' periapical radiograph two dimensional imaging ' },
-  { pattern: /\bpano\b|\bpan\b|\bpanoramic\b/, phrase: ' panoramic radiograph two dimensional imaging ' },
-  { pattern: /\brct\b|\bnsrct\b|\bendo tx\b|\broot canal\b/, phrase: ' prior endodontic treatment root canal treatment ' },
-  { pattern: /\bretreat\b|\bretx\b|\bretreatment\b/, phrase: ' retreatment evaluation previously treated tooth ' },
-  { pattern: /\bvrf\b(?!\s*(not suspected|unlikely|ruled out))/, phrase: ' vertical root fracture concern ' },
-  { pattern: /\bj[- ]?shape(d)?\b|\bj shaped lesion\b/, phrase: ' j shaped lesion vertical root fracture concern ' },
-  { pattern: /\bpa wnl\b|\bpa (looks )?normal\b|\bperiapical wnl\b|\bperiapical normal\b/, phrase: ' periapical radiograph within normal limits ' },
-  { pattern: /\bcbct vs monitor\b|\bmonitor\b|\bwatch\b|\bre-evaluate\b|\brecheck\b/, phrase: ' uncertainty marker monitor consideration ' },
-  { pattern: /\bttp\b|\btender to percussion\b|\bpercussion\b/, phrase: ' tender to percussion persistent symptoms ' },
-  { pattern: /\bbite test\b|\bpain on biting\b|\bpain chewing\b|\bpain on chewing\b|\bchewing pain\b|\bbite\b|\bhurts on (nuts|popcorn|hard foods?)\b/, phrase: ' pain on biting biting pain structural tooth pain ' },
-  { pattern: /\bcrack suspected\b|\bsuspect crack\b|\bcracked\b|\bcrack line\b/, phrase: ' cracked tooth structural tooth pain ' },
-  { pattern: /\bcold.{0,40}(inconsistent|sometimes|no response|lingers)\b|\b(inconsistent|contradictory).{0,40}cold\b/, phrase: ' contradictory nonspecific symptoms pulp testing ' },
-  { pattern: /\bcold test\b|\bcold\b|\bept\b|\belectric pulp\b/, phrase: ' pulp testing sensibility testing ' },
-  { pattern: /\bsap\b/, phrase: ' symptomatic apical periodontitis percussion tenderness periapical symptoms ' },
-  { pattern: /\baap\b/, phrase: ' asymptomatic apical periodontitis periapical finding ' },
-  { pattern: /\bsip\b/, phrase: ' symptomatic irreversible pulpitis pulp testing pain symptoms ' },
-  { pattern: /\bnecrotic\b|\bnecrosis\b|\bnecrotic pulp\b/, phrase: ' necrotic pulp endodontic diagnosis context ' },
-  { pattern: /\bmb2\b|\bmissed canal\b|\bmissed anatomy\b|\bextra canal\b|\buntreated canal\b/, phrase: ' missed canal missed anatomy endodontic anatomy context ' },
-  { pattern: /\bcalcified canal\b|\bcalcification\b|\bcalcified\b/, phrase: ' calcified canal canal calcification endodontic anatomy context ' },
-  { pattern: /\bperf\b|\bperforation\b|\bperforated\b/, phrase: ' perforation endodontic complication ' },
-  { pattern: /\bseparated file\b|\bsep file\b|\bbroken file\b|\bseparated instrument\b/, phrase: ' separated file endodontic complication ' },
-  { pattern: /\binternal resorption\b|\binternal resorp\b/, phrase: ' internal resorption resorption location extent ' },
-  { pattern: /\bexternal resorption\b|\bexternal resorp\b/, phrase: ' external resorption resorption location extent ' },
-  { pattern: /\bcervical resorption\b|\becr\b|\bexternal cervical\b/, phrase: ' cervical resorption external cervical resorption location extent ' },
-  { pattern: /\b(?<!no )sinus tract\b|\bdraining sinus\b|\bparulis\b|\bfistula\b/, phrase: ' sinus tract draining sinus periapical finding ' },
-  { pattern: /\bimplant site\b|\bimplant consult\b|\bimplant planning\b|\bimplant\b/, phrase: ' implant planning implant site assessment ' },
-  { pattern: /\bimpacted tooth\b|\bimpacted canine\b|\bimpaction\b|\bimpacted\b/, phrase: ' impacted tooth impaction localization ' },
-  { pattern: /\bectopic eruption\b|\bectopic\b/, phrase: ' ectopic eruption localization ' },
-  { pattern: /\bian\b|\binferior alveolar nerve\b|\bmental foramen\b|\bnerve\b/, phrase: ' inferior alveolar nerve anatomic risk ' }
-];
-
-const conceptPatterns = {
-  priorEndo: /\b(prior endodontic|previously treated|root canal treatment|after endodontic|following endodontic|rct)\b/,
-  postEndoSymptoms: /\b(post endodontic symptoms|after endodontic|following endodontic|rct.{0,25}(pain|symptoms|ttp)|root canal treatment.{0,25}(pain|symptoms|ttp))\b/,
-  nonhealingLesion: /\b(nonhealing lesion|persistent apical lesion|persistent lesion|non healing lesion|not healing)\b/,
-  persistentSymptoms: /\b(persistent|still|nonhealing|not healing|failed|symptoms|pain|tender to percussion|periapical symptoms)\b/,
-  inconclusive2d: /\b(inconclusive|unclear|not clear|cannot see|two dimensional imaging|2d inconclusive|pa inconclusive|pano unclear|pano inconclusive)\b/,
-  periapicalFinding: /\b(periapical radiolucency|periapical finding|parl|lesion|radiolucency|apical periodontitis)\b/,
-  nonspecificSymptoms: /\b(cannot localize|hard to localize|nonspecific|contradictory|unclear pain|referred pain)\b/,
-  pulpTesting: /\b(pulp testing|sensibility testing|cold test|electric pulp|ept|irreversible pulpitis)\b/,
-  percussionTenderness: /\b(tender to percussion|percussion tenderness|ttp|percussion)\b/,
-  pulpNecrosis: /\b(necrotic pulp|necrotic|necrosis)\b/,
-  verticalRootFracture: /\b(vertical root fracture|vrf|vertical fracture|root fracture concern)\b/,
-  crackedToothPain: /\b(cracked cusp|cracked tooth|cusp fracture|fractured cusp|cracked restoration)\b/,
-  structuralToothPain: /\b(structural tooth pain|pain chewing|pain on chewing|chewing pain)\b/,
-  bitingPain: /\b(pain on biting|biting pain|bite test)\b/,
-  localizedBitingPain: /\b(localized biting pain|localized pain on biting|pain on biting tooth|biting pain tooth)\b/,
-  isolatedProbing: /\b(isolated probing|isolated pocket|narrow pocket|probing defect|9mm pocket|deep pocket|\d{1,2}mm isolated)\b/,
-  crownOrPost: /\b(crown|post|core)\b/,
-  postAssociatedConcern: /\b(post associated|post-associated|post fracture|fracture around post|post.{0,30}fracture|fracture.{0,30}post)\b/,
-  largeRestoration: /\b(large restoration|large filling|big restoration|large amalgam|large composite|large mod|mod restoration|large mod restoration)\b/,
-  jShapedLesion: /\b(j shaped lesion|j-shaped lesion)\b/,
-  haloLesion: /\b(halo lesion|halo bone loss|halo)\b/,
-  resorption: /\b(resorption|resorp|internal resorption|external resorption|cervical resorption|ecr)\b/,
-  cervicalResorption: /\b(cervical resorption|external cervical|ecr)\b/,
-  locationExtent: /\b(location|extent|localize|localization|determine|map|how far|size)\b/,
-  missedAnatomy: /\b(missed canal|missed anatomy|mb2|extra canal|untreated canal|endodontic anatomy context)\b/,
-  retreatment: /\b(retreatment|retreat|retx|retreatment evaluation)\b/,
-  complications: /\b(perforation|perforated|separated file|separated instrument|broken file|endodontic complication)\b/,
-  calcifiedCanal: /\b(calcified canal|canal calcification|calcified)\b/,
-  implantPlanning: /\b(implant planning|implant site|implant consult|implant)\b/,
-  anatomicRisk: /\b(anatomic risk|inferior alveolar nerve|ian|mental foramen|nerve|sinus floor|root proximity|proximity)\b/,
-  measurementNeed: /\b(measure|measurement|width|height|ridge width|ridge|location)\b/,
-  trauma: /\b(trauma|trauma history|trauma hx|luxation|avulsion|alveolar fracture)\b/,
-  rootFracture: /\b(root fracture|horizontal root fracture|alveolar fracture)\b/,
-  displacement: /\b(displacement|luxation|avulsion)\b/,
-  sinusQuestion: /\b(sinus|maxillary sinus|odontogenic sinusitis|mucosal thickening|tooth sinus)\b/,
-  sinusTract: /\b(sinus tract|draining sinus|parulis|fistula)\b/,
-  impaction: /\b(impacted tooth|impacted canine|impaction|impacted)\b/,
-  ectopicEruption: /\b(ectopic eruption|ectopic)\b/,
-  airway: /\b(airway|sleep apnea|osa|snoring)\b/
-};
-
-const conceptExclusionPatterns = {
-  priorEndo: /\b(no prior rct|no previous rct|no prior endodontic|no root canal|untreated tooth)\b/,
-  persistentSymptoms: /\b(no symptoms|asymptomatic|no current pain|no pain)\b/,
-  periapicalFinding: /\b(no parl|without parl|no periapical radiolucency|no apical lesion)\b/,
-  isolatedProbing: /\b(no isolated probing|no isolated pocket|probing wnl|probing within normal limits|periodontal chart wnl|no narrow pocket|no deep pocket)\b/,
-  sinusTract: /\b(no sinus tract|sinus tract absent|without sinus tract)\b/,
-  sinusQuestion: /\b(no sinus tract|sinus tract absent|without sinus tract)\b/,
-  verticalRootFracture: /\b(no vrf|vrf unlikely|vrf not suspected|no vertical root fracture)\b/,
-  rootFracture: /\b(no root fracture|root fracture not suspected|vrf not suspected)\b/,
-  retreatment: /\b(not retreatment|no retreatment|retreatment not planned)\b/,
-  implantPlanning: /\b(no implant|no implant planning)\b/,
-  anatomicRisk: /\b(no nerve|no sinus question|no root proximity|no root proximity issue)\b/,
-  measurementNeed: /\b(already measured|no measurement needed)\b/,
-  impaction: /\b(no impacted teeth|no impacted tooth|no impaction)\b/
-};
-
-const reducingConceptPatterns = {
-  paWnl: /\b(pa wnl|pa normal|pa looks normal|periapical radiograph within normal limits|periapical wnl|periapical normal|radiograph wnl|xray wnl|x-ray wnl)\b/,
-  noApicalLesion: /\b(no parl|without parl|no periapical radiolucency|no apical lesion)\b/,
-  stableFinding: /\b(stable|unchanged)\b/,
-  noCurrentSymptoms: /\b(no symptoms|asymptomatic|no current pain|no pain)\b/,
-  uncertaintyMarker: /\b(cbct vs monitor|monitor\?|monitor consideration|watch|recheck|re-evaluate|uncertain)\b/
+const concepts = {
+  priorEndo: {
+    field: 'prior_treatment_status',
+    label: 'Prior root canal or endodontic treatment',
+    normalized: 'previous endodontic treatment',
+    patterns: [/\b(rct|nsrct|endo tx|root canal|prior endo|prior endodontic|previous endo|previously treated)\b/],
+    excludes: [/\b(no prior rct|no previous rct|no prior endo|no prior endodontic|no root canal|untreated tooth)\b/]
+  },
+  postEndoSymptoms: {
+    field: 'prior_treatment_status',
+    label: 'Symptoms reported after prior endodontic treatment',
+    normalized: 'post-endodontic symptoms',
+    patterns: [
+      /\b(after|following).{0,35}\b(rct|root canal|endo)\b/,
+      /\b(rct|root canal|endo).{0,35}\b(still|persistent|unchanged|sinus tract|swelling|ttp|tender|symptomatic)\b/,
+      /\b(rct|root canal|endo).{0,20}\b(wks|weeks|mo|months|ago).{0,35}\b(still|persistent|ttp|tender|symptomatic)\b/
+    ]
+  },
+  nonhealingLesion: {
+    field: '2d_imaging_findings',
+    label: 'Nonhealing or persistent apical finding language',
+    normalized: 'persistent/nonhealing apical finding',
+    patterns: [/\b(non[- ]?healing|not healing|persistent lesion|persistent apical|larger than prior|lesion remains|healing not evident)\b/]
+  },
+  persistentSymptoms: {
+    field: 'symptoms',
+    label: 'Persistent symptoms or pain',
+    normalized: 'persistent symptoms',
+    patterns: [/\b(persistent|still|unchanged symptoms|symptoms unchanged|dull ache|ache|pain|tender|ttp|swelling|sinus tract|symptomatic)\b/],
+    excludes: [/\b(no symptoms|asymptomatic|no current pain|no pain|better overall)\b/]
+  },
+  sourceUnclear: {
+    field: 'uncertainty_level',
+    label: 'Source or localization unclear',
+    normalized: 'unclear source/localization',
+    patterns: [/\b(source unclear|unclear source|cannot localize|hard to localize|vague|points generally|diffuse|referred pain|which tooth|multi[- ]?tooth|multiple teeth|localization|periodontal\/endodontic source|endo-perio|endo perio)\b/]
+  },
+  inconclusive2d: {
+    field: '2d_imaging_findings',
+    label: '2D imaging described as limited, unclear, or inconclusive',
+    normalized: '2D imaging limitation/inconclusive finding',
+    patterns: [/\b(pa|bw|pano|pan|fmx|radiograph|2d|x[- ]?ray).{0,35}\b(inconclusive|unclear|equivocal|limited|hard to see|hard to interpret|obscured|overlap|superimposition|difficult angulation|cannot see|not clear)\b/, /\b(anatomy obscured|sinus superimposition|lesion extent unclear|unclear apex|pano unclear|pa inconclusive|pa equivocal|bw equivocal|scatter obscures|obscures apex)\b/],
+    excludes: [/\b(no canal overlap|no overlap|roots straight and clear|clear of canal)\b/]
+  },
+  paWnl: {
+    field: '2d_imaging_findings',
+    label: '2D imaging reported as normal or WNL',
+    normalized: '2D imaging WNL/normal',
+    patterns: [/\b(pa|bw|fmx|radiograph|x[- ]?ray|periapical).{0,15}\b(wnl|normal|looks normal|current and wnl)\b/, /\b(no parl|no apical lesion|no obvious parl)\b/]
+  },
+  noApicalLesion: {
+    field: '2d_imaging_findings',
+    label: 'No apical radiolucency reported',
+    normalized: 'no PARL/no apical lesion',
+    patterns: [/\b(no parl|without parl|no periapical radiolucency|no apical lesion|no obvious parl)\b/]
+  },
+  periapicalFinding: {
+    field: '2d_imaging_findings',
+    label: 'Periapical radiolucency or apical finding language',
+    normalized: 'periapical finding/PARL',
+    patterns: [/\b(parl|pa rl|periapical radiolucency|apical radiolucency|radiolucency|apical lesion|apical finding|widened pdl|diffuse radiolucency)\b/],
+    excludes: [/\b(no parl|without parl|no periapical radiolucency|no apical lesion|no obvious parl)\b/]
+  },
+  nonspecificSymptoms: {
+    field: 'symptoms',
+    label: 'Nonspecific or contradictory symptoms',
+    normalized: 'nonspecific/contradictory symptoms',
+    patterns: [/\b(nonspecific|contradictory|inconsistent|equivocal|vague|hard to localize|cannot localize|unclear pain|mixed)\b/]
+  },
+  pulpTesting: {
+    field: 'clinical_tests_reported',
+    label: 'Pulp sensibility or vitality testing reported',
+    normalized: 'pulp/sensibility testing reported',
+    patterns: [/\b(cold test|cold|endo ice|heat test|heat|ept|electric pulp|test cavity|selective anesthesia)\b/]
+  },
+  pulpNoResponse: {
+    field: 'clinical_test_results',
+    label: 'No response to pulp testing',
+    normalized: 'no response to sensibility testing',
+    patterns: [/\b(cold|endo ice|ept|heat).{0,12}\b(nr|no response|nonresponsive|negative|-)\b/, /\b(negative cold|cold negative|cold -|ept nr|ept negative|no response to cold)\b/]
+  },
+  pulpLingering: {
+    field: 'clinical_test_results',
+    label: 'Lingering, delayed, exaggerated, or heat/cold pain response',
+    normalized: 'lingering/exaggerated pulp test response',
+    patterns: [/\b(lingering|delayed response|exaggerated response|pain relieved by cold|pain to heat|heat pain|cold lingers|lingers)\b/]
+  },
+  conflictingPulpTests: {
+    field: 'clinical_test_results',
+    label: 'Inconsistent or equivocal pulp test response',
+    normalized: 'inconsistent/equivocal pulp test response',
+    patterns: [/\b(cold|ept|heat).{0,30}\b(inconsistent|equivocal|mixed|sometimes|cannot reproduce)\b/, /\b(inconsistent|equivocal|mixed).{0,30}\b(cold|ept|heat)\b/]
+  },
+  percussionTenderness: {
+    field: 'clinical_tests_reported',
+    label: 'Tenderness to percussion or palpation',
+    normalized: 'percussion/palpation tenderness',
+    patterns: [/\b(ttp|tender to percussion|percussion \+|perc \+|vertical percussion|palpation \+|palp \+|vestibular tenderness|apical tenderness|buccal swelling)\b/]
+  },
+  bitingPain: {
+    field: 'clinical_tests_reported',
+    label: 'Bite or chewing pain reported',
+    normalized: 'bite/chewing pain',
+    patterns: [/\b(bite pain|biting pain|pain on biting|pain on release|chewing pain|pain chewing|tooth slooth|hard foods|nuts|popcorn|bite \+)\b/]
+  },
+  localizedBitingPain: {
+    field: 'clinical_tests_reported',
+    label: 'Localized biting pain',
+    normalized: 'localized bite pain',
+    patterns: [/\b(localized bite|localized biting|bite pain localized|pain on biting tooth|isolated bite pain)\b/]
+  },
+  crackedToothPain: {
+    field: 'suspected_condition',
+    label: 'Crack or fractured cusp language',
+    normalized: 'crack/fracture concern stated by user',
+    patterns: [/\b(crack suspected|suspect crack|crack\?|cracked tooth|crack line|fractured cusp|cusp fracture|split tooth concern|cracked cusp)\b/],
+    excludes: [/\b(no crack|crack not suspected)\b/]
+  },
+  verticalRootFracture: {
+    field: 'suspected_condition',
+    label: 'VRF or vertical root fracture concern stated by user',
+    normalized: 'VRF concern stated by user',
+    patterns: [/\b(vrf|vertical root fracture|vertical fracture|split root|root fracture concern)\b/],
+    excludes: [/\b(no vrf|vrf unlikely|vrf not suspected|no vertical root fracture)\b/]
+  },
+  isolatedProbing: {
+    field: 'periodontal_findings',
+    label: 'Isolated deep or narrow periodontal probing defect',
+    normalized: 'isolated/narrow deep probing defect',
+    patterns: [/\b(isolated probing|isolated pocket|narrow pocket|narrow probing|deep distal pocket|probing defect|localized periodontal defect|\d{1,2}\s?mm.{0,20}\b(isolated|narrow|pocket|probing)|isolated.{0,20}\d{1,2}\s?mm)\b/],
+    excludes: [/\b(no isolated probing|no isolated pocket|no probing defect|no .*probing defect|probing wnl|periodontal chart wnl|no narrow pocket|no deep pocket)\b/]
+  },
+  periodontalModifier: {
+    field: 'periodontal_findings',
+    label: 'Periodontal finding reported',
+    normalized: 'periodontal finding',
+    patterns: [/\b(furcation|vertical defect|mobility|class i mobility|class ii mobility|class iii mobility|localized periodontal defect)\b/]
+  },
+  jShapedLesion: {
+    field: '2d_imaging_findings',
+    label: 'J-shaped lesion language',
+    normalized: 'J-shaped lesion pattern described',
+    patterns: [/\bj[- ]?shaped?\b|\bj shape\b|\bj-shaped lesion\b/]
+  },
+  haloLesion: {
+    field: '2d_imaging_findings',
+    label: 'Halo lesion or halo bone-loss language',
+    normalized: 'halo bone-loss pattern described',
+    patterns: [/\b(halo lesion|halo bone loss|halo)\b/]
+  },
+  sinusTract: {
+    field: 'symptoms',
+    label: 'Sinus tract, draining sinus, parulis, or fistula',
+    normalized: 'sinus tract/drainage',
+    patterns: [/\b(sinus tract|draining sinus|parulis|fistula)\b/],
+    excludes: [/\b(no sinus tract|sinus tract absent|without sinus tract)\b/]
+  },
+  crownOrPost: {
+    field: 'artifact_or_restoration_risk',
+    label: 'Crown, post, or core present',
+    normalized: 'crown/post/core present',
+    patterns: [/\b(crown|post\/core|post core|post|core)\b/]
+  },
+  largeRestoration: {
+    field: 'artifact_or_restoration_risk',
+    label: 'Large restoration present',
+    normalized: 'large restoration present',
+    patterns: [/\b(large restoration|large filling|big restoration|large amalgam|large composite|large mod|mod amalgam|mod restoration|deep recurrent decay|deep decay)\b/]
+  },
+  postAssociatedConcern: {
+    field: 'suspected_condition',
+    label: 'Fracture concern associated with a post',
+    normalized: 'post-associated fracture concern',
+    patterns: [/\b(post.{0,30}fracture|fracture.{0,30}post|post-associated|post associated)\b/]
+  },
+  resorption: {
+    field: 'suspected_condition',
+    label: 'Resorption concern',
+    normalized: 'resorption concern stated by user',
+    patterns: [/\b(resorption|resorp|internal resorption|external resorption|cervical resorption|invasive cervical|inflammatory resorption|replacement resorption|ecr)\b/]
+  },
+  cervicalResorption: {
+    field: 'suspected_condition',
+    label: 'Cervical or invasive cervical resorption concern',
+    normalized: 'cervical/external cervical resorption concern',
+    patterns: [/\b(cervical resorption|invasive cervical|external cervical|ecr)\b/]
+  },
+  locationExtent: {
+    field: 'surgical_planning_need',
+    label: 'Need to clarify location, extent, type, or perforation relationship',
+    normalized: '3D location/extent question',
+    patterns: [/\b(location|extent|localize|localization|determine|map|how far|size|buccal|lingual|palatal|perforation concern|restorability|proximity)\b/]
+  },
+  perforationConcern: {
+    field: 'suspected_condition',
+    label: 'Perforation concern',
+    normalized: 'perforation concern',
+    patterns: [/\b(perf|perforation|perforated|strip perf)\b/]
+  },
+  missedAnatomy: {
+    field: 'procedure_context',
+    label: 'Missed canal or anatomy question',
+    normalized: 'missed canal/anatomy question',
+    patterns: [/\b(mb2|missed canal|missed anatomy|extra canal|untreated canal|root morphology unclear|canal morphology)\b/]
+  },
+  retreatment: {
+    field: 'procedure_context',
+    label: 'Retreatment evaluation language',
+    normalized: 'retreatment evaluation',
+    patterns: [/\b(retreat|re-tx|retx|retreatment|re treatment|retreatment evaluation|failed endo)\b/],
+    excludes: [/\b(not retreatment|no retreatment|retreatment not planned)\b/]
+  },
+  complications: {
+    field: 'procedure_context',
+    label: 'Endodontic complication language',
+    normalized: 'endodontic complication/anatomy question',
+    patterns: [/\b(separated file|sep file|broken file|separated instrument|ledge|blocked canal|calcified canal|calcification|perforation)\b/]
+  },
+  calcifiedCanal: {
+    field: 'procedure_context',
+    label: 'Calcified canal language',
+    normalized: 'calcified canal',
+    patterns: [/\b(calcified canal|canal calcification|calcified)\b/]
+  },
+  surgicalPlanningNeed: {
+    field: 'surgical_planning_need',
+    label: 'Surgical or guide-planning need',
+    normalized: 'surgical/guide planning need',
+    patterns: [/\b(apico|apicectomy|apicoectomy|presurgical|endo surgery|endodontic surgery|root[- ]?end|surgical guide|guide fabrication|guide planning|surgical extraction|surgery planning)\b/]
+  },
+  implantPlanning: {
+    field: 'procedure_context',
+    label: 'Implant planning or implant site assessment',
+    normalized: 'implant planning/site assessment',
+    patterns: [/\b(implant planning|implant site|implant consult|implant|surgical guide|guide fabrication)\b/],
+    excludes: [/\b(no implant|no implant planning)\b/]
+  },
+  anatomicRisk: {
+    field: 'anatomic_risk',
+    label: 'Anatomic proximity or risk structure mentioned',
+    normalized: 'anatomic risk/proximity',
+    patterns: [/\b(ian|inferior alveolar|mandibular canal|mental foramen|max sinus|maxillary sinus|sinus floor|nasal floor|nerve|canal proximity|root proximity|close to canal|canal diversion|darkening of root|dehiscence|fenestration)\b/],
+    excludes: [/\b(no nerve|no .*nerve|no sinus question|no root proximity|no root proximity issue|clear of canal|no canal overlap)\b/]
+  },
+  measurementNeed: {
+    field: 'surgical_planning_need',
+    label: 'Ridge, bone, width, height, or measurement need',
+    normalized: '3D measurement need',
+    patterns: [/\b(ridge width|ridge height|available bone|bone width|bone height|width|height|measure|measurement|sinus floor|ridge)\b/],
+    excludes: [/\b(already measured|no measurement needed)\b/]
+  },
+  trauma: {
+    field: 'procedure_context',
+    label: 'Trauma history or traumatic dental injury',
+    normalized: 'trauma context',
+    patterns: [/\b(trauma|trauma hx|trauma history|luxation|avulsion|intrusion|extrusion|displacement|alveolar fracture|immature apex)\b/]
+  },
+  rootFracture: {
+    field: 'suspected_condition',
+    label: 'Root or crown-root fracture concern',
+    normalized: 'root/crown-root fracture concern',
+    patterns: [/\b(root fracture|root fx|horizontal root fracture|crown-root fracture|crown root fracture)\b/],
+    excludes: [/\b(no root fracture|root fracture not suspected)\b/]
+  },
+  alveolarFracture: {
+    field: 'suspected_condition',
+    label: 'Alveolar fracture concern',
+    normalized: 'alveolar fracture concern',
+    patterns: [/\b(alveolar fracture|alveolar segment)\b/]
+  },
+  displacement: {
+    field: 'symptoms',
+    label: 'Luxation, avulsion, intrusion, extrusion, or displacement',
+    normalized: 'tooth displacement/luxation',
+    patterns: [/\b(luxation|avulsion|intrusion|extrusion|displacement|displaced)\b/]
+  },
+  sinusQuestion: {
+    field: 'anatomic_risk',
+    label: 'Tooth-sinus relationship or sinus question',
+    normalized: 'tooth-sinus question',
+    patterns: [/\b(tooth sinus|odontogenic sinusitis|mucosal thickening|maxillary sinus|sinus floor|sinus pressure|sinus proximity)\b/],
+    excludes: [/\b(no sinus question)\b/]
+  },
+  impaction: {
+    field: 'procedure_context',
+    label: 'Impacted tooth language',
+    normalized: 'impacted tooth localization question',
+    patterns: [/\b(impacted tooth|impacted canine|impaction|impacted third molar|impacted 3rd molar|impacted)\b/],
+    excludes: [/\b(no impacted teeth|no impacted tooth|no impaction)\b/]
+  },
+  ectopicEruption: {
+    field: 'procedure_context',
+    label: 'Ectopic eruption or transposition language',
+    normalized: 'ectopic eruption/transposition',
+    patterns: [/\b(ectopic eruption|ectopic|transposition|eruption path unclear)\b/]
+  },
+  supernumerary: {
+    field: 'procedure_context',
+    label: 'Supernumerary tooth language',
+    normalized: 'supernumerary tooth',
+    patterns: [/\b(supernumerary|mesiodens)\b/]
+  },
+  rootResorptionRisk: {
+    field: 'anatomic_risk',
+    label: 'Root resorption risk from impacted or ectopic tooth',
+    normalized: 'adjacent root resorption/proximity question',
+    patterns: [/\b(root resorption from impacted|resorption risk|lateral incisor root|adjacent root|root proximity)\b/]
+  },
+  extractionPlanning: {
+    field: 'procedure_context',
+    label: 'Extraction or surgical extraction planning',
+    normalized: 'extraction/surgical extraction context',
+    patterns: [/\b(ext|exo|extraction|surgical extraction)\b/]
+  },
+  thirdMolar: {
+    field: 'procedure_context',
+    label: 'Third molar language',
+    normalized: 'third molar relationship question',
+    patterns: [/\b(third molar|3rd molar|wisdom tooth|wisdom teeth)\b|#\s*(1|16|17|32)\b/]
+  },
+  rootMorphologyUnclear: {
+    field: '2d_imaging_findings',
+    label: 'Root morphology or dilaceration unclear',
+    normalized: 'root morphology unclear',
+    patterns: [/\b(root morphology unclear|root anatomy unclear|dilaceration|curved roots|ankylosis|canal relationship unclear)\b/]
+  },
+  ankylosis: {
+    field: 'suspected_condition',
+    label: 'Ankylosis concern',
+    normalized: 'ankylosis concern',
+    patterns: [/\b(ankylosis|ankylosed)\b/]
+  },
+  airway: {
+    field: 'procedure_context',
+    label: 'Airway or sleep-disordered breathing language',
+    normalized: 'airway language',
+    patterns: [/\b(airway|sleep apnea|osa|snoring)\b/]
+  },
+  routineRequest: {
+    field: 'caution_notes',
+    label: 'Routine scan request or no defined clinical question',
+    normalized: 'routine/no defined 3D clinical question',
+    patterns: [/\b(routine|screen|check everything|patient wants|friend had one|3d model|ortho record|no unresolved clinical question|2d imaging answers|monitor only|review only)\b/]
+  },
+  noCurrentSymptoms: {
+    field: 'caution_notes',
+    label: 'Asymptomatic or no current symptoms',
+    normalized: 'asymptomatic/no current symptoms',
+    patterns: [/\b(asymptomatic|no symptoms|no current pain|no pain)\b/]
+  },
+  stableFinding: {
+    field: 'caution_notes',
+    label: 'Stable or improving finding',
+    normalized: 'stable/improving finding',
+    patterns: [/\b(stable|unchanged from|small parl unchanged|better overall|healing progressing normally)\b/]
+  },
+  uncertaintyMarker: {
+    field: 'uncertainty_level',
+    label: 'Monitor/recheck or uncertainty language',
+    normalized: 'uncertainty/monitoring language',
+    patterns: [/\b(cbct vs monitor|monitor\?|monitor|watch|recheck|re-evaluate|uncertain|question|periodontal\/endodontic source|endo-perio|endo perio)\b/]
+  }
 };
 
 const conceptLabels = {
@@ -495,7 +794,25 @@ const conceptLabels = {
   impaction: 'Impacted tooth language',
   ectopicEruption: 'Ectopic eruption language',
   airway: 'Airway language',
+  extractionPlanning: 'Extraction or surgical extraction planning',
+  thirdMolar: 'Third molar language',
+  rootMorphologyUnclear: 'Root morphology or dilaceration unclear',
+  ankylosis: 'Ankylosis concern',
+  supernumerary: 'Supernumerary tooth language',
+  rootResorptionRisk: 'Root resorption risk or adjacent-root proximity',
+  surgicalPlanningNeed: 'Surgical or guide-planning need',
+  sourceUnclear: 'Source or localization unclear',
+  conflictingPulpTests: 'Inconsistent or equivocal pulp test results',
+  pulpNoResponse: 'No response to pulp testing',
+  pulpLingering: 'Lingering, delayed, exaggerated, or heat pain response',
+  periodontalModifier: 'Periodontal finding',
+  alveolarFracture: 'Alveolar fracture concern',
+  perforationConcern: 'Perforation concern',
+  routineRequest: 'Routine scan request or no defined clinical question',
   paWnl: 'PA / periapical imaging described as WNL or normal',
+  noApicalLesion: 'No apical radiolucency reported',
+  noCurrentSymptoms: 'Asymptomatic or no current symptoms',
+  stableFinding: 'Stable or improving finding',
   uncertaintyMarker: 'Uncertainty or monitoring language'
 };
 
@@ -540,32 +857,233 @@ const cdtFieldOfViewPatterns = [
 ];
 
 function normalizeScenarioText(text) {
-  const base = ` ${text.toLowerCase().replace(/[?#,;:()/]/g, ' ')} `;
-  const expansions = shorthandExpansions
-    .filter(rule => rule.pattern.test(base))
-    .map(rule => rule.phrase)
-    .join(' ');
+  return ` ${String(text || '')
+    .toLowerCase()
+    .replace(/endo\s*ice/g, 'endo ice')
+    .replace(/\bre[-\s]?tx\b/g, 'retx')
+    .replace(/\bnon[-\s]?responsive\b/g, 'nonresponsive')
+    .replace(/\bj[-\s]?shape(d)?\b/g, 'j-shaped')
+    .replace(/\bperc\s*\+/g, 'percussion +')
+    .replace(/\bpalp\s*\+/g, 'palpation +')
+    .replace(/\bbite\s*\+/g, 'bite +')
+    .replace(/\bcold\s*-/g, 'cold -')
+    .replace(/\bept\s*nr\b/g, 'ept nr')
+    .replace(/[?,;:()[\]{}]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()} `;
+}
 
-  return `${base} ${expansions}`.replace(/\s+/g, ' ').trim();
+function extractToothOrRegion(normalizedText) {
+  const teeth = new Set();
+  const toothMatches = normalizedText.matchAll(/(?:#\s*)?\b([1-9]|[12][0-9]|3[0-2])\b/g);
+  Array.from(toothMatches).forEach(match => {
+    const before = normalizedText.slice(Math.max(0, match.index - 2), match.index);
+    if (before.includes('#') || /\b(#|tooth|teeth|implant|rct|ext|exo|endo)\s*$/.test(normalizedText.slice(Math.max(0, match.index - 12), match.index))) {
+      teeth.add(`#${match[1]}`);
+    }
+  });
+
+  const regions = [
+    ['upper left', /\b(ul|upper left|maxillary left)\b/],
+    ['upper right', /\b(ur|upper right|maxillary right)\b/],
+    ['lower left', /\b(ll|lower left|mandibular left)\b/],
+    ['lower right', /\b(lr|lower right|mandibular right)\b/],
+    ['maxillary posterior', /\b(maxillary posterior|upper posterior)\b/],
+    ['mandibular posterior', /\b(mandibular posterior|lower posterior)\b/],
+    ['anterior', /\b(anterior|incisor|canine)\b/],
+    ['posterior', /\b(posterior|molar|premolar)\b/]
+  ]
+    .filter(([, pattern]) => pattern.test(normalizedText))
+    .map(([label]) => label);
+
+  return [...teeth, ...regions];
+}
+
+function uniquePush(target, value) {
+  if (value && !target.includes(value)) {
+    target.push(value);
+  }
+}
+
+function emptyClinicalEntities() {
+  return {
+    tooth_or_region: [],
+    procedure_context: [],
+    symptoms: [],
+    clinical_tests_reported: [],
+    clinical_test_results: [],
+    periodontal_findings: [],
+    '2d_imaging_findings': [],
+    prior_treatment_status: [],
+    suspected_condition: [],
+    anatomic_risk: [],
+    surgical_planning_need: [],
+    uncertainty_level: [],
+    artifact_or_restoration_risk: [],
+    matched_guidance_categories: [],
+    cbct_relevance: '',
+    confidence_level: 'Low',
+    input_completeness: {
+      category: 'Minimal',
+      score: 0,
+      present: [],
+      missing: [],
+      note: 'Limited clinical information was provided.'
+    },
+    missing_information: [],
+    caution_notes: []
+  };
 }
 
 function conceptsFromText(normalizedText) {
-  return Object.entries(conceptPatterns).reduce((found, [concept, pattern]) => {
-    const exclusion = conceptExclusionPatterns[concept];
-    if (pattern.test(normalizedText) && !(exclusion && exclusion.test(normalizedText))) {
+  return Object.entries(concepts).reduce((found, [concept, rule]) => {
+    const excluded = (rule.excludes || []).some(pattern => pattern.test(normalizedText));
+    const matched = rule.patterns.some(pattern => pattern.test(normalizedText));
+    if (matched && !excluded) {
       found.add(concept);
     }
     return found;
   }, new Set());
 }
 
-function reducingConceptsFromText(normalizedText) {
-  return Object.entries(reducingConceptPatterns).reduce((found, [concept, pattern]) => {
-    if (pattern.test(normalizedText)) {
-      found.add(concept);
+function reducingConceptsFromText(conceptSet) {
+  return ['paWnl', 'noApicalLesion', 'stableFinding', 'noCurrentSymptoms', 'uncertaintyMarker', 'routineRequest']
+    .reduce((found, concept) => {
+      if (conceptSet.has(concept)) {
+        found.add(concept);
+      }
+      return found;
+    }, new Set());
+}
+
+function assessInputCompleteness(conceptSet, entities) {
+  const factors = [
+    {
+      key: 'symptoms',
+      label: 'Symptoms described',
+      missing: 'Symptoms',
+      present: entities.symptoms.length > 0 || ['persistentSymptoms', 'bitingPain', 'sinusTract', 'sourceUnclear'].some(concept => conceptSet.has(concept))
+    },
+    {
+      key: 'clinicalTesting',
+      label: 'Clinical testing reported',
+      missing: 'Clinical testing',
+      present: entities.clinical_tests_reported.length > 0
+    },
+    {
+      key: 'testResults',
+      label: 'Test results included',
+      missing: 'Test results',
+      present: entities.clinical_test_results.length > 0
+        || ['percussionTenderness', 'bitingPain', 'isolatedProbing', 'periodontalModifier'].some(concept => conceptSet.has(concept))
+    },
+    {
+      key: 'twoDImaging',
+      label: '2D imaging findings included',
+      missing: '2D imaging findings',
+      present: entities['2d_imaging_findings'].length > 0
+    },
+    {
+      key: 'priorTreatment',
+      label: 'Prior treatment status included',
+      missing: 'Prior treatment status',
+      present: entities.prior_treatment_status.length > 0
+        || /\b(no prior rct|no prior endo|no previous rct|untreated tooth|no root canal)\b/.test(entities.normalized_text || '')
+    },
+    {
+      key: 'localizationDifficulty',
+      label: 'Localization difficulty described',
+      missing: 'Localization or source clarity',
+      present: ['sourceUnclear', 'conflictingPulpTests'].some(concept => conceptSet.has(concept))
+    },
+    {
+      key: 'unresolvedQuestion',
+      label: 'Unresolved clinical question described',
+      missing: 'Unresolved clinical question',
+      present: ['uncertaintyMarker', 'inconclusive2d', 'verticalRootFracture', 'crackedToothPain', 'resorption', 'missedAnatomy', 'retreatment', 'impaction', 'extractionPlanning'].some(concept => conceptSet.has(concept))
+    },
+    {
+      key: 'anatomySurgicalConcern',
+      label: 'Anatomy or surgical concern described',
+      missing: 'Anatomy or surgical concern',
+      present: ['anatomicRisk', 'measurementNeed', 'locationExtent', 'surgicalPlanningNeed', 'implantPlanning', 'rootMorphologyUnclear', 'rootResorptionRisk'].some(concept => conceptSet.has(concept))
     }
-    return found;
-  }, new Set());
+  ];
+
+  const present = factors.filter(factor => factor.present).map(factor => factor.label);
+  const missing = factors.filter(factor => !factor.present).map(factor => factor.missing);
+  let category = 'Minimal';
+  if (present.length >= 7) {
+    category = 'Comprehensive';
+  } else if (present.length >= 5) {
+    category = 'Moderate';
+  } else if (present.length >= 3) {
+    category = 'Partial';
+  }
+
+  const missingSentence = missing.length
+    ? ` Missing: ${missing.slice(0, 4).join(', ')}${missing.length > 4 ? ', and other details' : ''}.`
+    : '';
+  const note = category === 'Minimal'
+    ? `Limited clinical information was provided.${missingSentence} Additional clinical and radiographic detail may change CBCT relevance.`
+    : category === 'Partial'
+      ? `Interpretation confidence is reduced because some clinical detail was not included.${missingSentence}`
+      : category === 'Moderate'
+        ? `The note includes several useful clinical details, but additional detail may still change CBCT relevance.${missingSentence}`
+        : 'The note includes symptoms, testing/imaging context, and a defined clinical or anatomic question.';
+
+  return { category, score: present.length, present, missing, note };
+}
+
+function extractClinicalEntities(normalizedText, conceptSet, matches = []) {
+  const entities = emptyClinicalEntities();
+  entities.normalized_text = normalizedText;
+  entities.tooth_or_region = extractToothOrRegion(normalizedText);
+
+  conceptSet.forEach(concept => {
+    const rule = concepts[concept];
+    if (rule?.field) {
+      uniquePush(entities[rule.field], rule.label);
+    }
+  });
+
+  matches.forEach(match => uniquePush(entities.matched_guidance_categories, match.guidanceCategory || match.name));
+
+  const hasTesting = conceptSet.has('pulpTesting') || conceptSet.has('percussionTenderness') || conceptSet.has('bitingPain');
+  const has2dContext = conceptSet.has('inconclusive2d') || conceptSet.has('paWnl') || conceptSet.has('periapicalFinding') || conceptSet.has('noApicalLesion');
+  const has3dQuestion = ['anatomicRisk', 'measurementNeed', 'locationExtent', 'surgicalPlanningNeed', 'missedAnatomy', 'rootMorphologyUnclear', 'rootResorptionRisk'].some(concept => conceptSet.has(concept));
+  const hasUncertainty = ['sourceUnclear', 'nonspecificSymptoms', 'conflictingPulpTests', 'uncertaintyMarker', 'inconclusive2d'].some(concept => conceptSet.has(concept));
+
+  entities.uncertainty_level = [
+    hasUncertainty ? (conceptSet.has('inconclusive2d') || conceptSet.has('sourceUnclear') ? 'Moderate to high uncertainty in the written note' : 'Some uncertainty in the written note') : '',
+    hasTesting && !has2dContext ? 'Testing is reported without clear 2D imaging context' : ''
+  ].filter(Boolean);
+
+  if (!entities.tooth_or_region.length) uniquePush(entities.missing_information, 'Specific tooth number or region');
+  if (!has2dContext && !conceptSet.has('implantPlanning')) uniquePush(entities.missing_information, 'Whether 2D imaging is normal, limited, or explanatory');
+  if (!hasTesting && !conceptSet.has('implantPlanning') && !conceptSet.has('impaction') && !conceptSet.has('extractionPlanning')) uniquePush(entities.missing_information, 'Relevant clinical testing findings, if performed');
+  if (!has3dQuestion && matches.some(match => match.alignmentLevel !== 'limited')) uniquePush(entities.missing_information, 'The specific 3D information needed from CBCT');
+
+  if (conceptSet.has('pulpNoResponse') || conceptSet.has('pulpLingering')) {
+    uniquePush(entities.caution_notes, 'Pulp test results are treated as reported clinical findings, not as a pulpal diagnosis.');
+  }
+  if (conceptSet.has('routineRequest') || conceptSet.has('noCurrentSymptoms')) {
+    uniquePush(entities.caution_notes, 'Routine requests, asymptomatic notes, and cases already answered by 2D imaging reduce CBCT relevance.');
+  }
+  if (conceptSet.has('crownOrPost') || conceptSet.has('largeRestoration')) {
+    uniquePush(entities.caution_notes, 'Posts, crowns, restorations, and root filling materials can create artifacts that complicate CBCT interpretation.');
+  }
+  if (!matches.length) {
+    uniquePush(entities.caution_notes, 'No clear CBCT-alignment pattern was detected from the information provided.');
+  }
+
+  entities.input_completeness = assessInputCompleteness(conceptSet, entities);
+  if (['Minimal', 'Partial'].includes(entities.input_completeness.category)) {
+    uniquePush(entities.caution_notes, entities.input_completeness.note);
+  }
+
+  delete entities.normalized_text;
+  return entities;
 }
 
 function hasRequiredConcepts(requirements = [], concepts) {
@@ -585,7 +1103,7 @@ function scoreScenario(scenario, concepts, reducingConcepts) {
     }
   });
 
-  scenario.comboBonus.forEach(combo => {
+  (scenario.comboBonus || []).forEach(combo => {
     if (combo.every(concept => concepts.has(concept))) {
       score += 1;
     }
@@ -615,6 +1133,70 @@ function scoreScenario(scenario, concepts, reducingConcepts) {
     alignmentLevel = 'moderate';
   }
 
+  const clear3dNeed = [
+    'inconclusive2d',
+    'anatomicRisk',
+    'measurementNeed',
+    'locationExtent',
+    'surgicalPlanningNeed',
+    'missedAnatomy',
+    'complications',
+    'calcifiedCanal',
+    'rootMorphologyUnclear',
+    'rootResorptionRisk'
+  ].some(concept => concepts.has(concept));
+  const classicVrfCluster = (concepts.has('verticalRootFracture')
+    && (concepts.has('isolatedProbing') || concepts.has('jShapedLesion') || concepts.has('haloLesion') || concepts.has('priorEndo')))
+    || (scenario.name === 'Suspected vertical root fracture'
+      && concepts.has('priorEndo')
+      && concepts.has('isolatedProbing')
+      && concepts.has('bitingPain'));
+  const nonhealingEndoCluster = scenario.name === 'Persistent or nonhealing endodontic symptoms'
+    && concepts.has('priorEndo')
+    && (concepts.has('nonhealingLesion') || concepts.has('periapicalFinding') || concepts.has('sinusTract'))
+    && concepts.has('persistentSymptoms');
+  const implantAnatomyCluster = scenario.name === 'Implant planning'
+    && concepts.has('implantPlanning')
+    && (concepts.has('anatomicRisk') || concepts.has('measurementNeed') || concepts.has('surgicalPlanningNeed'));
+  const retreatmentAnatomyCluster = scenario.name === 'Missed anatomy or retreatment evaluation'
+    && concepts.has('priorEndo')
+    && (concepts.has('missedAnatomy') || concepts.has('complications') || concepts.has('calcifiedCanal'))
+    && (concepts.has('inconclusive2d') || concepts.has('retreatment') || concepts.has('missedAnatomy'));
+  const surgeryAnatomyCluster = scenario.name === 'Endodontic surgery planning'
+    && concepts.has('surgicalPlanningNeed')
+    && (concepts.has('anatomicRisk') || concepts.has('inconclusive2d') || concepts.has('locationExtent'));
+
+  const strongClusterMargin = (classicVrfCluster || retreatmentAnatomyCluster || surgeryAnatomyCluster) ? 0.75 : 2;
+  if ((classicVrfCluster || nonhealingEndoCluster || implantAnatomyCluster || retreatmentAnatomyCluster || surgeryAnatomyCluster) && requirementsMet && score - scenario.threshold >= strongClusterMargin) {
+    alignmentLevel = 'strong';
+  }
+
+  if (alignmentLevel === 'strong' && !clear3dNeed && !classicVrfCluster && !nonhealingEndoCluster && !surgeryAnatomyCluster) {
+    alignmentLevel = 'moderate';
+  }
+
+  if (concepts.has('routineRequest') || (concepts.has('noCurrentSymptoms') && !clear3dNeed)) {
+    score = Math.min(score, scenario.threshold + 0.25);
+    alignmentLevel = requirementsMet && score >= scenario.threshold ? 'limited' : alignmentLevel;
+  }
+
+  if (scenario.name === 'Contradictory or nonspecific signs and symptoms'
+    && concepts.has('paWnl')
+    && concepts.has('noApicalLesion')
+    && !concepts.has('inconclusive2d')
+    && !concepts.has('priorEndo')) {
+    alignmentLevel = 'limited';
+  }
+
+  if (scenario.name === 'Contradictory or nonspecific signs and symptoms'
+    && alignmentLevel === 'strong'
+    && !concepts.has('priorEndo')
+    && !concepts.has('anatomicRisk')
+    && !concepts.has('resorption')
+    && !concepts.has('verticalRootFracture')) {
+    alignmentLevel = 'moderate';
+  }
+
   return {
     ...scenario,
     score,
@@ -632,13 +1214,60 @@ function matchScenarioText(text) {
 function analyzeScenarioText(text) {
   const normalizedText = normalizeScenarioText(text);
   const concepts = conceptsFromText(normalizedText);
-  const reducingConcepts = reducingConceptsFromText(normalizedText);
-  const matches = scenarios
+  const reducingConcepts = reducingConceptsFromText(concepts);
+  const matches = guidanceScenarios
     .map(scenario => scoreScenario(scenario, concepts, reducingConcepts))
     .filter(match => match.score >= match.threshold)
     .sort((a, b) => b.score - a.score);
+  const entities = extractClinicalEntities(normalizedText, concepts, matches);
+  const topAlignment = matches[0]?.alignmentLevel || 'weak';
+  entities.confidence_level = confidenceLevelFor(topAlignment, entities.input_completeness.category);
+  entities.cbct_relevance = cbctRelevanceSummary(matches, concepts, entities);
 
-  return { matches, concepts, reducingConcepts };
+  return { matches, concepts, reducingConcepts, entities, normalizedText };
+}
+
+function confidenceLevelFor(alignmentLevel, completenessCategory) {
+  const base = ({ strong: 'High', moderate: 'Moderate', limited: 'Low', weak: 'Low' })[alignmentLevel] || 'Low';
+  const rank = { Low: 0, Moderate: 1, High: 2 };
+  const labelForRank = ['Low', 'Moderate', 'High'];
+  const maxByCompleteness = {
+    Minimal: 'Low',
+    Partial: 'Moderate',
+    Moderate: 'High',
+    Comprehensive: 'High'
+  }[completenessCategory] || 'Low';
+
+  return labelForRank[Math.min(rank[base], rank[maxByCompleteness])];
+}
+
+function cbctRelevanceSummary(matches, concepts, entities) {
+  const completenessPrefix = ['Minimal', 'Partial'].includes(entities.input_completeness.category)
+    ? `${entities.input_completeness.note} `
+    : '';
+
+  if (!matches.length) {
+    return `${completenessPrefix}CBCT relevance appears limited based on the information provided.`.trim();
+  }
+
+  const topMatch = matches[0];
+  const hasLimited2d = concepts.has('inconclusive2d');
+  const has3dNeed = ['anatomicRisk', 'measurementNeed', 'locationExtent', 'surgicalPlanningNeed', 'missedAnatomy', 'rootMorphologyUnclear', 'rootResorptionRisk'].some(concept => concepts.has(concept));
+  const hasUncertainty = ['sourceUnclear', 'nonspecificSymptoms', 'conflictingPulpTests', 'persistentSymptoms', 'verticalRootFracture', 'resorption'].some(concept => concepts.has(concept));
+
+  if (topMatch.alignmentLevel === 'strong') {
+    return `${completenessPrefix}The note describes a clearer unresolved clinical question with either limited 2D information or a specific 3D anatomy need. CBCT may be considered as a way to help clarify that question, while clinical judgment and lower-exposure alternatives still matter.`.trim();
+  }
+
+  if (topMatch.alignmentLevel === 'moderate' || (hasUncertainty && (hasLimited2d || has3dNeed))) {
+    return `${completenessPrefix}CBCT may help clarify the clinical question if exam findings and 2D imaging remain inconclusive. The provided text does not make CBCT required.`.trim();
+  }
+
+  if (entities.caution_notes.length) {
+    return `${completenessPrefix}CBCT relevance appears limited or indirect based on the conservative details in the note.`.trim();
+  }
+
+  return `${completenessPrefix}The scenario has some CBCT-related language, but the specific 3D question or 2D limitation is not fully established in the provided text.`.trim();
 }
 
 function labelsForConcepts(concepts) {
@@ -707,7 +1336,7 @@ function calculateDecisionImpact(entries) {
   }, { planImpact: 0, diagnosisImpact: 0, primaryImpact: 0 });
 }
 
-function renderAlignmentDetails(target, topMatch, concepts, reducingConcepts) {
+function renderAlignmentDetails(target, topMatch, concepts, reducingConcepts, entities = null) {
   const supporting = topMatch
     ? labelsForConcepts(topMatch.matchedConcepts)
     : labelsForConcepts(concepts);
@@ -720,10 +1349,43 @@ function renderAlignmentDetails(target, topMatch, concepts, reducingConcepts) {
   const reducingList = reducing.length
     ? reducing.map(item => `<li>${escapeHtml(item)}</li>`).join('')
     : '<li>No limiting details were detected in the note text.</li>';
+  const entitySections = entities ? [
+    ['What was recognized from the text', [
+      ...entities.tooth_or_region.map(item => `Tooth/region: ${item}`),
+      ...entities.procedure_context,
+      ...entities.symptoms,
+      ...entities.clinical_tests_reported,
+      ...entities.clinical_test_results,
+      ...entities.periodontal_findings,
+      ...entities['2d_imaging_findings'],
+      ...entities.prior_treatment_status,
+      ...entities.suspected_condition,
+      ...entities.anatomic_risk,
+      ...entities.surgical_planning_need,
+      ...entities.artifact_or_restoration_risk
+    ]],
+    ['What was inferred', [
+      ...entities.uncertainty_level,
+      `Input completeness: ${entities.input_completeness.category} (${entities.input_completeness.score}/8 factors present)`,
+      entities.input_completeness.note,
+      `CBCT relevance: ${entities.cbct_relevance}`,
+      `Confidence: ${entities.confidence_level}`
+    ]],
+    ['Missing information or caution notes', [
+      ...entities.missing_information.map(item => `Missing: ${item}`),
+      ...entities.caution_notes
+    ]]
+  ].map(([heading, items]) => `
+    <section>
+      <h4>${escapeHtml(heading)}</h4>
+      <ul>${(items.length ? items : ['No additional details were extracted.']).map(item => `<li>${escapeHtml(item)}</li>`).join('')}</ul>
+    </section>
+  `).join('') : '';
 
   target.innerHTML = `
+    ${entitySections}
     <section>
-      <h4>Supporting features</h4>
+      <h4>Matched guidance features</h4>
       <ul>${supportingList}</ul>
     </section>
     <section>
@@ -868,7 +1530,7 @@ function analyzeScenario() {
   if (!matches.length) {
     title.textContent = 'No specific CBCT guidance pattern detected';
     body.textContent = 'No specific CBCT-related language was detected in the scenario text. ADA/AAOMR guidance frames imaging around clinical need, patient selection, and whether lower-exposure options can provide the needed information.';
-    renderAlignmentDetails(details, null, scenarioAnalysis.concepts, scenarioAnalysis.reducingConcepts);
+    renderAlignmentDetails(details, null, scenarioAnalysis.concepts, scenarioAnalysis.reducingConcepts, scenarioAnalysis.entities);
     responsible.textContent = 'Add context such as nonhealing endodontic treatment, suspected fracture, resorption, trauma, implant planning, or inconclusive radiographs if those details apply.';
     return;
   }
@@ -887,7 +1549,7 @@ function analyzeScenario() {
     chip.textContent = `${match.name} (${match.alignmentLevel})`;
     chips.appendChild(chip);
   });
-  renderAlignmentDetails(details, topMatch, scenarioAnalysis.concepts, scenarioAnalysis.reducingConcepts);
+  renderAlignmentDetails(details, topMatch, scenarioAnalysis.concepts, scenarioAnalysis.reducingConcepts, scenarioAnalysis.entities);
 
   responsible.textContent = 'Responsible-use reminder: document the clinical question, use limited FOV when possible, optimize exposure for the patient and indication, and interpret findings within the complete clinical context.';
 }

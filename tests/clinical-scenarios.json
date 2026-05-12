@@ -348,7 +348,7 @@
     "expectedExclude": [
       "suspected vertical root fracture"
     ],
-    "expectedConfidence": "limited-to-moderate",
+    "expectedConfidence": "strong",
     "notes": "Tests complication/retreatment language without persistent symptoms."
   },
   {
@@ -383,5 +383,479 @@
     ],
     "expectedConfidence": "strong",
     "notes": "Tests FOV wording where the actual clinical question remains localized implant anatomy."
+  },
+  {
+    "id": "CASE-036",
+    "input": "#14 cold -, EPT NR, PA WNL. No swelling. Endo dx only.",
+    "expectedInclude": [
+      "pulpNoResponse"
+    ],
+    "expectedExclude": [
+      "strong CBCT indication",
+      "persistent or nonhealing endodontic symptoms"
+    ],
+    "expectedConfidence": "weak",
+    "notes": "Vitality findings alone should be recognized but not become a CBCT indication."
+  },
+  {
+    "id": "CASE-037",
+    "input": "#3 cold lingering, heat pain, PA normal, no PARL.",
+    "expectedInclude": [
+      "pulpLingering"
+    ],
+    "expectedExclude": [
+      "strong CBCT indication",
+      "persistent or nonhealing endodontic symptoms"
+    ],
+    "expectedConfidence": "weak",
+    "notes": "Pulp testing results are clinical findings, not diagnoses."
+  },
+  {
+    "id": "CASE-038",
+    "input": "#18 TTP+, PA WNL, no prior RCT.",
+    "expectedInclude": [
+      "percussionTenderness"
+    ],
+    "expectedExclude": [
+      "previously treated tooth",
+      "persistent or nonhealing endodontic symptoms"
+    ],
+    "expectedConfidence": "weak-or-limited",
+    "notes": "Percussion tenderness without 2D limitation or prior treatment stays conservative."
+  },
+  {
+    "id": "CASE-039",
+    "input": "#19 RCT, sinus tract, PA unclear MB vs distal root source.",
+    "expectedInclude": [
+      "persistent or nonhealing endodontic symptoms",
+      "previously treated tooth"
+    ],
+    "expectedConfidence": "strong",
+    "notes": "Short post-treatment sinus tract with localization uncertainty."
+  },
+  {
+    "id": "CASE-040",
+    "input": "31 vrf? rct post crown bite+ 8mm isolated pocket pa equivocal",
+    "expectedInclude": [
+      "suspected vertical root fracture",
+      "previously treated tooth"
+    ],
+    "expectedConfidence": "strong",
+    "notes": "Messy shorthand VRF cluster."
+  },
+  {
+    "id": "CASE-041",
+    "input": "#32 EXT planning, roots darkening over IAN on pano, root morphology unclear.",
+    "expectedInclude": [
+      "extractionPlanning",
+      "thirdMolar",
+      "anatomic measurement"
+    ],
+    "expectedConfidence": "strong",
+    "notes": "Extraction planning with vital anatomy and unclear root relationships."
+  },
+  {
+    "id": "CASE-042",
+    "input": "#17 impacted 3rd molar, canal diversion on pano, close to canal.",
+    "expectedInclude": [
+      "impacted tooth localization",
+      "thirdMolar",
+      "anatomic measurement"
+    ],
+    "expectedConfidence": "strong",
+    "notes": "Third molar/anatomic risk pattern."
+  },
+  {
+    "id": "CASE-043",
+    "input": "#11 canine impacted, buccal/palatal position unclear; lateral root resorption risk.",
+    "expectedInclude": [
+      "impacted tooth localization",
+      "rootResorptionRisk"
+    ],
+    "expectedConfidence": "strong",
+    "notes": "Impacted canine position and adjacent root risk."
+  },
+  {
+    "id": "CASE-044",
+    "input": "supernumerary/mesiodens, eruption path unclear, roots of 8/9 proximity?",
+    "expectedInclude": [
+      "supernumerary",
+      "impacted tooth localization"
+    ],
+    "expectedConfidence": "strong",
+    "notes": "Supernumerary and eruption-path localization."
+  },
+  {
+    "id": "CASE-045",
+    "input": "#9 trauma, luxation, root fx? PA hard to interpret.",
+    "expectedInclude": [
+      "Trauma",
+      "rootFracture"
+    ],
+    "expectedConfidence": "strong",
+    "notes": "Trauma with possible root fracture and limited 2D imaging."
+  },
+  {
+    "id": "CASE-046",
+    "input": "#8 avulsion replanted, immature apex, possible replacement resorption extent unclear.",
+    "expectedInclude": [
+      "Trauma",
+      "resorption localization"
+    ],
+    "expectedConfidence": "strong",
+    "notes": "Trauma/resorption extent question."
+  },
+  {
+    "id": "CASE-047",
+    "input": "#24 invasive cervical resorption? PA overlap makes buccal/lingual extent impossible.",
+    "expectedInclude": [
+      "external cervical resorption",
+      "resorption localization"
+    ],
+    "expectedConfidence": "strong",
+    "notes": "Cervical resorption with 2D overlap."
+  },
+  {
+    "id": "CASE-048",
+    "input": "#7 internal resorption vs external resorption, perforation concern, PA equivocal.",
+    "expectedInclude": [
+      "resorption localization",
+      "perforationConcern"
+    ],
+    "expectedConfidence": "strong",
+    "notes": "Internal/external differentiation and perforation concern."
+  },
+  {
+    "id": "CASE-049",
+    "input": "#14 prior RCT, post/core, crown. Scatter obscures apex; persistent TTP.",
+    "expectedInclude": [
+      "previously treated tooth",
+      "crownOrPost",
+      "persistent or nonhealing endodontic symptoms"
+    ],
+    "expectedConfidence": "strong",
+    "notes": "Artifact/restoration risk plus persistent post-treatment symptoms."
+  },
+  {
+    "id": "CASE-050",
+    "input": "UL molar vague sinus pressure. PA WNL, no PARL, ENT allergy dx.",
+    "expectedExclude": [
+      "strong CBCT indication",
+      "persistent or nonhealing endodontic symptoms"
+    ],
+    "expectedConfidence": "weak-or-limited",
+    "notes": "Sinus language without a dental/anatomic 3D question."
+  },
+  {
+    "id": "CASE-051",
+    "input": "Long note: Patient reports lower right chewing discomfort for 3 months. #30 has prior RCT/crown. Bite testing reproduces pain on release, probing shows isolated 9 mm ML defect, and PA is equivocal with possible halo bone loss. Clinician wrote VRF? vs retreat.",
+    "expectedInclude": [
+      "suspected vertical root fracture",
+      "previously treated tooth",
+      "retreatment evaluation"
+    ],
+    "expectedConfidence": "strong",
+    "notes": "Narrative VRF-pattern note."
+  },
+  {
+    "id": "CASE-052",
+    "input": "Long note: #3 root canal completed elsewhere 1 year ago. Patient has recurrent swelling and a draining sinus tract. PA shows persistent PARL but cannot determine which root is associated because of sinus superimposition.",
+    "expectedInclude": [
+      "persistent or nonhealing endodontic symptoms",
+      "apical pathology"
+    ],
+    "expectedConfidence": "strong",
+    "notes": "Narrative nonhealing/localization case."
+  },
+  {
+    "id": "CASE-053",
+    "input": "Patient has broad maxillary posterior pain, cold responses are inconsistent from #12-15, Tooth Slooth cannot reproduce consistently, and PA/BW are WNL. No swelling or probing defect.",
+    "expectedInclude": [
+      "contradictory or nonspecific symptoms",
+      "conflictingPulpTests"
+    ],
+    "expectedExclude": [
+      "suspected vertical root fracture"
+    ],
+    "expectedConfidence": "limited-to-moderate",
+    "notes": "Narrative localization difficulty with testing conflict."
+  },
+  {
+    "id": "CASE-054",
+    "input": "For implant planning at #19, restorative space is established but the clinician needs ridge width, available bone height, and relationship to the mandibular canal before guide fabrication.",
+    "expectedInclude": [
+      "implant planning",
+      "anatomic measurement"
+    ],
+    "expectedConfidence": "strong",
+    "notes": "Narrative implant guide/anatomic measurement."
+  },
+  {
+    "id": "CASE-055",
+    "input": "Impacted maxillary canine is visible on pano but buccal/palatal position and proximity to lateral incisor root are unclear. Eruption path is unclear.",
+    "expectedInclude": [
+      "impacted tooth localization",
+      "rootResorptionRisk"
+    ],
+    "expectedConfidence": "strong",
+    "notes": "Narrative orthodontic eruption/localization."
+  },
+  {
+    "id": "CASE-056",
+    "input": "Patient fell yesterday. #8 and #9 are mobile after trauma. PA suggests possible alveolar fracture but the location and extent are unclear.",
+    "expectedInclude": [
+      "Trauma",
+      "alveolarFracture"
+    ],
+    "expectedConfidence": "strong",
+    "notes": "Narrative trauma with alveolar involvement."
+  },
+  {
+    "id": "CASE-057",
+    "input": "Endodontic retreatment consult for #19: prior RCT, calcified/blocked canal suspected, possible ledge, PA does not show canal path clearly.",
+    "expectedInclude": [
+      "retreatment evaluation",
+      "missed anatomy",
+      "previously treated tooth"
+    ],
+    "expectedConfidence": "strong",
+    "notes": "Narrative retreatment complication/anatomy case."
+  },
+  {
+    "id": "CASE-058",
+    "input": "Presurgical endodontic planning for #14. Need to understand palatal root apex and maxillary sinus floor relationship because PA angulation is limited.",
+    "expectedInclude": [
+      "surgicalPlanningNeed",
+      "anatomic measurement"
+    ],
+    "expectedConfidence": "strong",
+    "notes": "Endodontic surgery planning with sinus relationship."
+  },
+  {
+    "id": "CASE-059",
+    "input": "Large MOD and visible cracked cusp on #31. Bite pain is reproducible clinically, PA WNL, probing WNL, no VRF suspected. Question is crown planning.",
+    "expectedInclude": [
+      "suspected cracked tooth / structural tooth pain"
+    ],
+    "expectedExclude": [
+      "suspected vertical root fracture",
+      "strong CBCT indication"
+    ],
+    "expectedConfidence": "limited-to-moderate",
+    "notes": "Clinically obvious crack with limited added 3D question."
+  },
+  {
+    "id": "CASE-060",
+    "input": "Routine recall. Obvious recurrent caries on BW explains symptoms. PA and exam otherwise WNL; no unresolved clinical question.",
+    "expectedExclude": [
+      "strong CBCT indication",
+      "persistent or nonhealing endodontic symptoms"
+    ],
+    "expectedConfidence": "weak",
+    "notes": "Negative/control: 2D and exam answer the question."
+  },
+  {
+    "id": "CASE-061",
+    "input": "#30 missing, implant maybe someday, but no planning yet and no measurement needed.",
+    "expectedExclude": [
+      "strong CBCT indication"
+    ],
+    "expectedConfidence": "weak-or-limited",
+    "notes": "Ambiguous implant mention without current anatomic question."
+  },
+  {
+    "id": "CASE-062",
+    "input": "Pain?",
+    "expectedExclude": [
+      "strong CBCT indication"
+    ],
+    "expectedConfidence": "weak",
+    "notes": "Very incomplete ambiguous note."
+  },
+  {
+    "id": "CASE-063",
+    "input": "#19 maybe endo? cold ?? pa??",
+    "expectedInclude": [
+      "pulpTesting"
+    ],
+    "expectedExclude": [
+      "strong CBCT indication",
+      "persistent or nonhealing endodontic symptoms"
+    ],
+    "expectedConfidence": "weak",
+    "notes": "Messy partial note with testing mention only."
+  },
+  {
+    "id": "CASE-064",
+    "input": "LL pain, not sure tooth, PA unclear, cold mixed.",
+    "expectedInclude": [
+      "contradictory or nonspecific symptoms",
+      "conflictingPulpTests"
+    ],
+    "expectedConfidence": "moderate",
+    "notes": "Short ambiguous localization plus inconclusive 2D."
+  },
+  {
+    "id": "CASE-065",
+    "input": "#14 PARL? no symptoms, stable compared with old PA.",
+    "expectedInclude": [
+      "apical pathology"
+    ],
+    "expectedExclude": [
+      "strong CBCT indication"
+    ],
+    "expectedConfidence": "weak-or-limited",
+    "notes": "Apical language tempered by asymptomatic/stable context."
+  },
+  {
+    "id": "CASE-066",
+    "input": "Exo #30 simple erupted tooth, PA shows roots clear of canal, no sinus/nerve issue.",
+    "expectedExclude": [
+      "strong CBCT indication",
+      "anatomic measurement"
+    ],
+    "expectedConfidence": "weak",
+    "notes": "Negative/control extraction without anatomic risk."
+  },
+  {
+    "id": "CASE-067",
+    "input": "Third molar consult #32. Pano shows no canal overlap; roots straight and clear.",
+    "expectedExclude": [
+      "strong CBCT indication"
+    ],
+    "expectedConfidence": "weak-or-limited",
+    "notes": "Third molar mention without risk markers."
+  },
+  {
+    "id": "CASE-068",
+    "input": "Implant #14, need sinus floor proximity and residual ridge height; pano not clear.",
+    "expectedInclude": [
+      "implant planning",
+      "anatomic measurement"
+    ],
+    "expectedConfidence": "strong",
+    "notes": "Short implant/sinus/ridge measurement case."
+  },
+  {
+    "id": "CASE-069",
+    "input": "#21 external inflammatory resorption after ortho, extent unclear on PA.",
+    "expectedInclude": [
+      "resorption localization"
+    ],
+    "expectedConfidence": "strong",
+    "notes": "External inflammatory resorption extent."
+  },
+  {
+    "id": "CASE-070",
+    "input": "#10 replacement resorption/ankylosis after trauma? PA overlap.",
+    "expectedInclude": [
+      "resorption localization",
+      "Trauma",
+      "ankylosis"
+    ],
+    "expectedConfidence": "strong",
+    "notes": "Replacement resorption/ankylosis after trauma."
+  },
+  {
+    "id": "CASE-071",
+    "input": "#4 prior RCT, MB2 concern, no pain, PA equivocal around crown margin.",
+    "expectedInclude": [
+      "missed anatomy",
+      "previously treated tooth"
+    ],
+    "expectedConfidence": "strong",
+    "notes": "Missed anatomy can remain relevant even without symptoms when 2D is equivocal."
+  },
+  {
+    "id": "CASE-072",
+    "input": "#13 apico history, now persistent apical tenderness; sinus proximity unclear.",
+    "expectedInclude": [
+      "surgicalPlanningNeed",
+      "persistent or nonhealing endodontic symptoms"
+    ],
+    "expectedConfidence": "strong",
+    "notes": "Apico history and sinus-proximity uncertainty."
+  },
+  {
+    "id": "CASE-073",
+    "input": "BW WNL, PA WNL, cold WNL, non-lingering response, percussion negative. Patient wants CBCT to be safe.",
+    "expectedExclude": [
+      "strong CBCT indication",
+      "persistent or nonhealing endodontic symptoms",
+      "suspected vertical root fracture"
+    ],
+    "expectedConfidence": "weak",
+    "notes": "Negative/control with normal testing and imaging."
+  },
+  {
+    "id": "CASE-074",
+    "input": "#15 heat pain relieved by cold, PA WNL. No swelling, no prior endo.",
+    "expectedInclude": [
+      "pulpLingering"
+    ],
+    "expectedExclude": [
+      "strong CBCT indication",
+      "previously treated tooth"
+    ],
+    "expectedConfidence": "weak",
+    "notes": "Heat/cold symptom recognition without CBCT overcall."
+  },
+  {
+    "id": "CASE-075",
+    "input": "#19 RCT, post, crown, isolated 7mm probing, bite pain on release, PA WNL, cannot tell if periodontal/endodontic source.",
+    "expectedInclude": [
+      "suspected vertical root fracture",
+      "previously treated tooth",
+      "contradictory or nonspecific symptoms"
+    ],
+    "expectedConfidence": "strong",
+    "notes": "Endo-perio uncertainty with VRF modifiers."
+  },
+  {
+    "id": "CASE-076",
+    "input": "Pain?",
+    "expectedExclude": [
+      "strong CBCT indication"
+    ],
+    "expectedConfidence": "weak",
+    "expectedCompleteness": "Minimal",
+    "expectedEntityConfidence": "Low",
+    "notes": "Completeness layer: sparse/vague note should still be interpreted with low confidence."
+  },
+  {
+    "id": "CASE-077",
+    "input": "#14 pain, cold weird, PA WNL, no prior RCT.",
+    "expectedInclude": [
+      "pulpTesting"
+    ],
+    "expectedExclude": [
+      "strong CBCT indication"
+    ],
+    "expectedCompleteness": "Partial",
+    "expectedEntityConfidence": "Low",
+    "notes": "Completeness layer: symptoms and testing without imaging or question."
+  },
+  {
+    "id": "CASE-078",
+    "input": "#19 prior RCT, persistent TTP, PA equivocal.",
+    "expectedInclude": [
+      "previously treated tooth",
+      "persistent or nonhealing endodontic symptoms"
+    ],
+    "expectedCompleteness": "Moderate",
+    "expectedEntityConfidence": "High",
+    "notes": "Completeness layer: useful but not complete clinical detail."
+  },
+  {
+    "id": "CASE-079",
+    "input": "#30 prior RCT/crown. Localized bite pain on release, percussion +, isolated 9mm probing, PA equivocal J-shaped lesion, source unclear, VRF? Need clarify location/extent of root/bone pattern.",
+    "expectedInclude": [
+      "suspected vertical root fracture",
+      "previously treated tooth"
+    ],
+    "expectedConfidence": "strong",
+    "expectedCompleteness": "Comprehensive",
+    "expectedEntityConfidence": "High",
+    "notes": "Completeness layer: symptoms, tests/results, imaging, prior treatment, localization, question, and anatomy detail."
   }
 ]

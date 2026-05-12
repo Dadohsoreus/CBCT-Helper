@@ -8,7 +8,7 @@ const conceptAliases = {
   },
   'contradictory or nonspecific symptoms': {
     scenarios: ['Contradictory or nonspecific signs and symptoms'],
-    concepts: ['nonspecificSymptoms']
+    concepts: ['nonspecificSymptoms', 'sourceUnclear', 'conflictingPulpTests']
   },
   'suspected vertical root fracture': {
     scenarios: ['Suspected vertical root fracture'],
@@ -68,7 +68,9 @@ function summarize(analysis) {
     })),
     concepts: Array.from(analysis.concepts),
     reducingConcepts: Array.from(analysis.reducingConcepts),
-    topAlignment: analysis.matches[0]?.alignmentLevel || 'weak'
+    topAlignment: analysis.matches[0]?.alignmentLevel || 'weak',
+    inputCompleteness: analysis.entities.input_completeness.category,
+    entityConfidence: analysis.entities.confidence_level
   };
 }
 
@@ -103,15 +105,25 @@ function runCase(testCase) {
   const confidenceMismatch = confidenceMatches(summary.topAlignment, expectedConfidence)
     ? null
     : { expected: expectedConfidence, actual: summary.topAlignment };
+  const completenessMismatch = !testCase.expectedCompleteness || summary.inputCompleteness === testCase.expectedCompleteness
+    ? null
+    : { expected: testCase.expectedCompleteness, actual: summary.inputCompleteness };
+  const entityConfidenceMismatch = !testCase.expectedEntityConfidence || summary.entityConfidence === testCase.expectedEntityConfidence
+    ? null
+    : { expected: testCase.expectedEntityConfidence, actual: summary.entityConfidence };
 
   return {
     id: testCase.id,
     passed: missedExpectedConcepts.length === 0
       && incorrectlyIncludedConcepts.length === 0
-      && !confidenceMismatch,
+      && !confidenceMismatch
+      && !completenessMismatch
+      && !entityConfidenceMismatch,
     missedExpectedConcepts,
     incorrectlyIncludedConcepts,
     confidenceMismatch,
+    completenessMismatch,
+    entityConfidenceMismatch,
     summary,
     notes: testCase.notes
   };
@@ -141,7 +153,16 @@ results.forEach(result => {
     console.log(`  confidence/alignment mismatch: expected ${result.confidenceMismatch.expected}, got ${result.confidenceMismatch.actual}`);
   }
 
+  if (result.completenessMismatch) {
+    console.log(`  completeness mismatch: expected ${result.completenessMismatch.expected}, got ${result.completenessMismatch.actual}`);
+  }
+
+  if (result.entityConfidenceMismatch) {
+    console.log(`  entity confidence mismatch: expected ${result.entityConfidenceMismatch.expected}, got ${result.entityConfidenceMismatch.actual}`);
+  }
+
   console.log(`  detected concepts: ${result.summary.concepts.join(', ') || 'none'}`);
+  console.log(`  input completeness: ${result.summary.inputCompleteness}; confidence: ${result.summary.entityConfidence}`);
   console.log(`  nuance: ${result.notes}`);
 });
 
