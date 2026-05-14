@@ -1578,8 +1578,12 @@ function analyzeScenario() {
 }
 
 function tabForHash(hash) {
-  if (!hash || hash === '#calculator' || hash === '#modality') {
-    return 'home';
+  if (!hash || hash === '#clinical-scenarios' || hash === '#modality') {
+    return 'clinical';
+  }
+
+  if (hash === '#calculator') {
+    return 'estimator';
   }
 
   const id = hash.slice(1);
@@ -1595,7 +1599,7 @@ function setActiveTab(tabName, options = {}) {
   const tabs = Array.from(document.querySelectorAll('.tab'));
   const panels = Array.from(document.querySelectorAll('[data-tab-panel]'));
   const activeTab = tabs.find(tab => tab.dataset.tab === tabName) || tabs[0];
-  const activeName = activeTab?.dataset.tab || 'home';
+  const activeName = activeTab?.dataset.tab || 'clinical';
 
   panels.forEach(panel => {
     panel.hidden = panel.dataset.tabPanel !== activeName;
@@ -1618,7 +1622,7 @@ function setupTabs() {
     tab.addEventListener('click', event => {
       event.preventDefault();
       const tabName = tab.dataset.tab || tabForHash(tab.hash);
-      const targetId = tabName === 'home' ? 'calculator' : tabName;
+      const targetId = tab.hash ? tab.hash.slice(1) : tabName;
       history.pushState(null, '', `#${targetId}`);
       setActiveTab(tabName, { targetId });
     });

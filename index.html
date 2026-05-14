@@ -16,7 +16,8 @@
       </div>
     </div>
     <nav class="tabs" aria-label="Website sections">
-      <a href="#calculator" class="tab is-active" data-tab="home">Estimator + Should I CBCT?</a>
+      <a href="#clinical-scenarios" class="tab is-active" data-tab="clinical">Clinical Scenarios</a>
+      <a href="#calculator" class="tab" data-tab="estimator">Estimator</a>
       <a href="#fov-resolution" class="tab" data-tab="fov-resolution">FOV &amp; Resolution</a>
       <a href="#navigation" class="tab" data-tab="navigation">Navigation Guide</a>
       <a href="#artifacts" class="tab" data-tab="artifacts">Artifact Guide</a>
@@ -26,7 +27,7 @@
   </header>
 
   <main>
-    <section id="calculator" class="section hero-band" data-tab-panel="home">
+    <section id="clinical-scenarios" class="section hero-band" data-tab-panel="clinical">
       <article class="decision-section" aria-labelledby="introTitle">
         <div class="intro-copy">
           <p class="eyebrow">Decision support</p>
@@ -58,6 +59,38 @@
         </div>
       </article>
 
+      <p class="path-note">Start with a clinical scenario below, or use the Estimator tab for practice-volume planning.</p>
+
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Clinical scenarios</p>
+          <h2>Should I CBCT?</h2>
+          <p class="lede">Enter a short clinical scenario. The guide looks for common situations discussed in AAE/AAOMR and ADA/AAOMR guidance and returns educational context, not a diagnosis or treatment recommendation.</p>
+        </div>
+      </div>
+
+      <div class="tool-grid">
+        <div class="panel">
+          <label class="scenario-label" for="scenarioInput">Clinical scenario</label>
+          <textarea id="scenarioInput" rows="8">#14 lingering cold, deep DO recurrent decay under crown. PA equivocal. Pt reports sinus pressure + vague pain zygoma area. Eval extent + possible MB2/perf?</textarea>
+          <div class="button-row">
+            <button id="analyzeScenario" type="button">Review scenario</button>
+            <button class="secondary" id="clearScenario" type="button">Clear</button>
+          </div>
+        </div>
+        <aside class="panel alignment-panel" id="recommendationBox">
+          <p class="eyebrow">Study context</p>
+          <h3 id="recommendationTitle">Study-based context</h3>
+          <p id="recommendationText"></p>
+          <div class="alignment-details" id="alignmentDetails"></div>
+          <div id="matchedIndications" class="chips"></div>
+          <div class="cdt-scenario-reference" id="cdtScenarioReference" hidden></div>
+          <p class="note" id="responsibleUse"></p>
+        </aside>
+      </div>
+    </section>
+
+    <section id="calculator" class="section" data-tab-panel="estimator">
       <div class="evidence-section">
         <div class="evidence-section-copy">
           <p class="eyebrow">Evidence that decisions change</p>
@@ -166,36 +199,6 @@
             <div class="total"><span>Total monthly imaging revenue</span><strong id="totalRevenue">$0</strong></div>
           </div>
           <p class="note">Assumption: each entered presentation is first screened with history, exam, and appropriate 2D imaging. Each entered indication is counted as an estimated CBCT scan whether the care is completed in-office or referred. Final imaging decisions remain clinician and patient specific.</p>
-        </aside>
-      </div>
-    </section>
-
-    <section id="modality" class="section" data-tab-panel="home">
-      <div class="section-head">
-        <div>
-          <p class="eyebrow">Part 2</p>
-          <h2>CBCT Considerations / Should I CBCT?</h2>
-          <p class="lede">Enter a short clinical scenario. The guide looks for common situations discussed in AAE/AAOMR and ADA/AAOMR guidance and returns educational context, not a diagnosis or treatment recommendation.</p>
-        </div>
-      </div>
-
-      <div class="tool-grid">
-        <div class="panel">
-          <label class="scenario-label" for="scenarioInput">Clinical scenario</label>
-          <textarea id="scenarioInput" rows="8">#14 lingering cold, deep DO recurrent decay under crown. PA equivocal. Pt reports sinus pressure + vague pain zygoma area. Eval extent + possible MB2/perf?</textarea>
-          <div class="button-row">
-            <button id="analyzeScenario" type="button">Review scenario</button>
-            <button class="secondary" id="clearScenario" type="button">Clear</button>
-          </div>
-        </div>
-        <aside class="panel alignment-panel" id="recommendationBox">
-          <p class="eyebrow">Study context</p>
-          <h3 id="recommendationTitle">Study-based context</h3>
-          <p id="recommendationText"></p>
-          <div class="alignment-details" id="alignmentDetails"></div>
-          <div id="matchedIndications" class="chips"></div>
-          <div class="cdt-scenario-reference" id="cdtScenarioReference" hidden></div>
-          <p class="note" id="responsibleUse"></p>
         </aside>
       </div>
     </section>

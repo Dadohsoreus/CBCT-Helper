@@ -146,7 +146,7 @@ h3 {
 
 .tabs {
   display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
+  grid-template-columns: repeat(7, minmax(0, 1fr));
   gap: 8px;
   max-width: var(--max);
   margin: 0 auto;
@@ -370,6 +370,14 @@ h3 {
 .decision-support-line {
   color: var(--muted-2) !important;
   font-size: 0.93rem !important;
+}
+
+.path-note {
+  max-width: 760px;
+  margin-top: var(--space-5);
+  margin-bottom: var(--space-5);
+  color: var(--muted);
+  font-size: 0.94rem;
 }
 
 .intro-points {
