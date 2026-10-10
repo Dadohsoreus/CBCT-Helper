@@ -3,271 +3,172 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Dan Alman CBCT Education</title>
-  <link rel="stylesheet" href="styles.css">
+  <meta name="description" content="CBCT education for general dentistry: clinical guidance, scan-review guides, and practice planning.">
+  <title>CBCT Helper | Dan Alman CBCT Education</title>
+  <link rel="stylesheet" href="styles.css?v=20261010-ui">
 </head>
 <body>
+  <a class="skip-link" href="#main-content">Skip to content</a>
   <header class="site-header">
     <div class="brand-wrap">
-      <img src="header-logo-xray.png" alt="Dan Alman CBCT logo" class="brand-logo">
-      <div class="header-copy">
-        <p class="eyebrow">Evidence-informed CBCT support for general dentistry</p>
-        <h1>Clinical CBCT Decision Center</h1>
-      </div>
+      <a href="#home" data-tab-link class="brand-link" aria-label="CBCT Helper home"><img src="header-logo-xray.png" alt="" class="brand-logo"><div class="header-copy"><span class="brand-name">CBCT Helper</span><p>Dan Alman CBCT Education</p></div></a>
+      <button type="button" id="menuToggle" class="menu-toggle" aria-expanded="false" aria-controls="siteNav">Menu</button>
     </div>
-    <nav class="tabs" aria-label="Website sections">
-      <a href="#clinical-scenarios" class="tab is-active" data-tab="clinical">Clinical Scenarios</a>
-      <a href="#calculator" class="tab" data-tab="estimator">Estimator</a>
-      <a href="#fov-resolution" class="tab" data-tab="fov-resolution">FOV &amp; Resolution</a>
-      <a href="#navigation" class="tab" data-tab="navigation">Navigation Guide</a>
-      <a href="#artifacts" class="tab" data-tab="artifacts">Artifact Guide</a>
-      <a href="#cdt" class="tab" data-tab="cdt">CDT Codes</a>
-      <a href="#citations" class="tab" data-tab="citations">Citations</a>
+    <nav class="tabs" id="siteNav" aria-label="Main navigation">
+      <a href="#home" class="tab is-active" data-tab="home" aria-current="page">Home</a>
+      <a href="#clinical-scenarios" class="tab" data-tab="clinical">Clinical cases</a>
+      <a href="#scan-guides" class="tab" data-tab="guides">Scan guides</a>
+      <a href="#calculator" class="tab" data-tab="estimator">Practice planner</a>
+      <a href="#citations" class="tab" data-tab="citations">About &amp; references</a>
     </nav>
   </header>
-
-  <main>
-    <section id="clinical-scenarios" class="section hero-band" data-tab-panel="clinical">
-      <article class="decision-section" aria-labelledby="introTitle">
-        <div class="intro-copy">
-          <p class="eyebrow">Decision support</p>
-          <h3 id="introTitle">CBCT is about better decisions.</h3>
-          <p>CBCT is often viewed as an endodontic or implant tool. In a restorative practice, its value is broader: it helps clarify uncertainty when 2D imaging, symptoms, and anatomy do not line up clearly.</p>
-          <p class="decision-statement">The most important question is not, "Can CBCT see more?" It is, "How often does 3D information change the decision I would have made otherwise?"</p>
-          <p>Published studies repeatedly show that CBCT can change diagnoses, clarify uncertainty, and alter treatment plans in a meaningful percentage of cases, especially when symptoms are unclear, anatomy is difficult to understand in 2D, or important findings may be obscured.</p>
-          <p class="decision-support-line">This guide keeps that decision context close to the literature, workflow, and patient-specific limits.</p>
-        </div>
-        <div class="intro-points" aria-label="CBCT decision support themes">
-          <div>
-            <span class="point-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" focusable="false"><path d="M12 21a9 9 0 1 0-9-9h3a6 6 0 1 1 6 6v3Z"/><path d="M12 15a3 3 0 1 0-3-3h3V9a3 3 0 0 0 0 6Z"/><path d="m15 9 4-4"/><path d="M16 5h3v3"/></svg>
-            </span>
-            <span><strong>Referral accuracy</strong><small>Better understand when a case may need specialty input.</small></span>
-          </div>
-          <div>
-            <span class="point-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" focusable="false"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"/><circle cx="12" cy="12" r="3"/></svg>
-            </span>
-            <span><strong>Fewer surprises</strong><small>Review anatomy and limitations before treatment begins.</small></span>
-          </div>
-          <div>
-            <span class="point-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" focusable="false"><path d="M12 3 20 6v6c0 5-3.4 8.5-8 9-4.6-.5-8-4-8-9V6l8-3Z"/><path d="m8.5 12 2.2 2.2 4.8-5"/></svg>
-            </span>
-            <span><strong>Conservative confidence</strong><small>Support more confident, measured decisions when appropriate.</small></span>
-          </div>
-        </div>
-      </article>
-
-      <p class="path-note">Start with a clinical scenario below, or use the Estimator tab for practice-volume planning.</p>
-
-      <div class="section-head">
-        <div>
-          <p class="eyebrow">Clinical scenarios</p>
-          <h2>Should I CBCT?</h2>
-          <p class="lede">Enter a short clinical scenario. The guide looks for common situations discussed in AAE/AAOMR and ADA/AAOMR guidance and returns educational context, not a diagnosis or treatment recommendation.</p>
-        </div>
+  <main id="main-content">
+    <section id="home" class="section home-section" data-tab-panel="home">
+      <div class="section-head"><div><p class="eyebrow">CBCT support for general dentistry</p><h1>What would you like to do?</h1><p class="lede">Review a clinical case, use the scan guides, estimate practice scan volume, and more.</p></div></div>
+      <div class="task-grid">
+        <a class="task-card" href="#clinical-scenarios" data-tab-link><span class="task-marker" aria-hidden="true">01</span><h2>Review a clinical case</h2><p>Find published guidance related to the details you provide.</p><span class="task-action">Review a case <span aria-hidden="true">→</span></span></a>
+        <a class="task-card" href="#scan-guides" data-tab-link><span class="task-marker" aria-hidden="true">02</span><h2>Use the scan guides</h2><p>Read practical guides to scan settings, image review, and artifacts.</p><span class="task-action">Open scan guides <span aria-hidden="true">→</span></span></a>
+        <a class="task-card" href="#calculator" data-tab-link><span class="task-marker" aria-hidden="true">03</span><h2>Estimate scan volume</h2><p>Estimate scan volume and gross revenue using your own assumptions.</p><span class="task-action">Open practice planner <span aria-hidden="true">→</span></span></a>
       </div>
-
-      <div class="tool-grid">
+      <h2 class="quick-access-title">Quick access</h2>
+      <div class="task-grid" aria-label="Quick access">
+        <a class="task-card" href="#artifacts" data-tab-link><span class="task-marker" aria-hidden="true">04</span><h2>Artifact examples</h2><p>Compare common artifact patterns and review ways to check them.</p><span class="task-action">View artifact examples <span aria-hidden="true">→</span></span></a>
+        <a class="task-card" href="#fov-resolution" data-tab-link><span class="task-marker" aria-hidden="true">05</span><h2>Field of view &amp; resolution</h2><p>Review scan coverage and image-detail considerations.</p><span class="task-action">Review scan settings <span aria-hidden="true">→</span></span></a>
+        <a class="task-card" href="#cdt" data-tab-link><span class="task-marker" aria-hidden="true">06</span><h2>CDT code reference</h2><p>Find common CBCT-related codes and their reference descriptions.</p><span class="task-action">View code reference <span aria-hidden="true">→</span></span></a>
+      </div>
+      <p class="home-note">Educational support for clinicians. Imaging decisions require the full patient history, examination, and existing imaging. <a href="#about-tool" data-tab-link>How this tool works</a></p>
+    </section>
+    <section id="clinical-scenarios" class="section" data-tab-panel="clinical" hidden>
+      <div class="section-head"><div><p class="eyebrow">Clinical cases</p><h1>Review a clinical case.</h1><p class="lede">Enter case details to see related CBCT guidance and its limitations. The tool does not decide whether a scan is needed.</p></div></div>
+      <div class="tool-grid clinical-grid">
+        <div class="clinical-input-column">
         <div class="panel">
-          <label class="scenario-label" for="scenarioInput">Clinical scenario</label>
-          <textarea id="scenarioInput" rows="8">#14 lingering cold, deep DO recurrent decay under crown. PA equivocal. Pt reports sinus pressure + vague pain zygoma area. Eval extent + possible MB2/perf?</textarea>
-          <div class="button-row">
-            <button id="analyzeScenario" type="button">Review scenario</button>
-            <button class="secondary" id="clearScenario" type="button">Clear</button>
-          </div>
+          <label class="scenario-label" for="scenarioInput">Case description</label>
+          <p class="form-helper" id="scenarioHelp">Include the tooth or area, symptoms, examination findings, existing imaging, and the question you need to answer. Omit patient identifiers.</p>
+          <textarea id="scenarioInput" rows="6" aria-describedby="scenarioHelp" placeholder="For example: tooth #14, persistent symptoms after root canal treatment, inconclusive periapical image. Is missed canal anatomy contributing?"></textarea>
+          <div class="example-buttons"><span>Try an example:</span><button type="button" class="secondary" data-scenario-example="pain">Unclear pain</button><button type="button" class="secondary" data-scenario-example="routine">Routine recall</button><button type="button" class="secondary" data-scenario-example="implant">Implant planning</button></div>
+          <div class="button-row"><button id="analyzeScenario" type="button">Find related guidance</button><button class="secondary" id="clearScenario" type="button">Clear</button></div>
+          <p class="note">The case tool uses preset text-matching rules in your browser. It does not send or save your case description. <a href="#about-tool" data-tab-link>Method and limitations</a></p>
         </div>
-        <aside class="panel alignment-panel" id="recommendationBox">
-          <p class="eyebrow">Study context</p>
-          <h3 id="recommendationTitle">Study-based context</h3>
-          <p id="recommendationText"></p>
-          <div class="alignment-details" id="alignmentDetails"></div>
+        <section class="panel match-explanation" aria-labelledby="matchExplanationTitle">
+          <h2 class="panel-title" id="matchExplanationTitle">How to interpret the text match</h2>
+          <p>The tool compares words and phrases with preset rules related to CBCT guidance. A close, partial, limited, or no match describes how the entered wording relates to a guidance topic.</p>
+          <p>The label does not indicate diagnostic certainty or determine whether a scan is needed. Recognized details may be incomplete. Review the original guidance and the complete clinical context.</p>
+        </section>
+        </div>
+        <aside class="panel alignment-panel" id="recommendationBox" aria-live="polite" aria-atomic="false">
+          <p class="eyebrow">Related guidance</p><h2 id="recommendationTitle">Add a case to begin</h2><p id="recommendationText">The result will show related guidance, limitations, and details to review.</p>
           <div id="matchedIndications" class="chips"></div>
+          <div class="alignment-details" id="alignmentDetails"></div>
           <div class="cdt-scenario-reference" id="cdtScenarioReference" hidden></div>
           <p class="note" id="responsibleUse"></p>
+          <button type="button" class="secondary" id="editScenario" hidden>Return to case description</button>
         </aside>
       </div>
     </section>
-
-    <section id="calculator" class="section" data-tab-panel="estimator">
-      <div class="evidence-section">
-        <div class="evidence-section-copy">
-          <p class="eyebrow">Evidence that decisions change</p>
-          <h2>Published studies show CBCT can shift clinical understanding.</h2>
-        </div>
-        <div class="evidence-strip" aria-label="Evidence highlights" id="evidenceHighlights">
-        </div>
+    <section id="scan-guides" class="section" data-tab-panel="guides" hidden>
+      <div class="section-head"><div><p class="eyebrow">Scan guides</p><h1>Find help with your scan.</h1><p class="lede">Choose the part of the workflow you want to review.</p></div></div>
+      <div class="task-grid">
+        <a class="task-card" href="#fov-resolution" data-tab-link><h2>Scan size &amp; detail</h2><p>Review field-of-view and resolution considerations for the question being investigated.</p><span class="task-action">Review scan settings →</span></a>
+        <a class="task-card" href="#navigation" data-tab-link><h2>Image review</h2><p>Find practical steps for working through common clinical questions in CS 3D Imaging.</p><span class="task-action">Open image-review guide →</span></a>
+        <a class="task-card" href="#artifacts" data-tab-link><h2>Artifact examples</h2><p>Compare image patterns and review checks for motion, metal, and other artifacts.</p><span class="task-action">View artifact examples →</span></a>
       </div>
-
-      <div class="section-head">
-        <div>
-          <p class="eyebrow">Part 1</p>
-          <h2>CBCT Utilization Estimator</h2>
-          <p class="lede">Estimate how often the cases you already see may match situations where CBCT changed diagnosis or treatment planning in published studies. Scan projections are rounded up to whole scans and are educational estimates, not imaging directives.</p>
-        </div>
-      </div>
-      <details class="disclosure">
-        <summary>How to interpret this estimate</summary>
-        <p>This tool is educational support only. It summarizes literature-supported considerations and practice-volume context. It does not diagnose conditions, recommend treatment, replace formal radiologic interpretation, or replace clinician judgment within the full patient context.</p>
-      </details>
-
-      <div class="tool-grid">
-        <form class="panel" id="calculatorForm">
-          <h3>Monthly clinical presentation</h3>
-          <p class="form-helper">Enter each patient once under the main reason CBCT is being considered. The right-hand boxes explain what the published percentage means; they are not separate scan counts.</p>
+    </section>
+    <section id="calculator" class="section" data-tab-panel="estimator" hidden>
+      <div class="section-head"><div><p class="eyebrow">Practice planner</p><h1>Estimate scan volume and revenue.</h1><p class="lede">Enter your case mix and scan-volume assumptions. These calculations describe a planning scenario; they do not establish imaging need or predict clinical outcomes.</p></div></div>
+      <div class="tool-grid planner-workspace">
+        <form class="panel planner-inputs" id="calculatorForm" aria-label="Practice planner inputs" onsubmit="return false">
+          <h2 class="panel-title">1. Monthly case mix</h2><p class="form-helper">Count each patient once, under the main reason imaging is being considered.</p>
           <div class="presentation-list">
-            <div class="presentation-row">
-              <label>Contradictory or hard-to-localize pain<input type="number" min="0" step="1" value="0" data-case="pain"></label>
-              <div class="evidence-box" data-evidence-card="pain"></div>
-            </div>
-            <div class="presentation-row">
-              <label>Nonhealing after endodontic treatment<input type="number" min="0" step="1" value="0" data-case="nonhealing"></label>
-              <div class="evidence-box" data-evidence-card="nonhealing"></div>
-            </div>
-            <div class="presentation-row">
-              <label>Suspected vertical root fracture<input type="number" min="0" step="1" value="0" data-case="fracture"></label>
-              <div class="evidence-box" data-evidence-card="fracture"></div>
-            </div>
-            <div class="presentation-row">
-              <label>Internal or external resorption concern<input type="number" min="0" step="1" value="0" data-case="resorption"></label>
-              <div class="evidence-box" data-evidence-card="resorption"></div>
-            </div>
-            <div class="presentation-row">
-              <label>Retreatment complication or missed anatomy<input type="number" min="0" step="1" value="0" data-case="retreatment"></label>
-              <div class="evidence-box" data-evidence-card="retreatment"></div>
-            </div>
-            <div class="presentation-row">
-              <label>Endodontic surgery planning<input type="number" min="0" step="1" value="0" data-case="surgery"></label>
-              <div class="evidence-box" data-evidence-card="surgery"></div>
-            </div>
-            <div class="presentation-row">
-              <label>Implant site assessment<input type="number" min="0" step="1" value="0" data-case="implant"></label>
-              <div class="evidence-box" data-evidence-card="implant"></div>
-            </div>
-            <div class="presentation-row">
-              <label>Airway or sleep-disordered breathing exams<input type="number" min="0" step="1" value="0" data-case="airway"></label>
-              <div class="evidence-box" data-evidence-card="airway"></div>
-            </div>
-            <div class="presentation-row">
-              <label>Sinus finding with possible odontogenic origin<input type="number" min="0" step="1" value="0" data-case="sinus"></label>
-              <div class="evidence-box" data-evidence-card="sinus"></div>
-            </div>
-            <div class="presentation-row">
-              <label>Impacted tooth or ectopic eruption assessment<input type="number" min="0" step="1" value="0" data-case="impaction"></label>
-              <div class="evidence-box" data-evidence-card="impaction"></div>
-            </div>
+            <div class="presentation-row"><label>Unclear or hard-to-localize pain<input type="number" min="0" step="1" value="0" data-case="pain"></label><details class="case-evidence"><summary>Study context</summary><div class="evidence-box" data-evidence-card="pain"></div></details></div>
+<div class="presentation-row"><label>Nonhealing after endodontic treatment<input type="number" min="0" step="1" value="0" data-case="nonhealing"></label><details class="case-evidence"><summary>Study context</summary><div class="evidence-box" data-evidence-card="nonhealing"></div></details></div>
+<div class="presentation-row"><label>Suspected vertical root fracture<input type="number" min="0" step="1" value="0" data-case="fracture"></label><details class="case-evidence"><summary>Study context</summary><div class="evidence-box" data-evidence-card="fracture"></div></details></div>
+<div class="presentation-row"><label>Resorption concern<input type="number" min="0" step="1" value="0" data-case="resorption"></label><details class="case-evidence"><summary>Study context</summary><div class="evidence-box" data-evidence-card="resorption"></div></details></div>
+<div class="presentation-row"><label>Retreatment or missed anatomy<input type="number" min="0" step="1" value="0" data-case="retreatment"></label><details class="case-evidence"><summary>Study context</summary><div class="evidence-box" data-evidence-card="retreatment"></div></details></div>
+<div class="presentation-row"><label>Endodontic surgery planning<input type="number" min="0" step="1" value="0" data-case="surgery"></label><details class="case-evidence"><summary>Study context</summary><div class="evidence-box" data-evidence-card="surgery"></div></details></div>
+<div class="presentation-row"><label>Implant site assessment<input type="number" min="0" step="1" value="0" data-case="implant"></label><details class="case-evidence"><summary>Study context</summary><div class="evidence-box" data-evidence-card="implant"></div></details></div>
+<div class="presentation-row"><label>Defined airway or sleep-related question<input type="number" min="0" step="1" value="0" data-case="airway"></label><details class="case-evidence"><summary>Study context</summary><div class="evidence-box" data-evidence-card="airway"></div></details></div>
+<div class="presentation-row"><label>Possible tooth-sinus relationship<input type="number" min="0" step="1" value="0" data-case="sinus"></label><details class="case-evidence"><summary>Study context</summary><div class="evidence-box" data-evidence-card="sinus"></div></details></div>
+<div class="presentation-row"><label>Impacted or ectopic tooth assessment<input type="number" min="0" step="1" value="0" data-case="impaction"></label><details class="case-evidence"><summary>Study context</summary><div class="evidence-box" data-evidence-card="impaction"></div></details></div>
           </div>
-
-          <h3>Referral and treatment setting</h3>
-          <p class="form-helper">Entered indications count toward estimated CBCT use whether the case is treated in your office or referred. The estimate is based on the clinical presentation, not on which services your office provides.</p>
-
-          <h3>Scan pricing</h3>
-          <div class="procedure-grid">
-            <label>Pans taken/month
-              <input type="number" min="0" step="1" value="45" id="panCount">
-            </label>
-            <label>Fee charged for a pan
-              <input type="number" min="0" step="1" value="95" id="panFee">
-            </label>
-            <label>Fee charged for a CBCT
-              <input type="number" min="0" step="1" value="295" id="cbctFee">
-            </label>
-          </div>
+          <h2 class="panel-title">2. Scan-volume assumptions</h2><p class="form-helper">Enter your own assumptions after considering patient selection. No proportion is selected for you.</p>
+          <div class="procedure-grid assumption-grid"><label>Share of entered cases proceeding to CBCT (%)<input id="scanShare" type="number" min="0" max="100" step="1" placeholder="Enter an assumption"></label><label>Number of scans referred out per month<input id="referredCount" type="number" min="0" step="1" placeholder="Enter count" aria-describedby="referralHelp"></label></div>
+          <p class="form-helper" id="referralHelp">Enter 0 if no scans are referred out. Referred scans are subtracted from total estimated scans and excluded from your practice's CBCT revenue.</p>
+          <details class="financial-inputs disclosure" open><summary>3. Optional gross-revenue calculation</summary><p>Enter fees and panoramic activity to calculate gross revenue. Operating costs, collections, and equipment costs are not included.</p><div class="procedure-grid"><label>Panoramic scans per month<input type="number" min="0" step="1" id="panCount" placeholder="Enter count"></label><label>Fee per panoramic scan ($)<input type="number" min="0" step="1" id="panFee" placeholder="Enter fee"></label><label>Fee per in-office CBCT scan ($)<input type="number" min="0" step="1" id="cbctFee" placeholder="Enter fee"></label></div></details>
         </form>
-
-        <aside class="panel result-panel" aria-live="polite">
-          <h3>Estimated study-based CBCT use</h3>
-          <div class="big-number"><span id="monthlyScans">0</span><small>per month</small></div>
-          <div class="quarter-number"><span id="quarterScans">0</span> per quarter</div>
-          <div class="metric-list">
-            <div><span>Cases with treatment-plan change evidence</span><strong id="planImpact">0</strong></div>
-            <div><span>Cases with diagnosis-change evidence</span><strong id="diagnosisImpact">0</strong></div>
-            <div><span>Largest contributing category</span><strong id="topCategory">-</strong></div>
-          </div>
-          <div class="decision-impact-box">
-            <h4>Estimated decisions changed</h4>
-            <p>Based on entered case mix and published study rates. Not a recommendation to scan every case.</p>
-            <div><span>Estimated decisions changed per month</span><strong id="decisionImpactMonthly">0</strong></div>
-            <div><span>Estimated decisions changed per quarter</span><strong id="decisionImpactQuarterly">0</strong></div>
-            <div><span>Treatment-plan change evidence per month</span><strong id="treatmentImpactMonthly">0</strong></div>
-            <div><span>Diagnosis-change evidence per month</span><strong id="diagnosticImpactMonthly">0</strong></div>
-          </div>
-          <div class="revenue-box">
-            <div><span>Monthly CBCT scan revenue</span><strong id="cbctRevenue">$0</strong></div>
-            <div><span>Monthly pan revenue</span><strong id="panRevenue">$0</strong></div>
-            <div class="total"><span>Total monthly imaging revenue</span><strong id="totalRevenue">$0</strong></div>
-          </div>
-          <p class="note">Assumption: each entered presentation is first screened with history, exam, and appropriate 2D imaging. Each entered indication is counted as an estimated CBCT scan whether the care is completed in-office or referred. Final imaging decisions remain clinician and patient specific.</p>
+        <aside class="panel planner-results" aria-live="polite">
+          <h2 class="panel-title">Total estimated CBCT use based on your monthly cases</h2><div class="metric-list"><div><span>Entered cases per month</span><strong id="enteredCases">0</strong></div></div>
+          <p class="form-helper" id="plannerStatus">Enter scan-volume assumptions to see calculated activity.</p>
+          <div class="metric-list"><div><span>Total CBCT scans per month</span><strong id="monthlyScans">—</strong></div><div><span>Scans performed in your practice</span><strong id="officeScans">—</strong></div><div><span>Scans referred out</span><strong id="referredScans">—</strong></div><div><span>Total CBCT scans per quarter</span><strong id="quarterScans">—</strong></div></div>
+          <details class="revenue-disclosure" open><summary>Optional gross revenue</summary><div class="revenue-box"><div><span>In-office CBCT revenue per month</span><strong id="cbctRevenue">—</strong></div><div><span>Panoramic revenue per month</span><strong id="panRevenue">—</strong></div><div class="total"><span>Total imaging revenue per month</span><strong id="totalRevenue">—</strong></div></div><p class="note">Gross revenue is not profit or a guarantee of collections.</p></details>
+          <p class="note">Study percentages are available beside each case category for reference. They are not used to forecast decisions changed in your practice.</p>
         </aside>
       </div>
     </section>
-
     <section id="fov-resolution" class="section muted" data-tab-panel="fov-resolution">
+      <a class="back-link" href="#scan-guides" data-tab-link>← All scan guides</a>
       <div class="section-head">
         <div>
           <p class="eyebrow">Scan selection</p>
-          <h2>FOV &amp; Resolution Guidance</h2>
+          <h1>Field of view &amp; image detail</h1>
           <p class="lede">Choose the scan size and resolution that match the diagnostic question, patient context, and level of detail needed.</p>
         </div>
       </div>
 
+      <nav class="guide-jump-links" aria-label="On this page"><span>On this page</span><a href="#scan-coverage" data-tab-link>Scan coverage</a><a href="#image-detail" data-tab-link>Image detail</a><a href="#system-workflow-notes" data-tab-link>System &amp; lab notes</a></nav>
       <div class="fov-principle panel">
         <p class="eyebrow">Main principle</p>
-        <h3>Match the scan to the question</h3>
-        <p>CBCT selection should be based on the clinical question and patient-specific factors, consistent with ALADA/ALADAIP principles. The goal is not simply to choose the smallest scan or the highest-resolution scan every time. The goal is to select the field of view and resolution that reasonably answer the clinical question while avoiding unnecessary exposure.</p>
+        <h2 class="panel-title">Match the scan to the question</h2>
+        <p>Select the scan coverage and image detail needed to answer the clinical question, considering the individual patient and ALADA/ALADAIP principles. Avoid unnecessary exposure; the smallest scan or highest resolution is not always the appropriate choice.</p>
         <div class="principle-grid" aria-label="FOV and resolution selection principles">
           <div><strong>Localized question</strong><span>Smaller fields of view are often appropriate when the clinical question is localized.</span></div>
           <div><strong>Broader anatomy</strong><span>Broader coverage may be appropriate when the anatomy of interest extends beyond one focused region.</span></div>
           <div><strong>Fine detail</strong><span>Higher resolution may be useful when subtle endodontic, root-surface, or cortical detail is clinically relevant.</span></div>
-          <div><strong>Broader anatomy</strong><span>Standard or lower-dose protocols may fit broader anatomy when fine-detail visualization is not the primary objective.</span></div>
+          <div><strong>Larger structures</strong><span>Standard or lower-dose protocols may fit broader anatomy when fine-detail visualization is not the primary objective.</span></div>
         </div>
       </div>
 
+      <h2 class="guide-section-title" id="scan-coverage">Scan coverage</h2><p class="guide-section-intro">Compare the area each field of view covers. Expand a card to review examples.</p>
       <div class="fov-grid">
         <article class="guide-card fov-card">
           <h3>Focus field</h3>
           <p>Useful when the clinical question is highly localized and fine detail is important.</p>
-          <h4>May fit questions such as</h4>
-          <ul>
+          <details class="guide-examples"><summary aria-label="Review examples for Focus field">Review examples</summary><div><p class="form-helper">May fit questions such as</p><ul>
             <li>Localized endodontic concern</li>
             <li>Suspected vertical root fracture</li>
             <li>Localized resorption evaluation</li>
             <li>Focused periapical assessment</li>
             <li>High-detail review of a limited anatomical region</li>
             <li>Localized pre-surgical endodontic assessment</li>
-          </ul>
+          </ul></div></details>
         </article>
         <article class="guide-card fov-card">
           <h3>Single jaw</h3>
           <p>A single-jaw scan may be the practical minimum when implant planning, intraoral scan integration, or guide design needs continuous anatomy across one arch.</p>
-          <h4>Worth considering when</h4>
-          <ul>
+          <details class="guide-examples"><summary aria-label="Review examples for Single jaw">Review examples</summary><div><p class="form-helper">Worth considering when</p><ul>
             <li>Multiple teeth within one arch are being evaluated</li>
             <li>Implant planning requires regional anatomical context</li>
             <li>Intraoral scan overlay or surgical guide design is anticipated</li>
             <li>The anatomy of interest extends beyond a focus field</li>
             <li>Sinus or mandibular canal relationship must be evaluated within one arch</li>
-          </ul>
+          </ul></div></details>
         </article>
         <article class="guide-card fov-card">
           <h3>Dual jaw</h3>
           <p>Dual-jaw imaging may help preserve anatomical relationship between arches while avoiding unnecessary expansion into a broader cranial scan.</p>
-          <h4>May be useful when</h4>
-          <ul>
+          <details class="guide-examples"><summary aria-label="Review examples for Dual jaw">Review examples</summary><div><p class="form-helper">May be useful when</p><ul>
             <li>Both arches require evaluation together</li>
             <li>Occlusal or opposing-tooth relationships are clinically relevant</li>
             <li>Symptoms are difficult to localize between arches</li>
             <li>Upper and lower anatomy together may improve interpretation</li>
             <li>Broader restorative or functional relationships must be visualized</li>
-          </ul>
+          </ul></div></details>
         </article>
         <article class="guide-card fov-card fov-feature">
           <h3>5x8 regional scan</h3>
           <p>A 5x8 FOV refers to approximately 5 cm width by 8 cm height, allowing upper and lower arch anatomy to be captured within a focused regional scan.</p>
           <p>A 5x8 regional scan may be useful when the clinician needs focused anatomical detail while still capturing vertically related upper and lower anatomy within one localized region.</p>
-          <h4>Examples</h4>
-          <ul>
+          <details class="guide-examples"><summary aria-label="Review examples for 5x8 regional scan">Review examples</summary><div><p class="form-helper">Examples</p><ul>
             <li>Pain that radiates between upper and lower arches</li>
             <li>Symptoms that are difficult to localize clinically</li>
             <li>Evaluation involving opposing posterior teeth</li>
@@ -275,211 +176,182 @@
             <li>A traditional focus field may be too restrictive vertically</li>
             <li>Regional implant or surgical evaluation involving opposing anatomy</li>
           </ul>
-          <p class="card-note">A 5x8 scan may help keep the view focused while still showing upper and lower anatomy in the same region.</p>
+          <p class="card-note">A 5x8 scan may help keep the view focused while still showing upper and lower anatomy in the same region.</p></div></details>
         </article>
         <article class="guide-card fov-card">
           <h3>Cranial scan</h3>
           <p>Cranial scans are generally reserved for situations where the clinical question cannot reasonably be answered using a more limited field of view.</p>
-          <h4>May be considered when</h4>
-          <ul>
+          <details class="guide-examples"><summary aria-label="Review examples for Cranial scan">Review examples</summary><div><p class="form-helper">May be considered when</p><ul>
             <li>Airway or broader craniofacial anatomy is relevant</li>
             <li>Orthodontic evaluation requires broad relationships</li>
             <li>Broader surgical planning is being evaluated</li>
             <li>Trauma or larger pathology assessment requires larger coverage</li>
             <li>Bilateral or multi-regional anatomy must be reviewed together</li>
             <li>Full craniofacial relationships are clinically relevant</li>
-          </ul>
+          </ul></div></details>
         </article>
       </div>
 
-      <div class="resolution-panel panel">
-        <p class="eyebrow">Image detail</p>
-        <h3>Resolution selection</h3>
+      <div class="resolution-panel panel" id="image-detail">
+        <h2 class="panel-title">Image detail</h2>
         <div class="resolution-grid">
           <article>
-            <h4>High resolution</h4>
+            <h3>High resolution</h3>
             <p>May be useful when fine detail may affect interpretation.</p>
-            <ul>
+            <details class="guide-examples"><summary aria-label="Review examples for High resolution">Review examples</summary><ul>
               <li>Fine endodontic detail</li>
               <li>Suspected vertical root fracture</li>
               <li>Resorption detail</li>
               <li>Subtle periapical findings</li>
               <li>Root morphology or canal anatomy</li>
               <li>Pre-surgical endodontic planning</li>
-            </ul>
+            </ul></details>
           </article>
           <article>
-            <h4>Standard resolution</h4>
+            <h3>Standard resolution</h3>
             <p>May be appropriate when the diagnostic question is not dependent on the smallest visible detail.</p>
-            <ul>
+            <details class="guide-examples"><summary aria-label="Review examples for Standard resolution">Review examples</summary><ul>
               <li>Broader anatomy review</li>
               <li>Implant planning that does not require ultra-fine endodontic detail</li>
               <li>Sinus, airway, impaction, orthodontic, or larger structural questions</li>
-            </ul>
+            </ul></details>
           </article>
           <article>
-            <h4>Lower-dose / lower-resolution protocols</h4>
+            <h3>Lower-dose / lower-resolution protocols</h3>
             <p>Often fit questions involving larger structures rather than subtle fine-detail interpretation.</p>
-            <ul>
+            <details class="guide-examples"><summary aria-label="Review examples for Lower-dose / lower-resolution protocols">Review examples</summary><ul>
               <li>Larger anatomical structures</li>
               <li>Broader anatomical orientation</li>
               <li>Airway, sinus, orthodontic, craniofacial, or structural evaluation</li>
               <li>Patient-specific dose considerations</li>
-            </ul>
+            </ul></details>
           </article>
         </div>
       </div>
 
+      <h2 class="guide-section-title" id="system-workflow-notes">System &amp; lab notes</h2><p class="guide-section-intro">These notes refer to CSD systems and laboratory workflows. Confirm requirements for your equipment and lab.</p>
       <div class="fov-note-grid">
-        <article class="panel fov-note">
-          <h3>High resolution is not limited to tiny focus fields</h3>
+        <details class="panel fov-note"><summary>High-resolution coverage on CSD systems</summary><div>
           <p>Some CBCT systems restrict high-resolution imaging to very small focus fields. CSD CBCT systems can capture high-resolution datasets across field sizes larger than a traditional localized focus field. This may allow clinicians to see fine detail while still including enough surrounding anatomy to answer the clinical question.</p>
-        </article>
-        <article class="panel fov-note">
-          <h3>When high resolution may be too much</h3>
+        </div></details>
+        <details class="panel fov-note"><summary>Preparing scans for laboratory workflows</summary><div>
           <p>High-resolution datasets from CSD CBCT systems may contain more detail and larger files than some labs prefer for routine guide fabrication or digital workflows.</p>
           <p>Many labs prioritize manageable file size, enough anatomical coverage, efficient workflow, and easier segmentation rather than maximum possible resolution.</p>
           <p>A scan optimized for fine clinical review may not always be the ideal dataset for every laboratory workflow. Confirm preferred scan settings, export requirements, file formats, and workflow limits before sending datasets.</p>
-        </article>
+        </div></details>
       </div>
 
       <div class="disclosure fov-disclaimer">
         This guidance is educational and intended to help align scan selection with the clinical question and ALADA/ALADAIP radiation-safety principles. It does not diagnose, recommend treatment, replace clinician judgment, or determine the correct scan protocol for an individual patient.
       </div>
+      <nav class="related-guides" aria-label="Related scan guides"><h2>Related guides</h2><div><a href="#navigation" data-tab-link>Review images <span aria-hidden="true">→</span></a><a href="#artifacts" data-tab-link>Compare artifact patterns <span aria-hidden="true">→</span></a></div></nav>
     </section>
 
     <section id="navigation" class="section muted" data-tab-panel="navigation">
-      <div class="section-head">
-        <div>
-          <p class="eyebrow">Part 3</p>
-          <h2>Finding Common Clinical Answers in CS 3D Imaging</h2>
-          <p class="lede">Practical navigation patterns for general dentistry cases. These are intentionally broad enough to use across scanners, patients, and clinical questions.</p>
-        </div>
-      </div>
-      <div class="card-grid">
-        <article class="guide-card">
-          <h3>Start every review the same way</h3>
-          <ol>
-            <li>Use MPR first, not the 3D rendering, for image review and measurements.</li>
+      <a class="back-link" href="#scan-guides" data-tab-link>← All scan guides</a>
+      <div class="section-head"><div><p class="eyebrow">Image review</p><h1>Review images in CS 3D Imaging.</h1><p class="lede">Start with the basic review steps, then choose the area you want to examine. Review the full scan as well as the area of concern.</p></div></div>
+      <div class="review-basics panel" id="review-start"><h2 class="panel-title">Before reviewing a specific area</h2><ol>
+            <li>Use the slice views (MPR) first, not the 3D rendering, for image review and measurements.</li>
             <li>Orient the area of interest so the tooth or ridge is straight in at least two planes.</li>
             <li>Scroll slowly through adjacent slices before deciding whether a finding is real.</li>
             <li>Save screenshots that show the finding in more than one plane.</li>
-          </ol>
-        </article>
-        <article class="guide-card">
-          <h3>Tooth-to-sinus questions</h3>
-          <ol>
+          </ol></div>
+      <nav class="topic-navigation" id="image-review-topics" aria-labelledby="reviewTopicsTitle"><h2 id="reviewTopicsTitle">Choose a review topic</h2><div class="topic-links"><a href="#review-sinus" data-tab-link>Tooth and sinus relationship <span aria-hidden="true">→</span></a>
+<a href="#review-resorption" data-tab-link>Resorption <span aria-hidden="true">→</span></a>
+<a href="#review-fracture" data-tab-link>Cracks and fractures <span aria-hidden="true">→</span></a>
+<a href="#review-endo" data-tab-link>Root canals and endodontic anatomy <span aria-hidden="true">→</span></a>
+<a href="#review-implant" data-tab-link>Implant site and surgical anatomy <span aria-hidden="true">→</span></a>
+<a href="#review-bone" data-tab-link>Periodontal and bone defects <span aria-hidden="true">→</span></a></div></nav>
+      <div class="review-topic-list"><details class="review-topic" id="review-sinus" data-guide-detail><summary>Tooth and sinus relationship</summary><div class="review-topic-body"><ol>
             <li>Follow the root apices, sinus floor, and adjacent mucosa in sagittal and coronal views.</li>
             <li>Look for a dental source plus a matching sinus response, not mucosal thickening alone.</li>
             <li>Ask whether the cortical sinus floor is intact, thinned, or interrupted.</li>
             <li>When the relationship is uncertain, describe the uncertainty rather than calling it dental in origin too quickly.</li>
-          </ol>
-        </article>
-        <article class="guide-card">
-          <h3>Resorption mapping</h3>
-          <ol>
+          </ol><a class="return-link" href="#image-review-topics" data-tab-link>Back to review topics ↑</a></div></details>
+<details class="review-topic" id="review-resorption" data-guide-detail><summary>Resorption</summary><div class="review-topic-body"><ol>
             <li>Center the tooth and scroll from crown to apex in axial slices.</li>
             <li>Decide whether the defect starts inside the canal space or on the external root surface.</li>
             <li>Describe location, depth, pulpal proximity, and bone communication.</li>
             <li>Use the scan as an anatomic map, then confirm significance with clinical findings.</li>
-          </ol>
-        </article>
-        <article class="guide-card">
-          <h3>Crack and fracture confidence</h3>
-          <ol>
+          </ol><a class="return-link" href="#image-review-topics" data-tab-link>Back to review topics ↑</a></div></details>
+<details class="review-topic" id="review-fracture" data-guide-detail><summary>Cracks and fractures</summary><div class="review-topic-body"><ol>
             <li>Do not require a visible crack line; it may be hidden by voxel size or artifact.</li>
             <li>Look for supporting bone patterns: isolated narrow defects, halo loss, or buccal/lingual breakout.</li>
             <li>Be cautious near posts, crowns, and root filling material.</li>
             <li>Interpret CBCT together with probing, bite testing, symptoms, and 2D images before any clinical decision.</li>
-          </ol>
-        </article>
-        <article class="guide-card">
-          <h3>Endodontic anatomy</h3>
-          <ol>
+          </ol><a class="return-link" href="#image-review-topics" data-tab-link>Back to review topics ↑</a></div></details>
+<details class="review-topic" id="review-endo" data-guide-detail><summary>Root canals and endodontic anatomy</summary><div class="review-topic-body"><ol>
             <li>Start at the chamber floor and follow canal paths apically in axial slices.</li>
             <li>Use the synchronized crosshair to confirm the same structure in all three views.</li>
             <li>Map missed anatomy, curvature, calcification, perforation risk, and apical anatomy.</li>
             <li>Keep the scan question specific and document what clinical uncertainty the image is helping clarify.</li>
-          </ol>
-        </article>
-        <article class="guide-card">
-          <h3>Implants and surgical risk</h3>
-          <ol>
+          </ol><a class="return-link" href="#image-review-topics" data-tab-link>Back to review topics ↑</a></div></details>
+<details class="review-topic" id="review-implant" data-guide-detail><summary>Implant site and surgical anatomy</summary><div class="review-topic-body"><ol>
             <li>Trace the arch and evaluate cross-sectional slices at the proposed site.</li>
             <li>Measure ridge width, height, concavities, sinus or nasal floor, and nerve position in cross-section.</li>
             <li>Keep the restorative goal, anatomy, and patient-specific risk factors in the same view.</li>
             <li>Record the slice and plane used for key measurements.</li>
-          </ol>
-        </article>
-        <article class="guide-card">
-          <h3>Periodontal and bony defects</h3>
-          <ol>
+          </ol><a class="return-link" href="#image-review-topics" data-tab-link>Back to review topics ↑</a></div></details>
+<details class="review-topic" id="review-bone" data-guide-detail><summary>Periodontal and bone defects</summary><div class="review-topic-body"><ol>
             <li>Evaluate buccal, lingual, mesial, and distal surfaces separately.</li>
             <li>Differentiate periodontal defects from endodontic lesions by tracking their origin and extent.</li>
             <li>Thin bone may disappear because of artifact or resolution limits, so be cautious before calling dehiscence.</li>
             <li>Use CBCT as an anatomic map, then confirm with probing and clinical attachment findings.</li>
-          </ol>
-        </article>
-        <article class="guide-card">
-          <h3>Whole-volume responsibility</h3>
-          <ol>
+          </ol><a class="return-link" href="#image-review-topics" data-tab-link>Back to review topics ↑</a></div></details></div>
+      <div class="review-basics panel" id="review-whole-scan"><h2 class="panel-title">Review the full scan</h2><ol>
             <li>Review beyond the immediate tooth: sinuses, nasal cavity, canals, cortices, condyles, and airway space.</li>
             <li>Separate dental findings from incidental or nonodontogenic findings in the chart.</li>
             <li>Refer when a finding is outside the clinical question or your interpretive comfort.</li>
             <li>Document what was reviewed and why the scan was taken.</li>
-          </ol>
-        </article>
-      </div>
+          </ol></div>
+      <nav class="related-guides" aria-label="Related scan guides"><h2>Related guides</h2><div><a href="#fov-resolution" data-tab-link>Review scan settings <span aria-hidden="true">→</span></a><a href="#artifacts" data-tab-link>Compare artifact patterns <span aria-hidden="true">→</span></a></div></nav>
     </section>
 
     <section id="artifacts" class="section" data-tab-panel="artifacts">
+      <a class="back-link" href="#scan-guides" data-tab-link>← All scan guides</a>
       <div class="section-head">
         <div>
-          <p class="eyebrow">Part 4</p>
-          <h2>Artifact Pattern Guide</h2>
-          <p class="lede">A quick visual logic guide for deciding whether the finding is likely artifact, anatomy, or disease.</p>
+          <p class="eyebrow">Artifact examples</p>
+          <h1>Compare artifact patterns</h1>
+          <p class="lede">Compare common artifact patterns and review checks that can help with interpretation.</p>
         </div>
       </div>
       <div class="artifact-intro">
-        <strong>Movement artifact comes first because it is widely recognized as the leading cause of artifacts in dental CBCT scans.</strong>
-        Patient motion can create duplicated borders, blur fine anatomy, and make small defects look larger or smaller than they are. Before diagnosing subtle fracture, resorption, dehiscence, or cortical interruption, first ask whether the whole volume shows motion.
+        <strong>Check for patient movement first.</strong>
+        Motion can duplicate borders, blur fine anatomy, and change the apparent size of small defects. Review the whole scan for motion before interpreting subtle findings.
       </div>
+      <p class="image-help"><span class="hover-image-help">Hover over an image to enlarge it. Click to open the image viewer.</span><span class="tap-image-help">Tap an image to open the image viewer.</span></p>
       <div class="artifact-table">
         <div class="artifact-row artifact-head">
           <span>Image</span><span>Pattern</span><span>Typical appearance</span><span>How to check it</span>
         </div>
         <div class="artifact-row" data-artifact-row data-pattern="Patient movement" data-frequency="Most common">
-          <span class="artifact-image-pair"><button class="artifact-thumb" type="button" aria-label="Expand movement artifact example"><img src="motion-artifact-clinical.png" alt="Movement artifact example"></button><button class="artifact-thumb" type="button" aria-label="Expand still patient comparison"><img src="motion-held-still.png" alt="Still patient comparison"></button></span><span><span class="pattern-name">Patient movement</span><small class="frequency-label">How common? Most common</small></span><span>Same CBCT machine, different patients: motion produces global blur, softer canal borders, and less interpretable trabecular/cortical detail.</span><span>Compare edges across the whole scan. Motion affects many structures at once, while disease usually follows anatomy.</span>
-          <div class="artifact-expanded" hidden></div>
+          <span class="artifact-image-pair"><button class="artifact-thumb" type="button" aria-label="Expand movement artifact example"><img src="motion-artifact-clinical.png" alt="Movement artifact example"></button><button class="artifact-thumb" type="button" aria-label="Expand still patient comparison"><img src="motion-held-still.png" alt="Still patient comparison"></button></span><span><span class="pattern-name">Patient movement</span><small class="frequency-label">How common? Most common</small></span><span><strong class="artifact-cell-label">Typical appearance</strong>Same CBCT machine, different patients: motion produces global blur, softer canal borders, and less interpretable trabecular/cortical detail.</span><span><strong class="artifact-cell-label">How to check it</strong>Compare edges across the whole scan. Motion affects many structures at once, while disease usually follows anatomy.</span>
         </div>
         <div class="artifact-row" data-artifact-row data-pattern="Beam hardening" data-frequency="Very common">
-          <span><button class="artifact-thumb" type="button" aria-label="Expand beam hardening artifact"><img src="artifact-beam-hardening-clinical.png" alt="Beam hardening artifact"></button></span><span><span class="pattern-name">Beam hardening</span><small class="frequency-label">How common? Very common</small></span><span>A black line or band adjacent to dense material. In a canal, it can look like obturation stops short or leaves an unfilled void.</span><span>Ask whether the dark line follows the curve or contour of the radiopaque material blocking the x-rays. If it tracks the material instead of anatomy, treat it cautiously.</span>
-          <div class="artifact-expanded" hidden></div>
+          <span><button class="artifact-thumb" type="button" aria-label="Expand beam hardening artifact"><img src="artifact-beam-hardening-clinical.png" alt="Beam hardening artifact"></button></span><span><span class="pattern-name">Beam hardening</span><small class="frequency-label">How common? Very common</small></span><span><strong class="artifact-cell-label">Typical appearance</strong>A black line or band adjacent to dense material. In a canal, it can look like obturation stops short or leaves an unfilled void.</span><span><strong class="artifact-cell-label">How to check it</strong>Ask whether the dark line follows the curve or contour of the radiopaque material blocking the x-rays. If it tracks the material instead of anatomy, treat it cautiously.</span>
         </div>
         <div class="artifact-row" data-artifact-row data-pattern="Scatter from metal" data-frequency="Very common">
-          <span><button class="artifact-thumb" type="button" aria-label="Expand scatter artifact from crown"><img src="artifact-scatter-clinical.png" alt="Scatter artifact from a crown"></button></span><span><span class="pattern-name">Scatter from metal</span><small class="frequency-label">How common? Very common</small></span><span>Broad dark bands, bright streaks, or starburst effects radiating from crowns, posts, restorations, or implants.</span><span>Lower confidence inside the scatter path. Correlate with clinical tests and 2D images before diagnosing cracks or bone loss next to metal.</span>
-          <div class="artifact-expanded" hidden></div>
+          <span><button class="artifact-thumb" type="button" aria-label="Expand scatter artifact from crown"><img src="artifact-scatter-clinical.png" alt="Scatter artifact from a crown"></button></span><span><span class="pattern-name">Scatter from metal</span><small class="frequency-label">How common? Very common</small></span><span><strong class="artifact-cell-label">Typical appearance</strong>Broad dark bands, bright streaks, or starburst effects radiating from crowns, posts, restorations, or implants.</span><span><strong class="artifact-cell-label">How to check it</strong>Lower confidence inside the scatter path. Correlate with clinical tests and 2D images before diagnosing cracks or bone loss next to metal.</span>
         </div>
         <div class="artifact-row" data-artifact-row data-pattern="Noise and limited fine detail" data-frequency="Common">
-          <span><button class="artifact-thumb" type="button" aria-label="Expand noise example"><img src="artifact-noise-clinical.png" alt="Noise and limited fine-detail definition"></button></span><span><span class="pattern-name">Noise and limited fine detail</span><small class="frequency-label">How common? Common</small></span><span>Grainy texture or soft boundaries make subtle root-surface, canal, or cortical findings less certain.</span><span>Adjust brightness/contrast and decide only from findings that persist across adjacent slices and planes.</span>
-          <div class="artifact-expanded" hidden></div>
+          <span><button class="artifact-thumb" type="button" aria-label="Expand noise example"><img src="artifact-noise-clinical.png" alt="Noise and limited fine-detail definition"></button></span><span><span class="pattern-name">Noise and limited fine detail</span><small class="frequency-label">How common? Common</small></span><span><strong class="artifact-cell-label">Typical appearance</strong>Grainy texture or soft boundaries make subtle root-surface, canal, or cortical findings less certain.</span><span><strong class="artifact-cell-label">How to check it</strong>Adjust brightness/contrast and decide only from findings that persist across adjacent slices and planes.</span>
         </div>
         <div class="artifact-row" data-artifact-row data-pattern="Blending artifact" data-frequency="Occasional" data-why="The scan averages nearby structures together instead of fully separating fine detail. This can be more noticeable with lower-detail acquisition methods, larger effective voxel sampling, thicker slices, aggressive smoothing, or reconstruction methods that blend adjacent structures together.">
-          <span><button class="artifact-thumb" type="button" aria-label="Expand blending artifact example"><img src="artifact-blending-clinical.png" alt="Blending artifact example"></button></span><span><span class="pattern-name">Blending artifact</span><small class="frequency-label">aliasing / partial volume</small><small class="frequency-label">How common? Occasional</small></span><span>Thin structures may appear softened, merged together, interrupted, or less sharply separated than expected.</span><span>Review nearby slices and multiple planes before deciding a structure is truly missing, fractured, or perforated.</span>
-          <div class="artifact-expanded" hidden></div>
+          <span><button class="artifact-thumb" type="button" aria-label="Expand blending artifact example"><img src="artifact-blending-clinical.png" alt="Blending artifact example"></button></span><span><span class="pattern-name">Blending artifact</span><small class="frequency-label">aliasing / partial volume</small><small class="frequency-label">How common? Occasional</small></span><span><strong class="artifact-cell-label">Typical appearance</strong>Thin structures may appear softened, merged together, interrupted, or less sharply separated than expected.</span><span><strong class="artifact-cell-label">How to check it</strong>Review nearby slices and multiple planes before deciding a structure is truly missing, fractured, or perforated.</span>
         </div>
         <div class="artifact-row" data-artifact-row data-pattern="Ring / detector artifact" data-frequency="Rare">
-          <span><button class="artifact-thumb" type="button" aria-label="Expand ring detector artifact"><img src="artifact-ring.png" alt="Ring detector artifact"></button></span><span><span class="pattern-name">Ring / detector artifact</span><small class="frequency-label">How common? Rare</small></span><span>Circular or band-like pattern unrelated to anatomy.</span><span>Look for the same pattern crossing air, soft tissue, teeth, and bone. Anatomy respects anatomy; detector artifact does not.</span>
-          <div class="artifact-expanded" hidden></div>
+          <span><button class="artifact-thumb" type="button" aria-label="Expand ring detector artifact"><img src="artifact-ring.png" alt="Ring detector artifact"></button></span><span><span class="pattern-name">Ring / detector artifact</span><small class="frequency-label">How common? Rare</small></span><span><strong class="artifact-cell-label">Typical appearance</strong>Circular or band-like pattern unrelated to anatomy.</span><span><strong class="artifact-cell-label">How to check it</strong>Look for the same pattern crossing air, soft tissue, teeth, and bone. Anatomy respects anatomy; detector artifact does not.</span>
         </div>
       </div>
+      <nav class="related-guides" aria-label="Related scan guides"><h2>Related guides</h2><div><a href="#navigation" data-tab-link>Review images <span aria-hidden="true">→</span></a><a href="#fov-resolution" data-tab-link>Review scan settings <span aria-hidden="true">→</span></a></div></nav>
     </section>
 
     <section id="cdt" class="section muted" data-tab-panel="cdt">
       <div class="section-head">
         <div>
           <p class="eyebrow">Reference</p>
-          <h2>CDT Code Reference</h2>
+          <h1>CDT code reference</h1>
           <p class="lede">Common CBCT-related CDT codes for educational reference. Codes do not determine medical necessity, guarantee reimbursement, or replace current CDT guidance, payer policy, documentation requirements, or the procedure actually performed.</p>
         </div>
       </div>
@@ -504,17 +376,24 @@
       <div class="section-head">
         <div>
           <p class="eyebrow">Evidence</p>
-          <h2>Citations Used in This Website</h2>
+          <h1>About &amp; references</h1>
         </div>
       </div>
+      <div class="panel about-tool" id="about-tool"><h2 class="panel-title">How the case tool works</h2><p>Dan Alman CBCT Education provides educational support for clinicians. The case tool compares words and phrases with preset rules related to published CBCT guidance. It does not understand every clinical statement or replace patient assessment.</p><p>Case descriptions are processed in your browser. The tool does not send or save them. Omit patient identifiers.</p><p>A match describes a relationship between the supplied text and a guidance topic. It is not a diagnosis, a probability of disease, or a decision to obtain a scan. Review the recognized details and the original guidance before applying the information.</p><p>The practice planner uses your entered case counts, scan-volume assumptions, and fees. Study findings are shown as reference information, not predictions of benefit in your practice.</p></div>
+      <nav class="guide-jump-links" aria-label="Reference shortcuts"><a href="#guideline-sources" data-tab-link>Guidance &amp; patient selection</a><a href="#study-sources" data-tab-link>Research studies</a><a href="#cdt" data-tab-link>CDT code reference</a></nav>
+      <details class="disclosure"><summary>Selected study findings</summary><p>These results come from the study populations described in each source and may not apply to your case mix.</p><div class="evidence-strip" aria-label="Selected study findings" id="evidenceHighlights"></div></details>
+      <h2 class="guide-section-title" id="guideline-sources">Guidance &amp; patient selection</h2>
       <div class="citation-list">
         <p id="cite-aae-aaomr"><strong>AAE/AAOMR 2025 update.</strong> AAE newsroom announcement, January 14, 2026: the update replaces the 2015 statement, condenses recommendations to 12, emphasizes training, ALADAIP, selective use, and patient-specific protocols. <a href="https://newsroom.aae.org/press-releases/aae-and-aaomr-release-joint-position-statement-on-the-use-of-cbct-in-endodontics/">Source</a></p>
         <p id="cite-ada-aaomr"><strong>ADA/AAOMR patient selection and ADA safety guidance.</strong> ADA Oral Health Topic on X-rays/Radiographs, updated March 26, 2026: imaging should follow clinical need, patient selection criteria, ALARA/ALADA principles, and CBCT should be used when lower-exposure imaging will not provide the needed diagnostic information. <a href="https://www.ada.org/resources/ada-library/oral-health-topics/x-rays-radiographs">Source</a></p>
-        <p id="cite-jada-guidelines"><strong>Applying AAE/AAOMR guidelines in endodontics.</strong> JADA 2024 paper in the provided study folder: CBCT was prescribed for 12% of patients, changed periapical diagnosis in 21% of evaluated teeth, and changed, established, or corrected treatment plans in 69% of evaluated cases overall. When available, the calculator uses percentages tied to the specific indication group studied in that paper rather than the overall rate. <a href="https://doi.org/10.1016/j.adaj.2023.09.007">Study DOI</a></p>
-        <p id="cite-endo-diagnosis"><strong>Impact on endodontic diagnosis.</strong> The provided study "The impact of cone beam computed tomography (CBCT) on the choice of endodontic diagnosis" reports diagnosis changes for at least one tooth in 41% of patients and 35% of evaluated teeth. <a href="https://doi.org/10.1111/iej.12350">Study DOI</a></p>
-        <p id="cite-referral-impact"><strong>Referral impact in endodontics.</strong> The provided study "CBCT assessment of referral reasons and impact on modifying treatment plan in endodontics" reports diagnosis changes in 34.45% in the abstract and major treatment-plan changes in 62.02% of referred endodontic cases. This is retained as referral context, not used as the VRF-specific calculator percentage. <a href="https://doi.org/10.53730/ijhs.v6nS2.8518">Study DOI</a></p>
+      </div>
+      <h2 class="guide-section-title" id="study-sources">Research studies</h2><p class="guide-section-intro">Study results describe the populations and methods in each source. Review the source before applying a finding to your practice.</p>
+      <div class="citation-list">
+        <p id="cite-jada-guidelines"><strong>Applying AAE/AAOMR guidelines in endodontics.</strong> JADA 2024 study: CBCT was prescribed for 12% of patients, changed periapical diagnosis in 21% of evaluated teeth, and changed, established, or corrected treatment plans in 69% of evaluated cases overall. Reported rates describe the selected endodontic study population. They are not general-practice forecasts. <a href="https://doi.org/10.1016/j.adaj.2023.09.007">Study DOI</a></p>
+        <p id="cite-endo-diagnosis"><strong>Impact on endodontic diagnosis.</strong> The study "The impact of cone beam computed tomography (CBCT) on the choice of endodontic diagnosis" reports diagnosis changes for at least one tooth in 41% of patients and 35% of evaluated teeth. <a href="https://doi.org/10.1111/iej.12350">Study DOI</a></p>
+        <p id="cite-referral-impact"><strong>Referral impact in endodontics.</strong> The study "CBCT assessment of referral reasons and impact on modifying treatment plan in endodontics" reports diagnosis changes in 34.45% in the abstract and major treatment-plan changes in 62.02% of referred endodontic cases. These results describe referred endodontic cases. <a href="https://doi.org/10.53730/ijhs.v6nS2.8518">Study DOI</a></p>
         <p id="cite-vrf-detection"><strong>Vertical root fracture diagnostic accuracy.</strong> Hassan and colleagues report overall diagnostic accuracy of 0.86 for CBCT and 0.66 for periapical radiographs in a laboratory study of vertical root fracture detection in endodontically treated teeth. <a href="https://doi.org/10.1016/j.joen.2009.01.022">Study DOI</a></p>
-        <p id="cite-impacted-canines"><strong>Impacted canines.</strong> The provided 2025 Applied Sciences study reports that 51.5% of extraction decisions made with 2D data changed to orthodontic traction after CBCT review. This is specialty-specific impacted-canine context. <a href="https://doi.org/10.3390/app152413061">Study DOI</a></p>
+        <p id="cite-impacted-canines"><strong>Impacted canines.</strong> The 2025 Applied Sciences study reports that 51.5% of extraction decisions made with 2D data changed to orthodontic traction after CBCT review. This is specialty-specific impacted-canine context. <a href="https://doi.org/10.3390/app152413061">Study DOI</a></p>
       </div>
     </section>
   </main>
@@ -524,6 +403,6 @@
     <span>Educational support only. Final imaging decisions remain clinician and patient specific.</span>
   </footer>
 
-  <script src="script.js"></script>
+  <script src="script.js?v=20261010-ui"></script>
 </body>
 </html>

@@ -37,8 +37,8 @@ const studies = {
 };
 
 const appVersion = {
-  version: 'clinical-scenario-2026-05-12-targeted-fixes',
-  buildDate: '2026-05-12',
+  version: 'stage1-usability-2026-10-08',
+  buildDate: '2026-10-08',
   source: 'local workspace'
 };
 
@@ -344,7 +344,7 @@ const guidanceScenarios = [
     reducers: { uncertaintyMarker: 0.25 },
     threshold: 3,
     title: 'This scenario matches published guidance for 3D anatomic assessment.',
-    text: 'AAE/AAOMR endodontic guidance includes surgical implant placement as a CBCT consideration, and ADA/AAOMR patient-selection guidance discusses CBCT when 3D anatomy is needed and 2D imaging does not provide enough information.'
+    text: 'The text describes an implant-planning anatomy question. ADA imaging guidance advises using CBCT when lower-exposure options cannot provide the necessary diagnostic information. Scan selection still requires examination and patient-specific assessment.'
   },
   {
     name: 'Trauma',
@@ -451,6 +451,11 @@ const concepts = {
     label: 'No apical radiolucency reported',
     normalized: 'no PARL/no apical lesion',
     patterns: [/\b(no parl|without parl|no periapical radiolucency|no apical lesion|no obvious parl)\b/]
+  },
+  conclusive2d: {
+    field: '2d_imaging_findings',
+    label: 'Existing 2D imaging reported to answer the question',
+    patterns: [/\b2d imaging (?:answers?|is conclusive|is adequate|is sufficient)\b/]
   },
   periapicalFinding: {
     field: '2d_imaging_findings',
@@ -736,9 +741,9 @@ const concepts = {
   },
   routineRequest: {
     field: 'caution_notes',
-    label: 'Routine scan request or no defined clinical question',
+    label: 'Routine or screening context',
     normalized: 'routine/no defined 3D clinical question',
-    patterns: [/\b(routine|screen|check everything|patient wants|friend had one|3d model|ortho record|no unresolved clinical question|2d imaging answers|monitor only|review only)\b/]
+    patterns: [/\b(routine|screen|check everything|patient wants|friend had one|3d model|ortho record|no unresolved clinical question|2d imaging answers?|monitor only|review only)\b/]
   },
   noCurrentSymptoms: {
     field: 'caution_notes',
@@ -761,6 +766,7 @@ const concepts = {
 };
 
 const conceptLabels = {
+  conclusive2d: 'Existing 2D imaging reported to answer the question',
   priorEndo: 'Prior endodontic treatment',
   postEndoSymptoms: 'Post-endodontic symptoms',
   nonhealingLesion: 'Persistent or nonhealing apical lesion language',
@@ -814,12 +820,12 @@ const conceptLabels = {
   periodontalModifier: 'Periodontal finding',
   alveolarFracture: 'Alveolar fracture concern',
   perforationConcern: 'Perforation concern',
-  routineRequest: 'Routine scan request or no defined clinical question',
+  routineRequest: 'Routine or screening context',
   paWnl: 'PA / periapical imaging described as WNL or normal',
   noApicalLesion: 'No apical radiolucency reported',
   noCurrentSymptoms: 'Asymptomatic or no current symptoms',
   stableFinding: 'Stable or improving finding',
-  uncertaintyMarker: 'Uncertainty or monitoring language'
+  uncertaintyMarker: 'Question or monitoring language'
 };
 
 const guideTestExamples = [
@@ -954,13 +960,54 @@ function emptyClinicalEntities() {
   };
 }
 
-function conceptsFromText(normalizedText) {
+// Negative test results and phrases such as "not healing" carry their own meaning.
+// Apply mention-level negation only to affirmative findings and procedure concerns.
+const negationAwareConcepts = new Set([
+  'priorEndo', 'persistentSymptoms', 'sourceUnclear', 'inconclusive2d', 'conclusive2d',
+  'periapicalFinding', 'nonspecificSymptoms', 'pulpLingering', 'percussionTenderness',
+  'bitingPain', 'localizedBitingPain', 'crackedToothPain', 'verticalRootFracture',
+  'isolatedProbing', 'periodontalModifier', 'jShapedLesion', 'haloLesion', 'sinusTract',
+  'crownOrPost', 'largeRestoration', 'postAssociatedConcern', 'resorption',
+  'cervicalResorption', 'perforationConcern', 'missedAnatomy', 'retreatment',
+  'complications', 'calcifiedCanal', 'surgicalPlanningNeed', 'implantPlanning',
+  'anatomicRisk', 'measurementNeed', 'trauma', 'rootFracture', 'alveolarFracture',
+  'displacement', 'sinusQuestion', 'impaction', 'ectopicEruption', 'supernumerary',
+  'rootResorptionRisk', 'extractionPlanning', 'rootMorphologyUnclear', 'ankylosis', 'airway'
+]);
+
+function mentionIsNegated(text, match) {
+  const before = text.slice(0, match.index).split(/\.|;|\b(?:but|however|yet|whereas)\b/).pop();
+  const after = text.slice(match.index + match[0].length);
+  // "Cannot rule out" and "not ruled out" express an unresolved concern.
+  if (/\b(?:cannot|can't|could not|not|unable to)\s+(?:rule|ruled)\s+out\s*$/.test(before)) return false;
+  const negativeBefore = /\b(?:no|without|denies|denied|negative for|absence of|free of|not)\s+(?:[\w/-]+\s+){0,6}$/.test(before);
+  const negativeAfter = /^\s*(?:(?:is|was|are|were)\s+)?(?:absent|not (?:present|suspected|planned|identified|seen)|ruled out|unlikely)\b/.test(after);
+  return negativeBefore || negativeAfter;
+}
+
+function conceptsFromText(normalizedText, originalText = normalizedText, wording = { negated: new Set() }) {
+  // Preserve comma-delimited affirmative clauses without losing simple denied lists.
+  const explicitLists = String(originalText).replace(/\b(?:no|without|denies|denied|negative for)\b[^.;\n]*/gi, phrase => {
+    return phrase.split(',').map((part, index) => index && /^\s*(?:and\s+|or\s+)?(?:(?:internal|external|cervical|vertical|root|alveolar|current)\s+)*(?:resorption|fracture|vrf|ecr|crack|pain|trauma|swelling|sinus tract|implant planning)\s*$/i.test(part) ? ' no ' + part.replace(/^\s*(?:and\s+|or\s+)?/i, '') : part).join(',');
+  });
+  const assertionText = normalizeScenarioText(explicitLists.replace(/[,;\n]/g, '. '));
   return Object.entries(concepts).reduce((found, [concept, rule]) => {
-    const excluded = (rule.excludes || []).some(pattern => pattern.test(normalizedText));
-    const matched = rule.patterns.some(pattern => pattern.test(normalizedText));
-    if (matched && !excluded) {
-      found.add(concept);
+    if (!negationAwareConcepts.has(concept)) {
+      const excluded = (rule.excludes || []).some(pattern => pattern.test(normalizedText));
+      if (!excluded && rule.patterns.some(pattern => pattern.test(normalizedText))) found.add(concept);
+      return found;
     }
+    rule.patterns.forEach(pattern => {
+      const globalPattern = new RegExp(pattern.source, pattern.flags.replace(/g/g, '') + 'g');
+      for (const match of assertionText.matchAll(globalPattern)) {
+        const start = assertionText.lastIndexOf('.', match.index) + 1;
+        const end = assertionText.indexOf('.', match.index + match[0].length);
+        const clause = assertionText.slice(start, end === -1 ? undefined : end);
+        const excluded = (rule.excludes || []).some(exclusion => exclusion.test(clause));
+        if (mentionIsNegated(assertionText, match) || excluded) wording.negated.add(concept);
+        else found.add(concept);
+      }
+    });
     return found;
   }, new Set());
 }
@@ -1072,7 +1119,7 @@ function extractClinicalEntities(normalizedText, conceptSet, matches = []) {
   matches.forEach(match => uniquePush(entities.matched_guidance_categories, match.guidanceCategory || match.name));
 
   const hasTesting = conceptSet.has('pulpTesting') || conceptSet.has('percussionTenderness') || conceptSet.has('bitingPain');
-  const has2dContext = conceptSet.has('inconclusive2d') || conceptSet.has('paWnl') || conceptSet.has('periapicalFinding') || conceptSet.has('noApicalLesion');
+  const has2dContext = conceptSet.has('inconclusive2d') || conceptSet.has('paWnl') || conceptSet.has('periapicalFinding') || conceptSet.has('noApicalLesion') || conceptSet.has('conclusive2d');
   const has3dQuestion = ['anatomicRisk', 'measurementNeed', 'locationExtent', 'surgicalPlanningNeed', 'missedAnatomy', 'rootMorphologyUnclear', 'rootResorptionRisk'].some(concept => conceptSet.has(concept));
   const hasUncertainty = ['sourceUnclear', 'nonspecificSymptoms', 'conflictingPulpTests', 'uncertaintyMarker', 'inconclusive2d'].some(concept => conceptSet.has(concept));
 
@@ -1235,18 +1282,23 @@ function matchScenarioText(text) {
 
 function analyzeScenarioText(text) {
   const normalizedText = normalizeScenarioText(text);
-  const concepts = conceptsFromText(normalizedText);
+  const wording = { negated: new Set() };
+  const concepts = conceptsFromText(normalizedText, text, wording);
   const reducingConcepts = reducingConceptsFromText(concepts);
   const matches = guidanceScenarios
     .map(scenario => scoreScenario(scenario, concepts, reducingConcepts))
     .filter(match => match.score >= match.threshold)
     .sort((a, b) => b.score - a.score);
   const entities = extractClinicalEntities(normalizedText, concepts, matches);
+  const mixedWording = [...wording.negated].filter(concept => concepts.has(concept));
+  if (mixedWording.length) {
+    entities.caution_notes.unshift(`Both positive and negative wording were found for: ${labelsForConcepts(mixedWording).join(', ')}. Review which tooth and time point each statement describes.`);
+  }
   const topAlignment = matches[0]?.alignmentLevel || 'weak';
   entities.confidence_level = confidenceLevelFor(topAlignment, entities.input_completeness.category);
   entities.cbct_relevance = cbctRelevanceSummary(matches, concepts, entities);
 
-  return { matches, concepts, reducingConcepts, entities, normalizedText };
+  return { matches, concepts, reducingConcepts, entities, normalizedText, negatedConcepts: wording.negated };
 }
 
 function confidenceLevelFor(alignmentLevel, completenessCategory) {
@@ -1319,14 +1371,7 @@ function renderEvidenceCards() {
   document.querySelectorAll('[data-evidence-card]').forEach(card => {
     const evidence = evidenceMap[card.dataset.evidenceCard];
     if (!evidence) return;
-
-    const linkText = evidence.doiUrl ? 'Study detail' : 'Evidence basis';
-    card.innerHTML = `
-      <strong>${escapeHtml(evidence.displayPercent)}</strong>
-      <span>${escapeHtml(evidence.cardCopy.headline)}</span>
-      <small>${escapeHtml(evidence.cardCopy.detail)}</small>
-      <a class="evidence-link" href="${escapeHtml(evidenceLinkFor(evidence))}">${linkText}</a>
-    `;
+    card.innerHTML = '<strong>' + escapeHtml(evidence.displayPercent) + '</strong><span>' + escapeHtml(evidence.cardCopy.headline) + '</span><small>' + escapeHtml(evidence.populationContext || evidence.guidelineContext) + '</small><small>' + escapeHtml(evidence.applicabilityWarning || 'No indication-specific percentage is used for this category.') + '</small><a class="evidence-link" href="' + escapeHtml(evidenceLinkFor(evidence)) + '">' + (evidence.doiUrl ? 'Read the study' : 'Read the source') + '</a>';
   });
 }
 
@@ -1358,67 +1403,29 @@ function calculateDecisionImpact(entries) {
   }, { planImpact: 0, diagnosisImpact: 0, primaryImpact: 0 });
 }
 
-function renderAlignmentDetails(target, topMatch, concepts, reducingConcepts, entities = null) {
-  const supporting = topMatch
-    ? labelsForConcepts(topMatch.matchedConcepts)
-    : labelsForConcepts(concepts);
-  const reducing = labelsForConcepts(reducingConcepts);
-  const limitation = topMatch?.limitation || 'What CBCT may add depends on the clinical question, patient context, image quality, and whether lower-exposure imaging or clinical testing can reasonably answer the question.';
+function guidanceSourceFor(match) {
+  const general = !match || /implant|impacted|extraction|airway|sinus/i.test(match.name);
+  return general ? { href: '#cite-ada-aaomr', label: 'ADA/AAOMR imaging guidance' } : { href: '#cite-aae-aaomr', label: 'AAE/AAOMR endodontic guidance' };
+}
 
-  const supportingList = supporting.length
-    ? supporting.map(item => `<li>${escapeHtml(item)}</li>`).join('')
-    : '<li>No specific CBCT-related pattern was detected.</li>';
-  const reducingList = reducing.length
-    ? reducing.map(item => `<li>${escapeHtml(item)}</li>`).join('')
-    : '<li>No limiting details were detected in the note text.</li>';
-  const entitySections = entities ? [
-    ['What was recognized from the text', [
-      ...entities.tooth_or_region.map(item => `Tooth/region: ${item}`),
-      ...entities.procedure_context,
-      ...entities.symptoms,
-      ...entities.clinical_tests_reported,
-      ...entities.clinical_test_results,
-      ...entities.periodontal_findings,
-      ...entities['2d_imaging_findings'],
-      ...entities.prior_treatment_status,
-      ...entities.suspected_condition,
-      ...entities.anatomic_risk,
-      ...entities.surgical_planning_need,
-      ...entities.artifact_or_restoration_risk
-    ]],
-    ['What was inferred', [
-      ...entities.uncertainty_level,
-      `Input completeness: ${entities.input_completeness.category} (${entities.input_completeness.score}/8 factors present)`,
-      entities.input_completeness.note,
-      `CBCT relevance: ${entities.cbct_relevance}`,
-      `Confidence: ${entities.confidence_level}`
-    ]],
-    ['Missing information or caution notes', [
-      ...entities.missing_information.map(item => `Missing: ${item}`),
-      ...entities.caution_notes
-    ]]
-  ].map(([heading, items]) => `
-    <section>
-      <h4>${escapeHtml(heading)}</h4>
-      <ul>${(items.length ? items : ['No additional details were extracted.']).map(item => `<li>${escapeHtml(item)}</li>`).join('')}</ul>
-    </section>
-  `).join('') : '';
-
-  target.innerHTML = `
-    ${entitySections}
-    <section>
-      <h4>Matched guidance features</h4>
-      <ul>${supportingList}</ul>
-    </section>
-    <section>
-      <h4>Details that make the evidence less direct</h4>
-      <ul>${reducingList}</ul>
-    </section>
-    <section>
-      <h4>What this may or may not add</h4>
-      <p>${escapeHtml(limitation)}</p>
-    </section>
-  `;
+function renderAlignmentDetails(target, topMatch, conceptSet, reducingConcepts, entities, matches = [], negatedConcepts = new Set()) {
+  const list = items => '<ul>' + items.map(item => '<li>' + escapeHtml(item) + '</li>').join('') + '</ul>';
+  const limitations = entities.caution_notes.filter(note => note !== entities.input_completeness.note && !note.startsWith('No clear CBCT-alignment'));
+  if (topMatch?.limitation) limitations.unshift(topMatch.limitation);
+  if (topMatch?.alignmentLevel === 'limited') limitations.unshift('Only a limited text match was found. Review the clinical question and supporting information.');
+  if (entities.missing_information.length) limitations.push('Not recognized in the text: ' + entities.missing_information.slice(0, 2).join('; ') + '.');
+  if (!limitations.length) limitations.push('The text match does not establish whether CBCT is needed.');
+  const recognized = [...entities.tooth_or_region.map(item => 'Tooth/area: ' + item), ...labelsForConcepts(conceptSet)];
+  const denied = labelsForConcepts(negatedConcepts).map(item => 'Negative wording recognized: ' + item);
+  const source = guidanceSourceFor(topMatch);
+  const secondary = matches.slice(1).map(match => {
+    const reference = guidanceSourceFor(match);
+    return '<section><h3>' + escapeHtml(match.name) + '</h3><p>' + escapeHtml(match.text) + '</p><a href="' + reference.href + '" data-tab-link>' + reference.label + '</a></section>';
+  }).join('');
+  target.innerHTML = '<section class="result-limits"><h3>Important limitations</h3>' + list([...new Set(limitations)].slice(0, 3)) + '</section>'
+    + '<p class="result-source">Source: <a href="' + source.href + '" data-tab-link>' + source.label + '</a></p>'
+    + '<details><summary>Review recognized details</summary><p>Check these details against your case. Edit the description and review it again if anything is incorrect.</p>' + list([...recognized, ...denied].length ? [...recognized, ...denied] : ['No specific clinical details were recognized.']) + '</details>'
+    + (secondary ? '<details><summary>Other related topics (' + (matches.length - 1) + ')</summary>' + secondary + '</details>' : '');
 }
 
 function cdtReferencesForScenario(text) {
@@ -1474,48 +1481,59 @@ if (typeof module !== 'undefined') {
     evidenceMap,
     studies,
     calculateDecisionImpact,
+    calculatePracticePlan,
+    matchLabelFor,
     appVersion
   };
 }
 
+function optionalNumber(value) {
+  if (value === null || value === undefined || String(value).trim() === '') return null;
+  const number = Number(value);
+  return Number.isFinite(number) && number >= 0 ? number : null;
+}
+
+function calculatePracticePlan(counts, assumptions = {}) {
+  const cases = counts.reduce((sum, count) => sum + Math.ceil(optionalNumber(count) ?? 0), 0);
+  const scanShare = optionalNumber(assumptions.scanShare);
+  const validScan = scanShare !== null && scanShare <= 100;
+  const totalScans = validScan ? cases * scanShare / 100 : null;
+  const referredCount = optionalNumber(assumptions.referredCount);
+  const referralEntered = assumptions.referredCount !== null && assumptions.referredCount !== undefined && String(assumptions.referredCount).trim() !== '';
+  const invalidReferral = referralEntered && (referredCount === null || !Number.isInteger(referredCount) || (totalScans !== null && referredCount > totalScans));
+  const validReferral = referredCount !== null && !invalidReferral;
+  const referredScans = totalScans !== null && validReferral ? referredCount : null;
+  const officeScans = referredScans !== null ? totalScans - referredScans : null;
+  const fee = optionalNumber(assumptions.cbctFee);
+  const panCount = optionalNumber(assumptions.panCount);
+  const panFee = optionalNumber(assumptions.panFee);
+  const cbctRevenue = officeScans !== null && fee !== null ? officeScans * fee : null;
+  const panRevenue = panCount !== null && panFee !== null ? Math.ceil(panCount) * panFee : null;
+  return { cases, totalScans, officeScans, referredScans, invalidReferral, cbctRevenue, panRevenue, totalRevenue: cbctRevenue !== null && panRevenue !== null ? cbctRevenue + panRevenue : null };
+}
+
 function updateCalculator() {
-  const rows = Array.from(document.querySelectorAll('[data-case]'));
-  const entries = [];
-  let top = { label: '-', value: 0 };
-  let projected = 0;
-
-  rows.forEach(input => {
-    const key = input.dataset.case;
-    const count = Math.ceil(Math.max(0, Number(input.value) || 0));
-    const item = indicationWeights[key];
-    projected += count;
-    entries.push({ item, count, adjusted: count });
-
-    if (count > top.value) {
-      top = { label: item.label, value: count };
-    }
+  const assumptions = Object.fromEntries(['scanShare', 'referredCount', 'panCount', 'panFee', 'cbctFee'].map(id => [id, document.getElementById(id).value]));
+  const plan = calculatePracticePlan(Array.from(document.querySelectorAll('[data-case]')).map(input => input.value), assumptions);
+  const displayCount = value => value === null ? '—' : new Intl.NumberFormat('en-US', { maximumFractionDigits: 1 }).format(value);
+  const displayMoney = value => value === null ? '—' : formatCurrency(value);
+  ['enteredCases', 'monthlyScans', 'officeScans', 'referredScans', 'quarterScans'].forEach((id, index) => {
+    document.getElementById(id).textContent = displayCount([plan.cases, plan.totalScans, plan.officeScans, plan.referredScans, plan.totalScans === null ? null : plan.totalScans * 3][index]);
   });
+  ['cbctRevenue', 'panRevenue', 'totalRevenue'].forEach(id => { document.getElementById(id).textContent = displayMoney(plan[id]); });
+  const invalidShare = assumptions.scanShare !== '' && (optionalNumber(assumptions.scanShare) === null || Number(assumptions.scanShare) > 100);
+  const referralInput = document.getElementById('referredCount');
+  if (plan.totalScans === null) referralInput.removeAttribute('max');
+  else referralInput.max = String(Math.floor(plan.totalScans));
+  referralInput.setAttribute('aria-invalid', String(plan.invalidReferral));
+  const status = document.getElementById('plannerStatus');
+  status.textContent = invalidShare ? 'Enter a percentage from 0 to 100.' : plan.invalidReferral ? (plan.totalScans !== null && Number(assumptions.referredCount) > plan.totalScans ? 'Scans referred out cannot exceed total estimated scans (' + displayCount(plan.totalScans) + ').' : 'Enter a whole number of referred scans, zero or greater.') : plan.totalScans === null ? 'Enter scan-volume assumptions to see calculated activity.' : plan.officeScans === null ? 'Enter the number of scans referred out. Enter 0 if none are referred.' : 'Calculated from your assumptions. Monthly counts represent average activity.';
+  status.setAttribute('role', invalidShare || plan.invalidReferral ? 'alert' : 'status');
+}
 
-  const impact = calculateDecisionImpact(entries);
-  const monthly = projected;
-  const panCount = Math.max(0, Number(document.getElementById('panCount').value) || 0);
-  const panFee = Math.max(0, Number(document.getElementById('panFee').value) || 0);
-  const cbctFee = Math.max(0, Number(document.getElementById('cbctFee').value) || 0);
-  const cbctRevenue = Math.ceil(monthly * cbctFee);
-  const panRevenue = Math.ceil(panCount * panFee);
-
-  document.getElementById('monthlyScans').textContent = monthly;
-  document.getElementById('quarterScans').textContent = monthly * 3;
-  document.getElementById('planImpact').textContent = Math.ceil(impact.planImpact);
-  document.getElementById('diagnosisImpact').textContent = Math.ceil(impact.diagnosisImpact);
-  document.getElementById('decisionImpactMonthly').textContent = Math.ceil(impact.primaryImpact);
-  document.getElementById('decisionImpactQuarterly').textContent = Math.ceil(impact.primaryImpact) * 3;
-  document.getElementById('treatmentImpactMonthly').textContent = Math.ceil(impact.planImpact);
-  document.getElementById('diagnosticImpactMonthly').textContent = Math.ceil(impact.diagnosisImpact);
-  document.getElementById('topCategory').textContent = top.label;
-  document.getElementById('cbctRevenue').textContent = formatCurrency(cbctRevenue);
-  document.getElementById('panRevenue').textContent = formatCurrency(panRevenue);
-  document.getElementById('totalRevenue').textContent = formatCurrency(cbctRevenue + panRevenue);
+function matchLabelFor(alignmentLevel) {
+  const label = ({ strong: 'Close match', moderate: 'Partial match', limited: 'Limited match' })[alignmentLevel] || 'No match';
+  return label + ' based on the entered text';
 }
 
 function formatCurrency(value) {
@@ -1528,233 +1546,198 @@ function formatCurrency(value) {
 
 function analyzeScenario() {
   const text = document.getElementById('scenarioInput').value;
-  const scenarioAnalysis = analyzeScenarioText(text);
-  const matches = scenarioAnalysis.matches;
+  const analysis = analyzeScenarioText(text);
   const title = document.getElementById('recommendationTitle');
   const body = document.getElementById('recommendationText');
   const details = document.getElementById('alignmentDetails');
   const chips = document.getElementById('matchedIndications');
   const responsible = document.getElementById('responsibleUse');
-  const cdtReference = document.getElementById('cdtScenarioReference');
-
-  chips.innerHTML = '';
-  details.innerHTML = '';
-  renderCdtScenarioReference(cdtReference, text);
-
+  const cdt = document.getElementById('cdtScenarioReference');
+  document.getElementById('editScenario').hidden = !text.trim();
+  chips.replaceChildren(); details.replaceChildren(); cdt.hidden = true; cdt.replaceChildren();
   if (!text.trim()) {
-    title.textContent = 'Enter a scenario to review';
-    body.textContent = 'Describe the patient presentation, prior treatment, exam findings, and whether 2D imaging is conclusive.';
+    title.textContent = 'Add a case to begin';
+    body.textContent = 'The result will show related guidance, limitations, and details to review.';
     responsible.textContent = '';
-    cdtReference.hidden = true;
-    cdtReference.innerHTML = '';
     return;
   }
+  const top = analysis.matches[0];
+  title.textContent = top ? 'Related topic: ' + top.name : 'No related guidance topic identified';
+  body.textContent = top ? top.text : 'The supplied text did not produce a guidance match. This does not rule out imaging need. Review the recognized details and the original guidance.';
+  const chip = document.createElement('span');
+  chip.textContent = matchLabelFor(top?.alignmentLevel);
+  chips.append(chip);
+  renderAlignmentDetails(details, top, analysis.concepts, analysis.reducingConcepts, analysis.entities, analysis.matches, analysis.negatedConcepts);
+  responsible.textContent = 'Educational reference. Final imaging decisions require the complete patient assessment.';
+}
 
-  if (!matches.length) {
-    title.textContent = 'No specific CBCT guidance pattern detected';
-    body.textContent = 'No specific CBCT-related language was detected in the scenario text. ADA/AAOMR guidance frames imaging around clinical need, patient selection, and whether lower-exposure options can provide the needed information.';
-    renderAlignmentDetails(details, null, scenarioAnalysis.concepts, scenarioAnalysis.reducingConcepts, scenarioAnalysis.entities);
-    responsible.textContent = 'Add context such as nonhealing endodontic treatment, suspected fracture, resorption, trauma, implant planning, or inconclusive radiographs if those details apply.';
-    return;
+function revealScenarioResult() {
+  const title = document.getElementById('recommendationTitle');
+  title.setAttribute('tabindex', '-1');
+  title.focus({ preventScroll: true });
+  if (window.matchMedia('(max-width: 980px)').matches) {
+    document.getElementById('recommendationBox').scrollIntoView({ behavior: 'auto', block: 'start' });
   }
-
-  const topMatch = matches[0];
-  const alignmentPrefix = {
-    strong: 'Strong match to published CBCT scenarios',
-    moderate: 'Moderate match to published CBCT scenarios',
-    limited: 'Limited match to published CBCT scenarios'
-  }[topMatch.alignmentLevel];
-
-  title.textContent = `${alignmentPrefix}: ${topMatch.title}`;
-  body.textContent = matches.map(match => match.text).join(' ');
-  matches.forEach(match => {
-    const chip = document.createElement('span');
-    chip.textContent = `${match.name} (${match.alignmentLevel})`;
-    chips.appendChild(chip);
-  });
-  renderAlignmentDetails(details, topMatch, scenarioAnalysis.concepts, scenarioAnalysis.reducingConcepts, scenarioAnalysis.entities);
-
-  responsible.textContent = 'Responsible-use reminder: document the clinical question, use limited FOV when possible, optimize exposure for the patient and indication, and interpret findings within the complete clinical context.';
 }
 
 function tabForHash(hash) {
-  if (!hash || hash === '#clinical-scenarios' || hash === '#modality') {
-    return 'clinical';
-  }
-
-  if (hash === '#calculator') {
-    return 'estimator';
-  }
-
+  if (!hash || hash === '#home') return 'home';
+  if (hash === '#modality') return 'clinical';
   const id = hash.slice(1);
-  if (id.startsWith('cite-')) {
-    return 'citations';
-  }
-
-  const panel = document.getElementById(id);
-  return panel?.dataset.tabPanel || 'home';
+  const target = document.getElementById(id);
+  return target?.closest('[data-tab-panel]')?.dataset.tabPanel || 'home';
 }
 
 function setActiveTab(tabName, options = {}) {
-  const tabs = Array.from(document.querySelectorAll('.tab'));
   const panels = Array.from(document.querySelectorAll('[data-tab-panel]'));
-  const activeTab = tabs.find(tab => tab.dataset.tab === tabName) || tabs[0];
-  const activeName = activeTab?.dataset.tab || 'clinical';
-
-  panels.forEach(panel => {
-    panel.hidden = panel.dataset.tabPanel !== activeName;
+  const activeName = panels.some(panel => panel.dataset.tabPanel === tabName) ? tabName : 'home';
+  document.body.classList.toggle('planner-is-active', activeName === 'estimator');
+  const group = ['fov-resolution', 'navigation', 'artifacts'].includes(activeName) ? 'guides' : activeName === 'cdt' ? 'citations' : activeName;
+  panels.forEach(panel => { panel.hidden = panel.dataset.tabPanel !== activeName; });
+  document.querySelectorAll('.tab').forEach(tab => {
+    const active = tab.dataset.tab === group;
+    tab.classList.toggle('is-active', active);
+    if (active) tab.setAttribute('aria-current', 'page'); else tab.removeAttribute('aria-current');
   });
-
-  tabs.forEach(tab => {
-    const isActive = tab.dataset.tab === activeName;
-    tab.classList.toggle('is-active', isActive);
-    tab.setAttribute('aria-selected', String(isActive));
-  });
-
-  if (options.scroll !== false) {
-    const target = options.targetId ? document.getElementById(options.targetId) : document.querySelector(`[data-tab-panel="${activeName}"]`);
-    target?.scrollIntoView({ behavior: options.instant ? 'auto' : 'smooth', block: 'start' });
+  const panel = panels.find(panel => panel.dataset.tabPanel === activeName);
+  const target = options.targetId ? document.getElementById(options.targetId) : panel;
+  // Links to a review topic also reveal its steps, including on direct entry or Back.
+  let disclosure = target?.closest('details');
+  while (disclosure) {
+    disclosure.open = true;
+    disclosure = disclosure.parentElement?.closest('details');
+  }
+  document.getElementById('menuToggle').setAttribute('aria-expanded', 'false');
+  document.getElementById('siteNav').classList.remove('is-open');
+  document.documentElement.style.setProperty('--site-header-height', Math.ceil(document.querySelector('.site-header').getBoundingClientRect().height) + 'px');
+  if (options.scroll !== false) (target || panel)?.scrollIntoView({ behavior: 'auto', block: 'start' });
+  if (options.focus) {
+    const focusTarget = target?.matches('details') ? target.querySelector('summary') : target?.matches('h1, h2, h3') ? target : target?.querySelector('h1, h2, h3') || target || panel?.querySelector('h1, h2');
+    if (focusTarget) { if (!focusTarget.matches('summary')) focusTarget.setAttribute('tabindex', '-1'); focusTarget.focus({ preventScroll: true }); }
   }
 }
 
 function setupTabs() {
-  document.querySelectorAll('.tab').forEach(tab => {
-    tab.addEventListener('click', event => {
-      event.preventDefault();
-      const tabName = tab.dataset.tab || tabForHash(tab.hash);
-      const targetId = tab.hash ? tab.hash.slice(1) : tabName;
-      history.pushState(null, '', `#${targetId}`);
-      setActiveTab(tabName, { targetId });
-    });
+  document.addEventListener('click', event => {
+    const link = event.target.closest('a[href^="#"]');
+    if (!link || link.classList.contains('skip-link')) return;
+    const target = document.getElementById(link.hash.slice(1));
+    if (!target) return;
+    event.preventDefault();
+    history.pushState(null, '', link.hash);
+    setActiveTab(tabForHash(link.hash), { targetId: target.id, focus: true });
   });
+  window.addEventListener('hashchange', () => setActiveTab(tabForHash(window.location.hash), { targetId: window.location.hash.slice(1), focus: true }));
+  document.getElementById('menuToggle').addEventListener('click', event => {
+    const open = event.currentTarget.getAttribute('aria-expanded') !== 'true';
+    event.currentTarget.setAttribute('aria-expanded', String(open));
+    document.getElementById('siteNav').classList.toggle('is-open', open);
+  });
+  document.addEventListener('keydown', event => { if (event.key === 'Escape' && document.getElementById('menuToggle').getAttribute('aria-expanded') === 'true') { document.getElementById('menuToggle').click(); document.getElementById('menuToggle').focus(); } });
+  setActiveTab(tabForHash(window.location.hash), { targetId: window.location.hash.slice(1), scroll: Boolean(window.location.hash) });
+}
 
-  document.querySelectorAll('a[href^="#cite-"]').forEach(link => {
-    link.addEventListener('click', event => {
-      const targetId = link.hash.slice(1);
-      setActiveTab('citations', { targetId });
-    });
-  });
-
-  window.addEventListener('hashchange', () => {
-    setActiveTab(tabForHash(window.location.hash), {
-      targetId: window.location.hash.slice(1),
-      instant: true
-    });
-  });
-
-  setActiveTab(tabForHash(window.location.hash), {
-    targetId: window.location.hash.slice(1),
-    instant: true,
-    scroll: Boolean(window.location.hash)
-  });
+function setupPlannerLayout() {
+  const header = document.querySelector('.site-header');
+  const syncHeight = () => document.documentElement.style.setProperty('--site-header-height', Math.ceil(header.getBoundingClientRect().height) + 'px');
+  syncHeight();
+  if (typeof ResizeObserver !== 'undefined') new ResizeObserver(syncHeight).observe(header);
+  else window.addEventListener('resize', syncHeight);
 }
 
 function setupArtifactExpansion() {
-  const supportsHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  const hoverQuery = window.matchMedia('(hover: hover) and (pointer: fine)');
+  const preview = document.createElement('div');
+  preview.className = 'artifact-image-preview';
+  preview.hidden = true;
+  preview.setAttribute('aria-hidden', 'true');
+  const previewImage = document.createElement('img');
+  previewImage.alt = '';
+  preview.append(previewImage);
 
-  function closeAll() {
-    document.querySelectorAll('.artifact-expanded').forEach(panel => {
-      panel.hidden = true;
-      panel.innerHTML = '';
-    });
+  const viewer = document.createElement('dialog');
+  viewer.className = 'artifact-image-viewer';
+  const closeButton = document.createElement('button');
+  closeButton.type = 'button';
+  closeButton.className = 'artifact-viewer-close';
+  closeButton.textContent = 'Close';
+  const viewerImage = document.createElement('img');
+  viewer.append(closeButton, viewerImage);
+  document.body.append(preview, viewer);
+
+  let activeImage = null;
+  let pointer = { x: 0, y: 0 };
+
+  function hidePreview() {
+    preview.hidden = true;
+    activeImage = null;
   }
 
-  function openRow(row, detail, thumbs, pattern, frequency, appearance, check, why) {
-    closeAll();
-    const images = thumbs.map(thumb => {
-      const img = thumb.querySelector('img');
-      return `<img src="${escapeHtml(img.getAttribute('src'))}" alt="${escapeHtml(img.getAttribute('alt'))}">`;
-    }).join('');
-
-    detail.innerHTML = `
-      <div class="artifact-expanded-images">${images}</div>
-      <div class="artifact-expanded-copy">
-        <h3>${escapeHtml(pattern)}</h3>
-        <p><strong>How common?</strong> ${escapeHtml(frequency)}</p>
-        <p><strong>Typical appearance:</strong> ${escapeHtml(appearance)}</p>
-        ${why ? `<p><strong>Why it happens:</strong> ${escapeHtml(why)}</p>` : ''}
-        <p><strong>How to check it:</strong> ${escapeHtml(check)}</p>
-      </div>
-    `;
-    detail.hidden = false;
+  function positionPreview() {
+    if (!activeImage) return;
+    const margin = 12;
+    const maxWidth = Math.max(1, Math.min(720, window.innerWidth - margin * 2));
+    const maxHeight = Math.max(1, Math.min(640, window.innerHeight - margin * 2));
+    const ratio = activeImage.naturalWidth / activeImage.naturalHeight || 1;
+    const width = Math.min(maxWidth, maxHeight * ratio);
+    const height = width / ratio;
+    // Center on the pointer, shifting only enough to keep the whole image visible.
+    preview.style.width = width + 'px';
+    preview.style.height = height + 'px';
+    preview.style.left = Math.max(margin, Math.min(pointer.x - width / 2, window.innerWidth - width - margin)) + 'px';
+    preview.style.top = Math.max(margin, Math.min(pointer.y - height / 2, window.innerHeight - height - margin)) + 'px';
   }
 
-  document.querySelectorAll('[data-artifact-row]').forEach(row => {
-    const thumbs = Array.from(row.querySelectorAll('.artifact-thumb'));
-    const detail = row.querySelector('.artifact-expanded');
-    const cells = Array.from(row.children).filter(child => child.tagName === 'SPAN');
-    const pattern = row.dataset.pattern || cells[1]?.textContent.trim() || 'Artifact';
-    const frequency = row.dataset.frequency || 'Varies';
-    const why = row.dataset.why || '';
-    const appearance = cells[2]?.textContent.trim() || '';
-    const check = cells[3]?.textContent.trim() || '';
-
-    if (supportsHover) {
-      thumbs.forEach(button => {
-        button.addEventListener('mouseenter', () => {
-          openRow(row, detail, thumbs, pattern, frequency, appearance, check, why);
-        });
-        button.addEventListener('mouseleave', () => {
-          detail.hidden = true;
-          detail.innerHTML = '';
-        });
-        button.addEventListener('click', event => {
-          event.preventDefault();
-        });
-      });
-    } else {
-      thumbs.forEach(button => {
-        button.addEventListener('click', () => {
-          const alreadyOpen = !detail.hidden;
-          closeAll();
-
-          if (alreadyOpen) {
-            return;
-          }
-
-          openRow(row, detail, thumbs, pattern, frequency, appearance, check, why);
-        });
-      });
-    }
+  previewImage.addEventListener('load', positionPreview);
+  closeButton.addEventListener('click', () => viewer.close());
+  viewer.addEventListener('click', event => {
+    if (event.target === viewer) viewer.close();
   });
-}
+  viewer.addEventListener('close', () => {
+    document.body.classList.remove('artifact-viewer-open');
+    viewerImage.removeAttribute('src');
+  });
 
-function setupMobileNavBehavior() {
-  const tabs = document.querySelector('.tabs');
-  if (!tabs) return;
+  document.querySelectorAll('.artifact-thumb').forEach(button => {
+    const image = button.querySelector('img');
+    button.setAttribute('aria-haspopup', 'dialog');
+    button.addEventListener('pointerenter', event => {
+      if (!hoverQuery.matches || event.pointerType === 'touch' || viewer.open) return;
+      activeImage = image;
+      pointer = { x: event.clientX, y: event.clientY };
+      previewImage.src = image.currentSrc || image.src;
+      positionPreview();
+      preview.hidden = false;
+    });
+    button.addEventListener('pointermove', event => {
+      if (activeImage !== image) return;
+      pointer = { x: event.clientX, y: event.clientY };
+      positionPreview();
+    });
+    button.addEventListener('pointerleave', hidePreview);
+    button.addEventListener('pointercancel', hidePreview);
+    button.addEventListener('click', () => {
+      hidePreview();
+      viewerImage.src = image.currentSrc || image.src;
+      viewerImage.alt = image.alt;
+      viewer.setAttribute('aria-label', image.alt);
+      viewer.showModal();
+      document.body.classList.add('artifact-viewer-open');
+    });
+  });
 
-  const mobileQuery = window.matchMedia('(max-width: 700px)');
-  let lastScrollY = window.scrollY;
-  let ticking = false;
-
-  function syncNav() {
-    const currentScrollY = window.scrollY;
-
-    if (!mobileQuery.matches || currentScrollY < 24) {
-      tabs.classList.remove('is-mobile-hidden');
-      lastScrollY = currentScrollY;
-      ticking = false;
-      return;
-    }
-
-    if (currentScrollY < lastScrollY - 6) {
-      tabs.classList.add('is-mobile-hidden');
-    } else if (currentScrollY > lastScrollY + 6) {
-      tabs.classList.remove('is-mobile-hidden');
-    }
-
-    lastScrollY = currentScrollY;
-    ticking = false;
-  }
-
-  window.addEventListener('scroll', () => {
-    if (ticking) return;
-    ticking = true;
-    window.requestAnimationFrame(syncNav);
-  }, { passive: true });
-
-  mobileQuery.addEventListener('change', syncNav);
-  syncNav();
+  // The overlay never receives pointer events, so it cannot interrupt thumbnail hover.
+  window.addEventListener('scroll', hidePreview, true);
+  window.addEventListener('resize', hidePreview);
+  window.addEventListener('blur', hidePreview);
+  window.addEventListener('hashchange', () => {
+    hidePreview();
+    if (viewer.open) viewer.close();
+  });
+  hoverQuery.addEventListener('change', hidePreview);
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape') hidePreview();
+  });
 }
 
 if (typeof window !== 'undefined') {
@@ -1762,21 +1745,39 @@ if (typeof window !== 'undefined') {
   renderEvidenceHighlights();
   renderEvidenceCards();
 
-  document.querySelectorAll('[data-case], #panCount, #panFee, #cbctFee').forEach(input => {
+  document.querySelectorAll('[data-case], #scanShare, #referredCount, #panCount, #panFee, #cbctFee').forEach(input => {
     input.addEventListener('input', updateCalculator);
     input.addEventListener('change', updateCalculator);
   });
 
-  document.getElementById('analyzeScenario').addEventListener('click', analyzeScenario);
+  document.getElementById('analyzeScenario').addEventListener('click', () => {
+    analyzeScenario();
+    if (document.getElementById('scenarioInput').value.trim()) revealScenarioResult();
+  });
   document.getElementById('clearScenario').addEventListener('click', () => {
     document.getElementById('scenarioInput').value = '';
     analyzeScenario();
   });
+  document.getElementById('editScenario').addEventListener('click', () => {
+    const input = document.getElementById('scenarioInput');
+    input.closest('.panel').scrollIntoView({ behavior: 'auto', block: 'start' });
+    input.focus({ preventScroll: true });
+  });
 
   updateCalculator();
   analyzeScenario();
+  setupPlannerLayout();
   setupTabs();
   setupArtifactExpansion();
-  setupMobileNavBehavior();
+  const examples = {
+    pain: '#14 lingering cold response and hard-to-localize pain. Periapical imaging is inconclusive. Need to clarify the source of symptoms.',
+    routine: 'Asymptomatic adult attending routine recall. No pain, no fracture concern, no resorption, no implant planning. Examination and 2D imaging answer the clinical question.',
+    implant: 'Implant planning at #30. Need ridge width and height measurements and the relationship to the mandibular canal.'
+  };
+  document.querySelectorAll('[data-scenario-example]').forEach(button => button.addEventListener('click', () => {
+    document.getElementById('scenarioInput').value = examples[button.dataset.scenarioExample];
+    analyzeScenario();
+    revealScenarioResult();
+  }));
 }
 
