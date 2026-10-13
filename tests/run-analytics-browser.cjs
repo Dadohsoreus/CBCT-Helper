@@ -31,6 +31,8 @@ const server = http.createServer(async (req,res)=>{
     const downloadPromise=page.waitForEvent('download');await page.locator('#export').click();const download=await downloadPromise;assert.match(download.suggestedFilename(),/^sample-cbct-usage/);
     await page.locator('#excludeBrowser').click();assert.match(await page.locator('#exclusionStatus').innerText(),/is excluded/);
     await page.locator('#leavePreview').click();assert.ok(await page.locator('#loginPanel').isVisible());assert.ok(await page.locator('#reports').isHidden());
+    await page.locator('#loginForm').waitFor({state:'visible',timeout:45000});
+    assert.match(await page.locator('#setupNote').innerText(),/Two-factor verification is required/);
     await page.goto(base+'/privacy.html');assert.match(await page.locator('#analyticsPreferenceStatus').innerText(),/not active/);assert.ok(await page.locator('#analyticsPreference').isDisabled());
     const measurement=[];page.on('request',request=>{if(request.url().includes('/collect'))measurement.push(request.url());});
     await page.goto(base+'/index.html#clinical-scenarios');await page.locator('[data-scenario-example="implant"]').click();assert.match(await page.locator('#recommendationTitle').innerText(),/Related topic/);

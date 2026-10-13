@@ -17,8 +17,10 @@ private rate-limit salt is installed. No secret value has been written to source
 The collector's Supabase secret is installed privately in Cloudflare. A deployed
 synthetic visit returned HTTP 204; its section timing, action counts, and Cloudflare-derived
 country/state were verified in the database and that exact fixture was removed.
-The owner-created dashboard account is allowlisted, and the owner confirmed public
-signups are disabled. No measured visits are stored yet.
+The owner-created dashboard account is allowlisted. An anonymous report request returns
+HTTP 401. The owner reported disabling public signups, but the live Auth settings still
+show `disable_signup: false`; that setting needs to be switched off and saved before
+activation. No measured visits are stored yet.
 
 Still required: publication of the dashboard with collection disabled; real administrator
 sign-in and authenticator enrollment; owner-browser exclusion on the public site; then
