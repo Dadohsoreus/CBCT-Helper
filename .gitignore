@@ -1,0 +1,6 @@
+
+.analytics-check/
+.dev.vars
+.env
+.env.*
+out/

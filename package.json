@@ -2,6 +2,8 @@
   "scripts": {
     "test:clinical": "node tests/run-clinical-scenarios.js",
     "test:evidence": "node tests/run-evidence-calculator.js",
-    "test:stage1": "node tests/run-stage1-regressions.js"
+    "test:stage1": "node tests/run-stage1-regressions.js",
+    "test:analytics": "node tests/run-analytics.js",
+    "test:analytics:database": "node tests/run-analytics-database.mjs"
   }
 }

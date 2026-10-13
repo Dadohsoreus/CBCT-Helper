@@ -1591,6 +1591,7 @@ function tabForHash(hash) {
 function setActiveTab(tabName, options = {}) {
   const panels = Array.from(document.querySelectorAll('[data-tab-panel]'));
   const activeName = panels.some(panel => panel.dataset.tabPanel === tabName) ? tabName : 'home';
+  window.CBCTAnalytics?.section(activeName);
   document.body.classList.toggle('planner-is-active', activeName === 'estimator');
   const group = ['fov-resolution', 'navigation', 'artifacts'].includes(activeName) ? 'guides' : activeName === 'cdt' ? 'citations' : activeName;
   panels.forEach(panel => { panel.hidden = panel.dataset.tabPanel !== activeName; });
