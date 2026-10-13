@@ -28,11 +28,14 @@ The owner completed authenticator enrollment and opened the protected live repor
 No measured visits were stored before activation. The owner's Chrome and in-app browsers
 are excluded on the public site's origin.
 
-The activation release updates the public configuration cache version. Run the live
-browser probe after GitHub Pages completes deployment and remove only its printed
-synthetic UUID after verifying the stored counters. Set exclusion separately on any
-additional owner browsers/devices. Never re-run the initial schema on the already
-provisioned project.
+Activation is deployed and verified. The live published-site probe recorded 33,420 ms
+in Clinical Cases and 5,052 ms in the Practice Planner; timing, section views, and action
+counts matched the stored record exactly. All nine collector responses were HTTP 204,
+and opting out stopped subsequent requests. Only that synthetic visit was present
+while the owner's excluded browser navigated the public tools; it was removed by its
+exact UUID afterward. The protected dashboard returned zero visits after cleanup.
+Set exclusion separately on any additional owner browsers/devices. Never re-run the
+initial schema on the already provisioned project.
 
 ## Preview
 
