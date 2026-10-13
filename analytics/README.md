@@ -1,7 +1,8 @@
 # CBCT Helper usage analytics
 
-Status: local implementation and sample-data preview. `analytics-config.js` ships with
-collection disabled. The user has connected Supabase and created a Cloudflare account.
+Status: dashboard and privacy page published at `https://cbcthelper.com/admin.html` and
+`https://cbcthelper.com/privacy.html`. `analytics-config.js` ships with collection disabled.
+The user has connected Supabase and created a Cloudflare account.
 The collector build passes Wrangler's dry run. The user created `CBCT Helper Analytics`
 in Geppetto's Workshop, project ref `ygemdjqukltfzyfaieyy`, region `us-east-1`.
 The hosted schema, private reporting helper, explicit browser-denial policies, and
@@ -18,14 +19,16 @@ The collector's Supabase secret is installed privately in Cloudflare. A deployed
 synthetic visit returned HTTP 204; its section timing, action counts, and Cloudflare-derived
 country/state were verified in the database and that exact fixture was removed.
 The owner-created dashboard account is allowlisted. An anonymous report request returns
-HTTP 401. The owner reported disabling public signups, but the live Auth settings still
-show `disable_signup: false`; that setting needs to be switched off and saved before
-activation. No measured visits are stored yet.
+HTTP 401. Public signups are saved as disabled and verified through the live Auth API.
+A real-browser synthetic visit recorded 33,252 ms in Clinical Cases and 5,052 ms in the
+Practice Planner; stored values matched the final payload. The browser stopped sending
+after exclusion. Both deployed probe fixtures were removed by their exact UUIDs.
+No measured visits are stored yet. The owner's Chrome browser is excluded on the public
+site's origin.
 
-Still required: publication of the dashboard with collection disabled; real administrator
-sign-in and authenticator enrollment; owner-browser exclusion on the public site; then
-tracker activation and live browser verification. Never re-run the initial schema on
-the already provisioned project.
+Still required: real administrator sign-in and authenticator enrollment; exclusion of
+any additional owner browsers/devices; then tracker activation and live browser
+verification. Never re-run the initial schema on the already provisioned project.
 
 ## Preview
 
