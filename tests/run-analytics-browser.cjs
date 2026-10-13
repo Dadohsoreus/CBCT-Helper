@@ -33,10 +33,10 @@ const server = http.createServer(async (req,res)=>{
     await page.locator('#leavePreview').click();assert.ok(await page.locator('#loginPanel').isVisible());assert.ok(await page.locator('#reports').isHidden());
     await page.locator('#loginForm').waitFor({state:'visible',timeout:45000});
     assert.match(await page.locator('#setupNote').innerText(),/Two-factor verification is required/);
-    await page.goto(base+'/privacy.html');assert.match(await page.locator('#analyticsPreferenceStatus').innerText(),/not active/);assert.ok(await page.locator('#analyticsPreference').isDisabled());
+    await page.goto(base+'/privacy.html');assert.match(await page.locator('#analyticsPreferenceStatus').innerText(),/is excluded/);assert.ok(await page.locator('#analyticsPreference').isEnabled());
     const measurement=[];page.on('request',request=>{if(request.url().includes('/collect'))measurement.push(request.url());});
     await page.goto(base+'/index.html#clinical-scenarios');await page.locator('[data-scenario-example="implant"]').click();assert.match(await page.locator('#recommendationTitle').innerText(),/Related topic/);
     await page.locator('#menuToggle').click();await page.locator('a.tab[data-tab="estimator"]').click();await page.locator('#scanShare').fill('50');assert.ok(await page.locator('#calculatorForm').isVisible());assert.equal(measurement.length,0);assert.deepEqual(errors,[]);
-    console.log('Browser checks passed: responsive dashboard, date ranges, sample CSV, owner exclusion, disabled privacy control, unchanged tools, zero collection requests, zero page errors.');
+    console.log('Browser checks passed: responsive dashboard, date ranges, sample CSV, owner exclusion, privacy preference, unchanged tools, zero localhost collection requests, zero page errors.');
   }finally{await browser.close();server.close();}
 })().catch(error=>{console.error(error.message);process.exitCode=1;server.close();});

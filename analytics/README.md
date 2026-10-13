@@ -1,14 +1,15 @@
 # CBCT Helper usage analytics
 
 Status: dashboard and privacy page published at `https://cbcthelper.com/admin.html` and
-`https://cbcthelper.com/privacy.html`. `analytics-config.js` ships with collection disabled.
+`https://cbcthelper.com/privacy.html`. Collection is enabled for the allowed public hosts.
+Localhost previews, administration pages, and excluded browsers send no measurements.
 The user has connected Supabase and created a Cloudflare account.
 The collector build passes Wrangler's dry run. The user created `CBCT Helper Analytics`
 in Geppetto's Workshop, project ref `ygemdjqukltfzyfaieyy`, region `us-east-1`.
 The hosted schema, private reporting helper, explicit browser-denial policies, and
 daily retention are installed. Hosted timing/retry/admin/MFA checks pass, all synthetic
 fixtures were rolled back, and the security advisor reports no findings. The local
-public URL/key configuration is connected; collection remains disabled.
+public URL/key configuration is connected.
 
 Wrangler is authenticated using encrypted local credentials. The user approved both
 Workers and Worker Scripts write permissions. The collector `cbct-helper-usage` is
@@ -23,17 +24,20 @@ HTTP 401. Public signups are saved as disabled and verified through the live Aut
 A real-browser synthetic visit recorded 33,252 ms in Clinical Cases and 5,052 ms in the
 Practice Planner; stored values matched the final payload. The browser stopped sending
 after exclusion. Both deployed probe fixtures were removed by their exact UUIDs.
-No measured visits are stored yet. The owner's Chrome browser is excluded on the public
-site's origin.
+The owner completed authenticator enrollment and opened the protected live report.
+No measured visits were stored before activation. The owner's Chrome and in-app browsers
+are excluded on the public site's origin.
 
-Still required: real administrator sign-in and authenticator enrollment; exclusion of
-any additional owner browsers/devices; then tracker activation and live browser
-verification. Never re-run the initial schema on the already provisioned project.
+The activation release updates the public configuration cache version. Run the live
+browser probe after GitHub Pages completes deployment and remove only its printed
+synthetic UUID after verifying the stored counters. Set exclusion separately on any
+additional owner browsers/devices. Never re-run the initial schema on the already
+provisioned project.
 
 ## Preview
 
 Serve the repository and open `/admin.html?demo=1`. The preview uses generated sample data,
-does not load Supabase, and makes no measurement requests while configuration is disabled.
+does not load Supabase, and never sends usage measurements from the administration page.
 Reports show visits, tool adoption, average/median section duration, devices, countries,
 and U.S. states. CSV files are explicitly marked as sample data in preview mode.
 
@@ -127,6 +131,9 @@ Public site: `analytics-config.js`, `analytics-client.js`, `privacy.html`, modif
 `wrangler.jsonc`. No backend secret belongs in a browser asset.
 
 Run `node tests/run-analytics.js` plus existing clinical/evidence/stage1 tests.
+Run `tests/check-collector-browser.cjs` with `CBCT_ANALYTICS_LIVE=1` for an explicit
+published-site probe; it records a synthetic visit that must be removed by its printed
+UUID after verification. It never enters administrator credentials.
 Database access, monotonic updates, reporting, and retention are tested with
 `tests/run-analytics-database.mjs` against a local PGlite instance. That test requires
 `@electric-sql/pglite` in `.analytics-check/node_modules`; it is a development dependency

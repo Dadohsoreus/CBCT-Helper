@@ -1,5 +1,6 @@
 // Explicit deployment probe. Serves local files in an isolated browser at the
 // intended public origin; enables collection in that browser response only.
+// Set CBCT_ANALYTICS_LIVE=1 to test the published site without replacing assets.
 // Prints the exact synthetic visit ID so it can be removed after verification.
 const { chromium } = require(process.env.CBCT_PLAYWRIGHT_MODULE || 'playwright');
 const fs = require('node:fs/promises');
@@ -14,7 +15,7 @@ const root = process.cwd();
   page.on('request', request => { if (request.url().endsWith('/collect')) payloads.push(JSON.parse(request.postData())); });
   page.on('response', response => { if (response.url().endsWith('/collect')) responses.push(response.status()); });
   try {
-    await page.route('https://cbcthelper.com/**', async route => {
+    if (process.env.CBCT_ANALYTICS_LIVE !== '1') await page.route('https://cbcthelper.com/**', async route => {
       const pathname = decodeURIComponent(new URL(route.request().url()).pathname);
       const filename = path.resolve(root, '.' + (pathname === '/' ? '/index.html' : pathname));
       if (!filename.startsWith(root + path.sep)) return route.fulfill({status:403});
