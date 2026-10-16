@@ -3,9 +3,9 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="CBCT education for general dentistry: clinical guidance, scan-review guides, and practice planning.">
+  <meta name="description" content="CBCT education for general dentistry: clinical guidance, scan-review guides, and scan-volume estimates.">
   <title>CBCT Helper | Dan Alman CBCT Education</title>
-  <link rel="stylesheet" href="styles.css?v=20261010-ui">
+  <link rel="stylesheet" href="styles.css?v=20261014-scan-estimate">
 </head>
 <body>
   <a class="skip-link" href="#main-content">Skip to content</a>
@@ -18,7 +18,7 @@
       <a href="#home" class="tab is-active" data-tab="home" aria-current="page">Home</a>
       <a href="#clinical-scenarios" class="tab" data-tab="clinical">Clinical cases</a>
       <a href="#scan-guides" class="tab" data-tab="guides">Scan guides</a>
-      <a href="#calculator" class="tab" data-tab="estimator">Practice planner</a>
+      <a href="#calculator" class="tab" data-tab="estimator">Estimate scan volume</a>
       <a href="#citations" class="tab" data-tab="citations">About &amp; references</a>
     </nav>
   </header>
@@ -28,7 +28,7 @@
       <div class="task-grid">
         <a class="task-card" href="#clinical-scenarios" data-tab-link><span class="task-marker" aria-hidden="true">01</span><h2>Review a clinical case</h2><p>Find published guidance related to the details you provide.</p><span class="task-action">Review a case <span aria-hidden="true">→</span></span></a>
         <a class="task-card" href="#scan-guides" data-tab-link><span class="task-marker" aria-hidden="true">02</span><h2>Use the scan guides</h2><p>Read practical guides to scan settings, image review, and artifacts.</p><span class="task-action">Open scan guides <span aria-hidden="true">→</span></span></a>
-        <a class="task-card" href="#calculator" data-tab-link><span class="task-marker" aria-hidden="true">03</span><h2>Estimate scan volume</h2><p>Estimate scan volume and gross revenue using your own assumptions.</p><span class="task-action">Open practice planner <span aria-hidden="true">→</span></span></a>
+        <a class="task-card" href="#calculator" data-tab-link><span class="task-marker" aria-hidden="true">03</span><h2>Estimate scan volume</h2><p>Use your monthly cases to estimate CBCT scans, explore study findings and calculate scan revenue.</p><span class="task-action">Estimate my scans <span aria-hidden="true">→</span></span></a>
       </div>
       <h2 class="quick-access-title">Quick access</h2>
       <div class="task-grid" aria-label="Quick access">
@@ -39,31 +39,47 @@
       <p class="home-note">Educational support for clinicians. Imaging decisions require the full patient history, examination, and existing imaging. <a href="#about-tool" data-tab-link>How this tool works</a></p>
     </section>
     <section id="clinical-scenarios" class="section" data-tab-panel="clinical" hidden>
-      <div class="section-head"><div><p class="eyebrow">Clinical cases</p><h1>Review a clinical case.</h1><p class="lede">Enter case details to see related CBCT guidance and its limitations. The tool does not decide whether a scan is needed.</p></div></div>
+      <div class="section-head"><div><p class="eyebrow">Clinical cases</p><h1>Review a clinical case.</h1><p class="lede">See when published guidance supports CBCT, why it may help, and which details still need review.</p></div></div>
       <div class="tool-grid clinical-grid">
-        <div class="clinical-input-column">
-        <div class="panel">
+        <div class="panel" id="caseInputPanel">
           <label class="scenario-label" for="scenarioInput">Case description</label>
-          <p class="form-helper" id="scenarioHelp">Include the tooth or area, symptoms, examination findings, existing imaging, and the question you need to answer. Omit patient identifiers.</p>
-          <textarea id="scenarioInput" rows="6" aria-describedby="scenarioHelp" placeholder="For example: tooth #14, persistent symptoms after root canal treatment, inconclusive periapical image. Is missed canal anatomy contributing?"></textarea>
+          <p class="form-helper" id="scenarioHelp">Describe one clinical question. Include the tooth or area, current findings, existing imaging, and how the answer could affect care. Omit patient identifiers.</p>
+          <div class="case-starting-point" id="caseAssumptions"><strong>Starting point for this review</strong><p>Begin with the patient’s history and examination, using appropriate 2D X-rays as the initial imaging when needed. This tool assumes the history and exam are complete, relevant 2D X-rays have been taken and reviewed, and no CBCT has been taken for this question.</p><p>Use suitable existing images; this does not call for new 2D exposures in every case. If any assumption is incorrect, say so in your description. Describe what is still unclear or what information is needed for planning.</p></div>
+          <textarea id="scenarioInput" rows="6" maxlength="6000" aria-describedby="scenarioHelp caseAssumptions" placeholder="For example: tooth #14, persistent symptoms after root canal treatment, inconclusive periapical image. Is missed canal anatomy contributing?"></textarea>
           <div class="example-buttons"><span>Try an example:</span><button type="button" class="secondary" data-scenario-example="pain">Unclear pain</button><button type="button" class="secondary" data-scenario-example="routine">Routine recall</button><button type="button" class="secondary" data-scenario-example="implant">Implant planning</button></div>
-          <div class="button-row"><button id="analyzeScenario" type="button">Find related guidance</button><button class="secondary" id="clearScenario" type="button">Clear</button></div>
-          <p class="note">The case tool uses preset text-matching rules in your browser. It does not send or save your case description. <a href="#about-tool" data-tab-link>Method and limitations</a></p>
+          <div class="button-row"><button id="analyzeScenario" type="button">Review CBCT guidance</button><button class="secondary" id="clearScenario" type="button">Clear</button></div>
+          <p id="caseUpdateNotice" class="note" role="status" hidden>Case edited. Update the guidance to review these changes.</p>
+          <p class="note">Your description and follow-up answers are processed in this browser. They are not sent or saved. <a href="clinical-method.html" target="_blank" rel="noopener">Decision method and limitations</a></p>
         </div>
-        <section class="panel match-explanation" aria-labelledby="matchExplanationTitle">
-          <h2 class="panel-title" id="matchExplanationTitle">How to interpret the text match</h2>
-          <p>The tool compares words and phrases with preset rules related to CBCT guidance. A close, partial, limited, or no match describes how the entered wording relates to a guidance topic.</p>
-          <p>The label does not indicate diagnostic certainty or determine whether a scan is needed. Recognized details may be incomplete. Review the original guidance and the complete clinical context.</p>
-        </section>
-        </div>
-        <aside class="panel alignment-panel" id="recommendationBox" aria-live="polite" aria-atomic="false">
-          <p class="eyebrow">Related guidance</p><h2 id="recommendationTitle">Add a case to begin</h2><p id="recommendationText">The result will show related guidance, limitations, and details to review.</p>
-          <div id="matchedIndications" class="chips"></div>
+        <section class="panel alignment-panel" id="recommendationBox" aria-labelledby="recommendationTitle">
+          <div class="guidance-summary" aria-live="polite" aria-atomic="true">
+            <p class="eyebrow">Guidance for your case</p><h2 id="recommendationTitle">Add a case to begin</h2><p id="recommendationText">The result will show guidance, details used, and anything still needed.</p>
+            <div id="matchedIndications" class="chips"></div>
+          </div>
+          <section id="caseFollowups" class="case-followups" aria-labelledby="caseFollowupsTitle" hidden>
+            <h3 id="caseFollowupsTitle">How do you think the additional information could impact the outcome?</h3>
+            <p class="form-helper" id="caseReasonInstructions">Reasons related to the recognized question appear first. Choose the main reason to update the guidance and return to the result above. A reason does not establish an indication by itself.</p>
+            <div id="caseReasons" class="case-reasons" role="radiogroup" aria-labelledby="caseFollowupsTitle" aria-describedby="caseReasonInstructions"></div>
+            <p id="caseReasonHelp" class="note" hidden></p>
+            <div id="additionalCaseQuestions" hidden></div>
+          </section>
+          <section id="caseClarification" class="case-clarification" aria-labelledby="caseClarificationTitle" hidden>
+            <h3 id="caseClarificationTitle">What to clarify</h3><div id="caseClarificationQuestions"></div>
+          </section>
+          <div class="button-row result-actions" id="caseResultActions" hidden>
+            <button type="button" class="secondary" id="editScenario">Edit this case</button>
+            <button type="button" class="secondary" id="newScenario">Start a new case</button>
+          </div>
           <div class="alignment-details" id="alignmentDetails"></div>
           <div class="cdt-scenario-reference" id="cdtScenarioReference" hidden></div>
           <p class="note" id="responsibleUse"></p>
-          <button type="button" class="secondary" id="editScenario" hidden>Return to case description</button>
-        </aside>
+        </section>
+        <section class="panel match-explanation" aria-labelledby="matchExplanationTitle">
+          <h2 class="panel-title" id="matchExplanationTitle">How to use the result</h2>
+          <p>The tool identifies a covered question, checks the reported circumstances, and links to the relevant recommendation. Each result shows the information used and any details still needed.</p>
+          <p>“Outside current coverage” means the tool cannot assess that topic. It does not mean CBCT is inappropriate. A supported result is guidance for consideration, not a patient-specific prescription.</p>
+          <details class="coverage-details"><summary>Topics currently covered</summary><p>Selected endodontic questions: unclear tooth symptoms, persistent disease, suspected fractures, root resorption, canal anatomy, retreatment, root-end surgery and possible endodontic sinusitis. Also presurgical implant planning, localized dental trauma, impacted-tooth localization and third-molar anatomical risk.</p><p>Routine screening and sleep-apnea diagnostic requests receive purpose-specific notices. General TMJ, jaw pathology, orthodontic, periodontal and implant follow-up or complication pathways are not yet included.</p></details>
+        </section>
       </div>
     </section>
     <section id="scan-guides" class="section" data-tab-panel="guides" hidden>
@@ -75,35 +91,49 @@
       </div>
     </section>
     <section id="calculator" class="section" data-tab-panel="estimator" hidden>
-      <div class="section-head"><div><p class="eyebrow">Practice planner</p><h1>Estimate scan volume and revenue.</h1><p class="lede">Enter your case mix and scan-volume assumptions. These calculations describe a planning scenario; they do not establish imaging need or predict clinical outcomes.</p></div></div>
-      <div class="tool-grid planner-workspace">
-        <form class="panel planner-inputs" id="calculatorForm" aria-label="Practice planner inputs" onsubmit="return false">
-          <h2 class="panel-title">1. Monthly case mix</h2><p class="form-helper">Count each patient once, under the main reason imaging is being considered.</p>
+      <div class="section-head"><div><p class="eyebrow">Estimate scan volume</p><h1>Estimate your monthly CBCT scans.</h1><p class="lede">Start with your monthly cases. See your scan total, how study findings relate to those cases, and optional revenue from scans alone.</p></div></div>
+      <form class="planner-workspace" id="calculatorForm" aria-label="Scan volume estimate" novalidate>
+        <div class="panel planner-inputs" id="scanInputs">
+          <h2 class="panel-title" id="scanInputsTitle" tabindex="-1">1. Enter your monthly cases</h2>
+          <p class="form-helper" id="caseCountHelp">Include only cases you have assessed as appropriate for CBCT. We assume each entered case proceeds to one scan. Count a scan once under its main reason, even if several categories apply. Leave other fields at zero or blank.</p>
+          <p class="form-helper">“Which cases count?” gives examples within each category; the symptoms alone do not establish a need for CBCT.</p>
           <div class="presentation-list">
-            <div class="presentation-row"><label>Unclear or hard-to-localize pain<input type="number" min="0" step="1" value="0" data-case="pain"></label><details class="case-evidence"><summary>Study context</summary><div class="evidence-box" data-evidence-card="pain"></div></details></div>
-<div class="presentation-row"><label>Nonhealing after endodontic treatment<input type="number" min="0" step="1" value="0" data-case="nonhealing"></label><details class="case-evidence"><summary>Study context</summary><div class="evidence-box" data-evidence-card="nonhealing"></div></details></div>
-<div class="presentation-row"><label>Suspected vertical root fracture<input type="number" min="0" step="1" value="0" data-case="fracture"></label><details class="case-evidence"><summary>Study context</summary><div class="evidence-box" data-evidence-card="fracture"></div></details></div>
-<div class="presentation-row"><label>Resorption concern<input type="number" min="0" step="1" value="0" data-case="resorption"></label><details class="case-evidence"><summary>Study context</summary><div class="evidence-box" data-evidence-card="resorption"></div></details></div>
-<div class="presentation-row"><label>Retreatment or missed anatomy<input type="number" min="0" step="1" value="0" data-case="retreatment"></label><details class="case-evidence"><summary>Study context</summary><div class="evidence-box" data-evidence-card="retreatment"></div></details></div>
-<div class="presentation-row"><label>Endodontic surgery planning<input type="number" min="0" step="1" value="0" data-case="surgery"></label><details class="case-evidence"><summary>Study context</summary><div class="evidence-box" data-evidence-card="surgery"></div></details></div>
-<div class="presentation-row"><label>Implant site assessment<input type="number" min="0" step="1" value="0" data-case="implant"></label><details class="case-evidence"><summary>Study context</summary><div class="evidence-box" data-evidence-card="implant"></div></details></div>
-<div class="presentation-row"><label>Defined airway or sleep-related question<input type="number" min="0" step="1" value="0" data-case="airway"></label><details class="case-evidence"><summary>Study context</summary><div class="evidence-box" data-evidence-card="airway"></div></details></div>
-<div class="presentation-row"><label>Possible tooth-sinus relationship<input type="number" min="0" step="1" value="0" data-case="sinus"></label><details class="case-evidence"><summary>Study context</summary><div class="evidence-box" data-evidence-card="sinus"></div></details></div>
-<div class="presentation-row"><label>Impacted or ectopic tooth assessment<input type="number" min="0" step="1" value="0" data-case="impaction"></label><details class="case-evidence"><summary>Study context</summary><div class="evidence-box" data-evidence-card="impaction"></div></details></div>
+            <div class="presentation-row"><label>Unclear or hard-to-localize pain<input type="number" min="0" max="100000" step="1" inputmode="numeric" value="0" data-case="pain" aria-describedby="caseCountHelp"></label><details class="case-evidence"><summary>Which cases count?</summary><p>Pain that is difficult to locate, conflicting clinical findings, or symptoms involving more than one tooth, when the examination and 2D images do not answer the endodontic question.</p></details></div>
+            <div class="presentation-row"><label>Nonhealing after endodontic treatment<input type="number" min="0" max="100000" step="1" inputmode="numeric" value="0" data-case="nonhealing" aria-describedby="caseCountHelp"></label><details class="case-evidence"><summary>Which cases count?</summary><p>Persistent symptoms, a sinus tract or a nonhealing lesion after root canal treatment, when further information is needed to decide on care. Excludes routine follow-up of a tooth that is healing as expected.</p></details></div>
+            <div class="presentation-row"><label>Suspected vertical root fracture<input type="number" min="0" max="100000" step="1" inputmode="numeric" value="0" data-case="fracture" aria-describedby="caseCountHelp"></label><details class="case-evidence"><summary>Which cases count?</summary><p>A suspected root fracture with findings such as isolated deep probing, persistent biting pain or a suspicious bone-loss pattern, when the examination and 2D images are inconclusive. CBCT cannot reliably rule out every fracture.</p></details></div>
+            <div class="presentation-row"><label>Resorption concern<input type="number" min="0" max="100000" step="1" inputmode="numeric" value="0" data-case="resorption" aria-describedby="caseCountHelp"></label><details class="case-evidence"><summary>Which cases count?</summary><p>Internal, external or cervical resorption requiring assessment of location, extent or treatment options beyond what the examination and 2D images provide.</p></details></div>
+            <div class="presentation-row"><label>Retreatment or missed anatomy<input type="number" min="0" max="100000" step="1" inputmode="numeric" value="0" data-case="retreatment" aria-describedby="caseCountHelp"></label><details class="case-evidence"><summary>Which cases count?</summary><p>A suspected missed canal, complex anatomy, separated instrument, perforation or other complication where 3D information is needed for retreatment planning. If already counted under nonhealing, do not count the same scan again.</p></details></div>
+            <div class="presentation-row"><label>Endodontic surgery planning<input type="number" min="0" max="100000" step="1" inputmode="numeric" value="0" data-case="surgery" aria-describedby="caseCountHelp"></label><details class="case-evidence"><summary>Which cases count?</summary><p>Planning apical or root-end surgery, including root position, lesion extent and relationships to the sinus, nerve canal, cortical bone or nearby roots.</p></details></div>
+            <div class="presentation-row"><label>Implant site assessment<input type="number" min="0" max="100000" step="1" inputmode="numeric" value="0" data-case="implant" aria-describedby="caseCountHelp"></label><details class="case-evidence"><summary>Which cases count?</summary><p>Presurgical implant planning: ridge width and height, nearby nerves and sinus, and assessment of grafting needs. Count a scan once even if it covers more than one proposed implant site.</p></details></div>
+            <div class="presentation-row"><label>Possible tooth-sinus relationship<input type="number" min="0" max="100000" step="1" inputmode="numeric" value="0" data-case="sinus" aria-describedby="caseCountHelp"></label><details class="case-evidence"><summary>Which cases count?</summary><p>A suspected dental source of sinus disease or an upper tooth infection whose relationship to the sinus needs clarification after initial assessment. Incidental sinus thickening alone is not an automatic indication.</p></details></div>
+            <div class="presentation-row"><label>Impacted or ectopic tooth assessment<input type="number" min="0" max="100000" step="1" inputmode="numeric" value="0" data-case="impaction" aria-describedby="caseCountHelp"></label><details class="case-evidence"><summary>Which cases count?</summary><p>An impacted or ectopic tooth with an unresolved question about 3D position, adjacent roots, resorption or surgical risk that could affect management. Excludes routine scanning of every impacted tooth.</p></details></div>
+            <div class="presentation-row"><label>Other clinically indicated scans<input type="number" min="0" max="100000" step="1" inputmode="numeric" value="0" data-case="other" aria-describedby="caseCountHelp"></label><details class="case-evidence"><summary>Which cases count?</summary><p>Cases outside these categories for which you have already established a specific CBCT indication. They contribute to scan volume and revenue only; no decision-change percentage is assigned.</p></details></div>
           </div>
-          <h2 class="panel-title">2. Scan-volume assumptions</h2><p class="form-helper">Enter your own assumptions after considering patient selection. No proportion is selected for you.</p>
-          <div class="procedure-grid assumption-grid"><label>Share of entered cases proceeding to CBCT (%)<input id="scanShare" type="number" min="0" max="100" step="1" placeholder="Enter an assumption"></label><label>Number of scans referred out per month<input id="referredCount" type="number" min="0" step="1" placeholder="Enter count" aria-describedby="referralHelp"></label></div>
-          <p class="form-helper" id="referralHelp">Enter 0 if no scans are referred out. Referred scans are subtracted from total estimated scans and excluded from your practice's CBCT revenue.</p>
-          <details class="financial-inputs disclosure" open><summary>3. Optional gross-revenue calculation</summary><p>Enter fees and panoramic activity to calculate gross revenue. Operating costs, collections, and equipment costs are not included.</p><div class="procedure-grid"><label>Panoramic scans per month<input type="number" min="0" step="1" id="panCount" placeholder="Enter count"></label><label>Fee per panoramic scan ($)<input type="number" min="0" step="1" id="panFee" placeholder="Enter fee"></label><label>Fee per in-office CBCT scan ($)<input type="number" min="0" step="1" id="cbctFee" placeholder="Enter fee"></label></div></details>
-        </form>
-        <aside class="panel planner-results" aria-live="polite">
-          <h2 class="panel-title">Total estimated CBCT use based on your monthly cases</h2><div class="metric-list"><div><span>Entered cases per month</span><strong id="enteredCases">0</strong></div></div>
-          <p class="form-helper" id="plannerStatus">Enter scan-volume assumptions to see calculated activity.</p>
-          <div class="metric-list"><div><span>Total CBCT scans per month</span><strong id="monthlyScans">—</strong></div><div><span>Scans performed in your practice</span><strong id="officeScans">—</strong></div><div><span>Scans referred out</span><strong id="referredScans">—</strong></div><div><span>Total CBCT scans per quarter</span><strong id="quarterScans">—</strong></div></div>
-          <details class="revenue-disclosure" open><summary>Optional gross revenue</summary><div class="revenue-box"><div><span>In-office CBCT revenue per month</span><strong id="cbctRevenue">—</strong></div><div><span>Panoramic revenue per month</span><strong id="panRevenue">—</strong></div><div class="total"><span>Total imaging revenue per month</span><strong id="totalRevenue">—</strong></div></div><p class="note">Gross revenue is not profit or a guarantee of collections.</p></details>
-          <p class="note">Study percentages are available beside each case category for reference. They are not used to forecast decisions changed in your practice.</p>
-        </aside>
-      </div>
+          <button type="submit" id="showScanEstimate" class="primary">See my estimate <span aria-hidden="true">→</span></button>
+        </div>
+        <section class="panel planner-results" id="scanResults" aria-labelledby="scanResultsTitle" hidden>
+          <div class="estimate-heading"><h2 class="panel-title" id="scanResultsTitle" tabindex="-1">2. Your monthly estimate</h2><button type="button" id="editScanCounts" class="secondary">Edit case counts</button></div>
+          <div class="estimate-metrics">
+            <div class="estimate-metric"><span>Total CBCT scans per month</span><strong id="monthlyScans">0</strong><p id="scanEstimateNote">One scan per entered case, with each scan counted once.</p></div>
+            <div class="estimate-metric study-metric"><span>Treatment plans clarified or changed</span><strong id="decisionEstimate">No estimate</strong><span class="estimate-caption">Study illustration per month</span><p id="decisionCoverage"></p></div>
+          </div>
+          <p class="form-helper" id="decisionUnestimated" hidden></p>
+          <p class="note">The decision figure illustrates findings from selected cases in an endodontic specialty clinic. It is not a validated forecast for your practice or a measure of improved patient outcomes.</p>
+          <details class="estimate-method"><summary>How is the decision figure calculated?</summary>
+            <p>We multiply each matching case count by its published treatment-planning percentage, add the results, and round the total once. The study counted teeth; this illustration assumes one primary tooth or endodontic question per entered scan.</p>
+            <div class="estimate-table-wrap"><table><caption>Percentages used from Chugal and colleagues, JADA 2024, Figure 4</caption><thead><tr><th scope="col">Case category</th><th scope="col">Your cases</th><th scope="col">Study rate</th></tr></thead><tbody id="decisionStudyRows"></tbody></table></div>
+            <p>“Clarified or changed” includes establishing a plan that was previously uncertain and correcting a provisional plan. Other categories remain in the scan total but are not assigned a rate. Diagnosis-change and fracture-detection percentages are not added to this figure.</p>
+            <p><a href="https://doi.org/10.1016/j.adaj.2023.09.007" target="_blank" rel="noopener">Read the study</a> · <a href="#citations" data-tab-link>Review sources</a></p>
+          </details>
+          <details class="estimate-revenue" open><summary>3. Optional revenue from scans alone</summary>
+            <p>Assumes your practice performs and charges for every scan in the total.</p>
+            <label class="scan-fee-label" for="cbctFee">What would you charge per CBCT scan? ($)<input type="number" min="0" max="1000000" step="0.01" inputmode="decimal" id="cbctFee" placeholder="Enter your fee" aria-describedby="feeError revenueLimits"></label>
+            <p class="field-error" id="feeError" role="status" hidden>Enter a fee from $0 to $1,000,000, with no more than two decimal places.</p>
+            <div class="scan-revenue-result" aria-live="polite" aria-atomic="true"><span>Gross scan revenue per month</span><strong id="cbctRevenue">—</strong><p id="revenueFormula">Enter your fee to calculate monthly scan revenue.</p></div>
+            <p class="note" id="revenueLimits">Scan fees only. Excludes treatment revenue, expenses, discounts and uncollected charges. Gross revenue is not profit.</p>
+          </details>
+        </section>
+      </form>
     </section>
     <section id="fov-resolution" class="section muted" data-tab-panel="fov-resolution">
       <a class="back-link" href="#scan-guides" data-tab-link>← All scan guides</a>
@@ -379,11 +409,13 @@
           <h1>About &amp; references</h1>
         </div>
       </div>
-      <div class="panel about-tool" id="about-tool"><h2 class="panel-title">How the case tool works</h2><p>Dan Alman CBCT Education provides educational support for clinicians. The case tool compares words and phrases with preset rules related to published CBCT guidance. It does not understand every clinical statement or replace patient assessment.</p><p>Case descriptions are processed in your browser. The tool does not send or save them. Omit patient identifiers.</p><p>A match describes a relationship between the supplied text and a guidance topic. It is not a diagnosis, a probability of disease, or a decision to obtain a scan. Review the recognized details and the original guidance before applying the information.</p><p>The practice planner uses your entered case counts, scan-volume assumptions, and fees. Study findings are shown as reference information, not predictions of benefit in your practice.</p></div>
+      <div class="panel about-tool" id="about-tool"><h2 class="panel-title">How the case tool works</h2><p>The case tool recognizes selected clinical questions, checks the reported circumstances and shows guidance with source links. It distinguishes missing information, conflicting details, existing imaging, unsupported purposes and topics outside its coverage.</p><p>Descriptions and follow-up answers are processed in your browser; they are not sent or saved. Omit patient identifiers. Recognition can be incomplete, and the software has not been independently validated as a clinical decision instrument.</p><p>Each result explains which information was used. It is not a diagnosis, a probability of disease or a prescription for a scan. <a href="clinical-method.html" target="_blank" rel="noopener">Read the decision rules, source map and limitations</a>.</p><p>The scan estimator uses your entered case counts and optional fee. These values and study outcome percentages do not influence clinical guidance.</p></div>
       <nav class="guide-jump-links" aria-label="Reference shortcuts"><a href="#guideline-sources" data-tab-link>Guidance &amp; patient selection</a><a href="#study-sources" data-tab-link>Research studies</a><a href="#cdt" data-tab-link>CDT code reference</a></nav>
       <details class="disclosure"><summary>Selected study findings</summary><p>These results come from the study populations described in each source and may not apply to your case mix.</p><div class="evidence-strip" aria-label="Selected study findings" id="evidenceHighlights"></div></details>
       <h2 class="guide-section-title" id="guideline-sources">Guidance &amp; patient selection</h2>
       <div class="citation-list">
+        <p id="cite-patient-selection-2026"><strong>ADA/AAOMR 2026 clinical recommendations.</strong> The clinical case rules link directly to the applicable box or table in the full consensus recommendations. <a href="https://health.ri.gov/sites/g/files/xkgbur1006/files/2026-01/ADA-AAOMR-patient-selection.pdf">Full recommendations (PDF)</a> · <a href="https://doi.org/10.1016/j.adaj.2025.10.013">Journal DOI</a> · <a href="clinical-method.html">Case-tool source map</a></p>
+        <p id="cite-osa-diagnosis"><strong>AASM adult OSA diagnostic guideline (2017).</strong> Recommendations 1–2 support the case tool’s sleep-apnea diagnostic boundary. <a href="https://aasm.org/resources/clinicalguidelines/diagnostic-testing-osa.pdf">Full guideline (PDF)</a></p>
         <p id="cite-aae-aaomr"><strong>AAE/AAOMR 2025 update.</strong> AAE newsroom announcement, January 14, 2026: the update replaces the 2015 statement, condenses recommendations to 12, emphasizes training, ALADAIP, selective use, and patient-specific protocols. <a href="https://newsroom.aae.org/press-releases/aae-and-aaomr-release-joint-position-statement-on-the-use-of-cbct-in-endodontics/">Source</a></p>
         <p id="cite-ada-aaomr"><strong>ADA/AAOMR patient selection and ADA safety guidance.</strong> ADA Oral Health Topic on X-rays/Radiographs, updated March 26, 2026: imaging should follow clinical need, patient selection criteria, ALARA/ALADA principles, and CBCT should be used when lower-exposure imaging will not provide the needed diagnostic information. <a href="https://www.ada.org/resources/ada-library/oral-health-topics/x-rays-radiographs">Source</a></p>
       </div>
@@ -405,7 +437,8 @@
   </footer>
 
   <script src="analytics-config.js?v=20261012-live"></script>
-  <script src="analytics-client.js?v=20261012"></script>
-  <script src="script.js?v=20261012-analytics"></script>
+  <script src="analytics-client.js?v=20261013-clinical"></script>
+  <script src="clinical-guidance.js?v=20261014-4"></script>
+  <script src="script.js?v=20261014-scan-estimate"></script>
 </body>
 </html>

@@ -134,7 +134,7 @@
     if (event.target.closest('#analyzeScenario') && doc.getElementById('scenarioInput')?.value.trim()) root.CBCTAnalytics.action('case_requested');
     if (event.target.closest('[data-scenario-example]')) root.CBCTAnalytics.action('case_requested');
     if (event.target.closest('.artifact-thumb')) root.CBCTAnalytics.action('artifact_opened');
-    if (event.target.closest('.citation-list a, #alignmentDetails a')) root.CBCTAnalytics.action('source_opened');
+    if (event.target.closest('.citation-list a, #alignmentDetails .result-source a')) root.CBCTAnalytics.action('source_opened');
   });
   doc.addEventListener('input', event => {
     if (!event.isTrusted || !event.target.closest('#calculatorForm') || !active) return;

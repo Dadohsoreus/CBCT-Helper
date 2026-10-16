@@ -1,3 +1,6 @@
+const clinicalGuidance = typeof module !== 'undefined' && module.exports
+  ? require('./clinical-guidance.js') : globalThis.CBCTClinicalGuidance;
+
 const studies = {
   jadaGuidelines2024: {
     studyTitle: 'Applying AAE/AAOMR guidelines for CBCT prescription: Impact on endodontic clinical decisions',
@@ -37,8 +40,8 @@ const studies = {
 };
 
 const appVersion = {
-  version: 'stage1-usability-2026-10-08',
-  buildDate: '2026-10-08',
+  version: 'scan-estimator-2026-10-14.1',
+  buildDate: '2026-10-14',
   source: 'local workspace'
 };
 
@@ -66,8 +69,8 @@ const evidenceMap = {
   nonhealing: {
     indicationId: 'nonhealing',
     label: 'Nonhealing endodontic treatment',
-    displayPercent: '93%',
-    calculatorRate: { scanFactor: 1, planRate: 0.93, diagnosisRate: 0.21 },
+    displayPercent: '88%',
+    calculatorRate: { scanFactor: 1, planRate: 0.88, diagnosisRate: 0.21 },
     metricType: 'Treatment-plan change / establishment / correction',
     services: ['endo'],
     group: 'endo',
@@ -78,13 +81,13 @@ const evidenceMap = {
       headline: 'treatment plan changed or was clarified in nonhealing endodontic cases',
       detail: 'Enter how many cases you see with nonhealing endodontic treatment per month, such as persistent symptoms, a sinus tract, or a lesion that remains after a prior root canal.'
     },
-    notes: 'R7-specific JADA figure-derived treatment-planning impact.'
+    notes: 'JADA 2024 Figure 4F, R7: 79% uncertain-to-final plus 9% corrected treatment plans = 88%.'
   },
   fracture: {
     indicationId: 'fracture',
     label: 'Suspected vertical root fracture',
-    displayPercent: '88%',
-    calculatorRate: { scanFactor: 1, planRate: 0.88, diagnosisRate: 0.23 },
+    displayPercent: '93%',
+    calculatorRate: { scanFactor: 1, planRate: 0.93, diagnosisRate: 0.23 },
     metricType: 'Treatment-plan change / establishment / correction',
     services: ['endo'],
     group: 'endo',
@@ -103,7 +106,7 @@ const evidenceMap = {
       absoluteDifference: 0.2,
       note: 'Specialty/laboratory diagnostic-accuracy context; not a treatment recommendation.'
     },
-    notes: 'Replaces broad referred-endodontic-case rate with R6-specific JADA figure-derived rate.'
+    notes: 'JADA 2024 Figure 4E, R6: 75% uncertain-to-final plus 18% corrected treatment plans = 93%.'
   },
   resorption: {
     indicationId: 'resorption',
@@ -226,16 +229,13 @@ const evidenceMap = {
   }
 };
 
-const indicationWeights = Object.fromEntries(
-  Object.entries(evidenceMap).map(([key, evidence]) => [key, {
-    label: evidence.label,
-    scanFactor: evidence.calculatorRate.scanFactor,
-    planRate: evidence.calculatorRate.planRate,
-    diagnosisRate: evidence.calculatorRate.diagnosisRate,
-    services: evidence.services,
-    group: evidence.group
-  }])
-);
+// Only these five categories share the Figure 4 treatment-planning outcome.
+// Do not add diagnosis-change or diagnostic-accuracy rates to this illustration.
+// The impacted-canine study uses a different outcome and is deliberately excluded.
+const decisionStudyCategories = Object.freeze(['pain', 'nonhealing', 'fracture', 'resorption', 'surgery']);
+const scanCategories = Object.freeze([...decisionStudyCategories, 'retreatment', 'implant', 'sinus', 'impaction', 'other']);
+const maxMonthlyCases = 100000;
+const maxScanFee = 1000000;
 
 const evidenceHighlights = [
   {
@@ -424,14 +424,14 @@ const concepts = {
     field: 'symptoms',
     label: 'Persistent symptoms or pain',
     normalized: 'persistent symptoms',
-    patterns: [/\b(persistent|still|unchanged symptoms|symptoms unchanged|dull ache|ache|pain|tender|ttp|swelling|sinus tract|symptomatic)\b/],
+    patterns: [/\b(persistent|still|unchanged symptoms|symptoms unchanged|dull ache|aches?|aching|hurts?|pain|tender|ttp|swelling|sinus tract|symptomatic)\b/],
     excludes: [/\b(no symptoms|asymptomatic|no current pain|no pain|better overall)\b/]
   },
   sourceUnclear: {
     field: 'uncertainty_level',
     label: 'Source or localization unclear',
     normalized: 'unclear source/localization',
-    patterns: [/\b(source unclear|unclear source|cannot localize|hard to localize|vague|points generally|diffuse|referred pain|which tooth|multi[- ]?tooth|multiple teeth|localization|periodontal\/endodontic source|endo-perio|endo perio)\b/]
+    patterns: [/\b(source unclear|unclear source|cannot localize|hard to localize|cannot tell (?:me )?where|cannot tell which tooth|vague|points generally|diffuse|referred pain|which tooth|multi[- ]?tooth|multiple teeth|localization|periodontal\/endodontic source|endo-perio|endo perio)\b/]
   },
   inconclusive2d: {
     field: '2d_imaging_findings',
@@ -580,7 +580,7 @@ const concepts = {
     field: 'suspected_condition',
     label: 'Resorption concern',
     normalized: 'resorption concern stated by user',
-    patterns: [/\b(resorption|resorp|internal resorption|external resorption|cervical resorption|invasive cervical|inflammatory resorption|replacement resorption|ecr)\b/]
+    patterns: [/\b(resorption|resorp|internal resorption|external resorption|cervical resorption|invasive cervical|inflammatory resorption|replacement resorption|ecr)\b/, /\broot\b.{0,50}\b(?:dissolving|being eaten away)\b/]
   },
   cervicalResorption: {
     field: 'suspected_condition',
@@ -592,7 +592,7 @@ const concepts = {
     field: 'surgical_planning_need',
     label: 'Need to clarify location, extent, type, or perforation relationship',
     normalized: '3D location/extent question',
-    patterns: [/\b(location|extent|localize|localization|determine|map|how far|size|buccal|lingual|palatal|perforation concern|restorability|proximity)\b/]
+    patterns: [/\b(location|extent|localize|localization|how far|buccal|lingual|palatal|perforation concern|restorability|proximity)\b/, /\b(?:lesion|defect|resorption|apical lesion) size\b|\bsize of (?:the )?(?:lesion|defect|resorption)\b/]
   },
   perforationConcern: {
     field: 'suspected_condition',
@@ -604,7 +604,7 @@ const concepts = {
     field: 'procedure_context',
     label: 'Missed canal or anatomy question',
     normalized: 'missed canal/anatomy question',
-    patterns: [/\b(mb2|missed canal|missed anatomy|extra canal|untreated canal|root morphology unclear|canal morphology)\b/]
+    patterns: [/\b(mb2|missed canal|missed anatomy|extra canal|untreated canal|root morphology unclear|canal morphology|canal (?:was |has been )?missed)\b/]
   },
   retreatment: {
     field: 'procedure_context',
@@ -617,7 +617,7 @@ const concepts = {
     field: 'procedure_context',
     label: 'Endodontic complication language',
     normalized: 'endodontic complication/anatomy question',
-    patterns: [/\b(separated file|sep file|broken file|separated instrument|ledge|blocked canal|calcified canal|calcification|perforation)\b/]
+    patterns: [/\b(separated file|sep file|broken file|separated instrument|(?:file|instrument) broke(?:n)? in (?:the )?canal|ledge|blocked canal|calcified canal|calcification|perforation)\b/]
   },
   calcifiedCanal: {
     field: 'procedure_context',
@@ -649,20 +649,20 @@ const concepts = {
     field: 'surgical_planning_need',
     label: 'Ridge, bone, width, height, or measurement need',
     normalized: '3D measurement need',
-    patterns: [/\b(ridge width|ridge height|available bone|bone width|bone height|width|height|measure|measurement|sinus floor|ridge)\b/],
+    patterns: [/\b(ridge (?:width|height|dimensions)|available bone|bone width|bone height|anatomic measurement|site measurements?|sinus floor)\b/],
     excludes: [/\b(already measured|no measurement needed)\b/]
   },
   trauma: {
     field: 'procedure_context',
     label: 'Trauma history or traumatic dental injury',
     normalized: 'trauma context',
-    patterns: [/\b(trauma|trauma hx|trauma history|luxation|avulsion|intrusion|extrusion|displacement|alveolar fracture|immature apex)\b/]
+    patterns: [/\b(trauma|trauma hx|trauma history|luxation|avulsion|intrusion|extrusion|displacement|alveolar fracture|immature apex)\b/, /\b(?:fell|fall|hit)\b.{0,35}\b(?:tooth|teeth|incisor)\b/]
   },
   rootFracture: {
     field: 'suspected_condition',
     label: 'Root or crown-root fracture concern',
     normalized: 'root/crown-root fracture concern',
-    patterns: [/\b(root fracture|root fx|horizontal root fracture|crown-root fracture|crown root fracture)\b/],
+    patterns: [/\b(root fracture|root fx|horizontal root fracture|crown-root fracture|crown root fracture)\b/, /\broot (?:of (?:tooth )?\d+ )?(?:is |may be |might be )?split\b/],
     excludes: [/\b(no root fracture|root fracture not suspected)\b/]
   },
   alveolarFracture: {
@@ -681,14 +681,14 @@ const concepts = {
     field: 'anatomic_risk',
     label: 'Tooth-sinus relationship or sinus question',
     normalized: 'tooth-sinus question',
-    patterns: [/\b(tooth sinus|odontogenic sinusitis|mucosal thickening|maxillary sinus|sinus floor|sinus pressure|sinus proximity)\b/],
+    patterns: [/\b(tooth sinus|odontogenic sinusitis|mucosal thickening|maxillary sinus|sinus floor|sinus pressure|sinus symptoms|sinus proximity)\b/],
     excludes: [/\b(no sinus question)\b/]
   },
   impaction: {
     field: 'procedure_context',
     label: 'Impacted tooth language',
     normalized: 'impacted tooth localization question',
-    patterns: [/\b(impacted tooth|impacted canine|impaction|impacted third molar|impacted 3rd molar|impacted)\b/],
+    patterns: [/\b(impacted tooth|impacted canine|impaction|impacted third molar|impacted 3rd molar|impacted)\b/, /\bcanine (?:has not|hasn't) (?:come through|erupted)\b/],
     excludes: [/\b(no impacted teeth|no impacted tooth|no impaction)\b/]
   },
   ectopicEruption: {
@@ -869,8 +869,7 @@ const cdtFieldOfViewPatterns = [
 ];
 
 function normalizeScenarioText(text) {
-  return ` ${String(text || '')
-    .toLowerCase()
+  return ` ${clinicalGuidance.normalizeText(text)
     .replace(/endo\s*ice/g, 'endo ice')
     .replace(/\bre[-\s]?tx\b/g, 'retx')
     .replace(/\bnon[-\s]?responsive\b/g, 'nonresponsive')
@@ -1280,10 +1279,11 @@ function matchScenarioText(text) {
   return analyzeScenarioText(text).matches;
 }
 
-function analyzeScenarioText(text) {
-  const normalizedText = normalizeScenarioText(text);
+function analyzeScenarioText(text, answers = {}) {
+  const interpretedText = clinicalGuidance.prepareText(text).text;
+  const normalizedText = normalizeScenarioText(interpretedText);
   const wording = { negated: new Set() };
-  const concepts = conceptsFromText(normalizedText, text, wording);
+  const concepts = conceptsFromText(normalizedText, interpretedText, wording);
   const reducingConcepts = reducingConceptsFromText(concepts);
   const matches = guidanceScenarios
     .map(scenario => scoreScenario(scenario, concepts, reducingConcepts))
@@ -1296,9 +1296,10 @@ function analyzeScenarioText(text) {
   }
   const topAlignment = matches[0]?.alignmentLevel || 'weak';
   entities.confidence_level = confidenceLevelFor(topAlignment, entities.input_completeness.category);
-  entities.cbct_relevance = cbctRelevanceSummary(matches, concepts, entities);
-
-  return { matches, concepts, reducingConcepts, entities, normalizedText, negatedConcepts: wording.negated };
+  const analysis = { matches, concepts, reducingConcepts, entities, normalizedText, negatedConcepts: wording.negated };
+  analysis.guidance = clinicalGuidance.decide(text, { ...analysis, labels: conceptLabels }, answers);
+  entities.cbct_relevance = analysis.guidance.explanation;
+  return analysis;
 }
 
 function confidenceLevelFor(alignmentLevel, completenessCategory) {
@@ -1389,20 +1390,6 @@ function renderEvidenceHighlights() {
   `).join('');
 }
 
-function calculateDecisionImpact(entries) {
-  return entries.reduce((totals, entry) => {
-    const planImpact = entry.adjusted * entry.item.planRate;
-    const diagnosisImpact = entry.adjusted * entry.item.diagnosisRate;
-
-    totals.planImpact += planImpact;
-    totals.diagnosisImpact += diagnosisImpact;
-    // Primary estimated decisions changed avoids adding treatment-planning and diagnosis rates together
-    // for the same case category, because those decisions may overlap within a study population.
-    totals.primaryImpact += Math.max(planImpact, diagnosisImpact);
-    return totals;
-  }, { planImpact: 0, diagnosisImpact: 0, primaryImpact: 0 });
-}
-
 function guidanceSourceFor(match) {
   const general = !match || /implant|impacted|extraction|airway|sinus/i.test(match.name);
   return general ? { href: '#cite-ada-aaomr', label: 'ADA/AAOMR imaging guidance' } : { href: '#cite-aae-aaomr', label: 'AAE/AAOMR endodontic guidance' };
@@ -1480,8 +1467,9 @@ if (typeof module !== 'undefined') {
     conceptLabels,
     evidenceMap,
     studies,
-    calculateDecisionImpact,
     calculatePracticePlan,
+    decisionStudyCategories,
+    scanCategories,
     matchLabelFor,
     appVersion
   };
@@ -1494,41 +1482,63 @@ function optionalNumber(value) {
 }
 
 function calculatePracticePlan(counts, assumptions = {}) {
-  const cases = counts.reduce((sum, count) => sum + Math.ceil(optionalNumber(count) ?? 0), 0);
-  const scanShare = optionalNumber(assumptions.scanShare);
-  const validScan = scanShare !== null && scanShare <= 100;
-  const totalScans = validScan ? cases * scanShare / 100 : null;
-  const referredCount = optionalNumber(assumptions.referredCount);
-  const referralEntered = assumptions.referredCount !== null && assumptions.referredCount !== undefined && String(assumptions.referredCount).trim() !== '';
-  const invalidReferral = referralEntered && (referredCount === null || !Number.isInteger(referredCount) || (totalScans !== null && referredCount > totalScans));
-  const validReferral = referredCount !== null && !invalidReferral;
-  const referredScans = totalScans !== null && validReferral ? referredCount : null;
-  const officeScans = referredScans !== null ? totalScans - referredScans : null;
+  const invalidCounts = [];
+  const validObject = counts && typeof counts === 'object' && !Array.isArray(counts);
+  if (!validObject || Object.keys(counts).some(key => !scanCategories.includes(key))) invalidCounts.push('categories');
+  const entries = scanCategories.map(key => {
+    const raw = validObject ? counts[key] : undefined;
+    const validType = raw === null || raw === undefined || typeof raw === 'string' || typeof raw === 'number';
+    const blank = raw === null || raw === undefined || typeof raw === 'string' && raw.trim() === '';
+    const count = blank ? 0 : optionalNumber(raw);
+    if (!validType || !blank && (!Number.isSafeInteger(count) || count > maxMonthlyCases)) invalidCounts.push(key);
+    return { key, count: count ?? 0 };
+  });
+  const totalScans = invalidCounts.length ? null : entries.reduce((sum, entry) => sum + entry.count, 0);
+  const coveredEntries = entries.filter(entry => decisionStudyCategories.includes(entry.key));
+  const studyCases = totalScans === null ? null : coveredEntries.reduce((sum, entry) => sum + entry.count, 0);
+  // Integer percentages preserve the published precision. Sum before rounding for display.
+  const studyIllustration = studyCases > 0 ? coveredEntries.reduce((sum, entry) => sum + entry.count * Math.round(evidenceMap[entry.key].calculatorRate.planRate * 100), 0) / 100 : null;
   const fee = optionalNumber(assumptions.cbctFee);
-  const panCount = optionalNumber(assumptions.panCount);
-  const panFee = optionalNumber(assumptions.panFee);
-  const cbctRevenue = officeScans !== null && fee !== null ? officeScans * fee : null;
-  const panRevenue = panCount !== null && panFee !== null ? Math.ceil(panCount) * panFee : null;
-  return { cases, totalScans, officeScans, referredScans, invalidReferral, cbctRevenue, panRevenue, totalRevenue: cbctRevenue !== null && panRevenue !== null ? cbctRevenue + panRevenue : null };
+  const feeEntered = assumptions.cbctFee !== null && assumptions.cbctFee !== undefined && String(assumptions.cbctFee).trim() !== '';
+  const feeCents = fee === null ? null : Math.round(fee * 100);
+  const invalidFeeType = assumptions.cbctFee !== null && assumptions.cbctFee !== undefined && typeof assumptions.cbctFee !== 'string' && typeof assumptions.cbctFee !== 'number';
+  const invalidFee = invalidFeeType || feeEntered && (fee === null || fee > maxScanFee || Math.abs(fee * 100 - feeCents) > 0.000001);
+  const cbctRevenue = totalScans !== null && fee !== null && !invalidFee ? totalScans * feeCents / 100 : null;
+  return { totalScans, studyCases, unestimatedCases: totalScans === null ? null : totalScans - studyCases, studyIllustration, cbctRevenue, invalidCounts, invalidFee };
 }
 
 function updateCalculator() {
-  const assumptions = Object.fromEntries(['scanShare', 'referredCount', 'panCount', 'panFee', 'cbctFee'].map(id => [id, document.getElementById(id).value]));
-  const plan = calculatePracticePlan(Array.from(document.querySelectorAll('[data-case]')).map(input => input.value), assumptions);
-  const displayCount = value => value === null ? '—' : new Intl.NumberFormat('en-US', { maximumFractionDigits: 1 }).format(value);
-  const displayMoney = value => value === null ? '—' : formatCurrency(value);
-  ['enteredCases', 'monthlyScans', 'officeScans', 'referredScans', 'quarterScans'].forEach((id, index) => {
-    document.getElementById(id).textContent = displayCount([plan.cases, plan.totalScans, plan.officeScans, plan.referredScans, plan.totalScans === null ? null : plan.totalScans * 3][index]);
+  const countInputs = [...document.querySelectorAll('#calculatorForm [data-case]')];
+  const feeInput = document.getElementById('cbctFee');
+  const plan = calculatePracticePlan(Object.fromEntries(countInputs.map(input => [input.dataset.case, input.value])), { cbctFee: feeInput.value });
+  countInputs.forEach(input => {
+    const invalid = plan.invalidCounts.includes(input.dataset.case) || input.validity.badInput;
+    input.setCustomValidity(invalid ? 'Enter a whole number from 0 to 100,000, or leave blank for zero.' : '');
+    input.setAttribute('aria-invalid', String(invalid));
   });
-  ['cbctRevenue', 'panRevenue', 'totalRevenue'].forEach(id => { document.getElementById(id).textContent = displayMoney(plan[id]); });
-  const invalidShare = assumptions.scanShare !== '' && (optionalNumber(assumptions.scanShare) === null || Number(assumptions.scanShare) > 100);
-  const referralInput = document.getElementById('referredCount');
-  if (plan.totalScans === null) referralInput.removeAttribute('max');
-  else referralInput.max = String(Math.floor(plan.totalScans));
-  referralInput.setAttribute('aria-invalid', String(plan.invalidReferral));
-  const status = document.getElementById('plannerStatus');
-  status.textContent = invalidShare ? 'Enter a percentage from 0 to 100.' : plan.invalidReferral ? (plan.totalScans !== null && Number(assumptions.referredCount) > plan.totalScans ? 'Scans referred out cannot exceed total estimated scans (' + displayCount(plan.totalScans) + ').' : 'Enter a whole number of referred scans, zero or greater.') : plan.totalScans === null ? 'Enter scan-volume assumptions to see calculated activity.' : plan.officeScans === null ? 'Enter the number of scans referred out. Enter 0 if none are referred.' : 'Calculated from your assumptions. Monthly counts represent average activity.';
-  status.setAttribute('role', invalidShare || plan.invalidReferral ? 'alert' : 'status');
+  const invalidFee = plan.invalidFee || feeInput.validity.badInput;
+  feeInput.setCustomValidity(invalidFee ? 'Enter a fee from $0 to $1,000,000, with no more than two decimal places.' : '');
+  feeInput.setAttribute('aria-invalid', String(invalidFee));
+  document.getElementById('feeError').hidden = !invalidFee;
+  const number = value => new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 }).format(value);
+  document.getElementById('monthlyScans').textContent = plan.totalScans === null ? '—' : number(plan.totalScans);
+  document.getElementById('scanEstimateNote').textContent = plan.totalScans === 0 ? 'No cases entered yet. Edit your case counts to build an estimate.' : 'One scan per entered case, with each scan counted once.';
+  document.getElementById('decisionEstimate').textContent = plan.studyIllustration === null ? 'No estimate' : plan.studyIllustration < 0.5 ? 'Fewer than 1' : 'About ' + number(plan.studyIllustration);
+  document.getElementById('decisionCoverage').textContent = plan.totalScans === 0
+    ? 'Enter monthly case counts to see how the study findings relate to your cases.'
+    : plan.studyCases > 0
+    ? 'Based on ' + number(plan.studyCases) + ' of your ' + number(plan.totalScans) + ' monthly cases with comparable study data. If the same rates applied, this many treatment plans would be clarified or changed.'
+    : 'The entered categories have no comparable percentage in this calculation. This does not mean CBCT has no value for these cases.';
+  document.getElementById('decisionUnestimated').hidden = !(plan.unestimatedCases > 0 && plan.studyCases > 0);
+  document.getElementById('decisionUnestimated').textContent = number(plan.unestimatedCases || 0) + ' other cases count toward scans and revenue; their decision impact is not estimated.';
+  document.getElementById('decisionStudyRows').innerHTML = decisionStudyCategories.map(key => {
+    const count = Number(countInputs.find(input => input.dataset.case === key)?.value) || 0;
+    return '<tr><th scope="row">' + escapeHtml(evidenceMap[key].label) + '</th><td>' + number(Math.max(0, count)) + '</td><td>' + escapeHtml(evidenceMap[key].displayPercent) + '</td></tr>';
+  }).join('');
+  const revenue = invalidFee ? null : plan.cbctRevenue;
+  document.getElementById('cbctRevenue').textContent = revenue === null ? '—' : formatCurrency(revenue);
+  document.getElementById('revenueFormula').textContent = revenue === null ? 'Enter your fee to calculate monthly scan revenue.' : number(plan.totalScans) + ' scans × ' + formatCurrency(Number(feeInput.value)) + ' per scan';
+  return plan;
 }
 
 function matchLabelFor(alignmentLevel) {
@@ -1540,44 +1550,115 @@ function formatCurrency(value) {
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
-    maximumFractionDigits: 0
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2
   }).format(value);
 }
 
 function analyzeScenario() {
   const text = document.getElementById('scenarioInput').value;
-  const analysis = analyzeScenarioText(text);
+  const answers = { reason: document.querySelector('input[name="case-reason"]:checked')?.value };
+  const analysis = analyzeScenarioText(text, answers);
+  const result = analysis.guidance;
+  // Keep the order independent of the answer, including when a selection changes the outcome.
+  const descriptionResult = answers.reason ? clinicalGuidance.decide(text, analysis) : result;
+  const reasonOptions = document.getElementById('caseReasons');
+  const orderedReasons = clinicalGuidance.reasonOrder(descriptionResult.topic?.id);
+  if (reasonOptions.dataset.order !== orderedReasons.join(',')) {
+    const labels = new Map([...reasonOptions.children].map(label => [label.querySelector('input').value, label]));
+    orderedReasons.forEach(key => reasonOptions.append(labels.get(key)));
+    reasonOptions.dataset.order = orderedReasons.join(',');
+  }
   const title = document.getElementById('recommendationTitle');
   const body = document.getElementById('recommendationText');
   const details = document.getElementById('alignmentDetails');
   const chips = document.getElementById('matchedIndications');
   const responsible = document.getElementById('responsibleUse');
   const cdt = document.getElementById('cdtScenarioReference');
-  document.getElementById('editScenario').hidden = !text.trim();
+  document.getElementById('caseResultActions').hidden = !text.trim();
   chips.replaceChildren(); details.replaceChildren(); cdt.hidden = true; cdt.replaceChildren();
+  const showFollowups = result.showFollowups && result.status !== 'review_existing';
+  document.getElementById('caseFollowups').hidden = !showFollowups;
+  const reasonHelp = document.getElementById('caseReasonHelp');
+  reasonHelp.textContent = clinicalGuidance.reasons[result.reasonKey]?.help || '';
+  reasonHelp.hidden = !reasonHelp.textContent;
+  document.getElementById('caseClarification').hidden = showFollowups || !result.questions.length;
+  document.getElementById('recommendationBox').dataset.guidanceStatus = result.status;
+  document.getElementById('caseUpdateNotice').hidden = true;
+  title.textContent = result.title;
+  body.textContent = result.explanation;
   if (!text.trim()) {
-    title.textContent = 'Add a case to begin';
-    body.textContent = 'The result will show related guidance, limitations, and details to review.';
     responsible.textContent = '';
     return;
   }
-  const top = analysis.matches[0];
-  title.textContent = top ? 'Related topic: ' + top.name : 'No related guidance topic identified';
-  body.textContent = top ? top.text : 'The supplied text did not produce a guidance match. This does not rule out imaging need. Review the recognized details and the original guidance.';
-  const chip = document.createElement('span');
-  chip.textContent = matchLabelFor(top?.alignmentLevel);
-  chips.append(chip);
-  renderAlignmentDetails(details, top, analysis.concepts, analysis.reducingConcepts, analysis.entities, analysis.matches, analysis.negatedConcepts);
-  responsible.textContent = 'Educational reference. Final imaging decisions require the complete patient assessment.';
+  if (result.status === 'conditional') {
+    const confirmation = document.createElement('div');
+    confirmation.className = 'confirmation-details';
+    const pending = [...new Set([...result.questions, ...result.clarifications])];
+    const first = document.createElement('p');
+    const label = document.createElement('strong');
+    label.textContent = 'Detail to confirm: ';
+    first.append(label, pending[0] || 'Review the case details before proceeding.');
+    confirmation.append(first);
+    if (pending.length > 1) {
+      const remaining = document.createElement('ul');
+      pending.slice(1).forEach(question => {
+        const item = document.createElement('li');
+        item.textContent = question;
+        remaining.append(item);
+      });
+      confirmation.append(remaining);
+    }
+    chips.append(confirmation);
+  } else {
+    const chip = document.createElement('span');
+    chip.textContent = result.rule === 'priority-assessment' ? 'Urgent assessment takes priority' : ({ supported: 'Guidance applies using the details and stated assumptions', needs_details: 'Clarification needed', outside_coverage: 'Outside current coverage', not_supported: 'Purpose not supported as described', review_existing: 'Existing images need priority' })[result.status];
+    chips.append(chip);
+  }
+  const list = items => '<ul>' + items.map(item => '<li>' + escapeHtml(item) + '</li>').join('') + '</ul>';
+  document.getElementById('caseClarificationQuestions').innerHTML = list(result.questions);
+  const additional = document.getElementById('additionalCaseQuestions');
+  const clarifications = result.status === 'conditional' ? [] : result.clarifications.length ? result.clarifications : result.questions.filter(question => !question.startsWith('How could additional information'));
+  additional.hidden = !clarifications.length;
+  additional.innerHTML = clarifications.length ? '<h4>Details to add to your description</h4>' + list(clarifications) : '';
+  const refs = [...new Set(result.sourceKeys)].map(key => clinicalGuidance.sources[key]);
+  const used = result.trace.map(item => '<div><dt>' + escapeHtml(item.label) + '</dt><dd>' + escapeHtml(item.value) + '<small>' + escapeHtml(item.origin) + '</small></dd></div>').join('');
+  const limitation = ['fracture', 'cracked'].includes(result.topic?.id) ? '<p>Images do not reliably prove or exclude every crack. Restorations and filling materials can affect interpretation.</p>' : '';
+  details.innerHTML = (result.topic ? '<p class="result-topic"><strong>Clinical question:</strong> ' + escapeHtml(result.topic.label) + '</p>' : '')
+    + limitation
+    + '<details class="decision-trace"><summary>How this result was reached</summary><dl>' + used + '</dl><p>Only the details shown here were used for this result. Check them against your case.</p></details>'
+    + (refs.length ? '<section class="result-source"><h3>Supporting recommendations</h3><ul>' + refs.map(ref => '<li><a href="' + escapeHtml(ref.url) + '" target="_blank" rel="noopener">' + escapeHtml(ref.label) + '</a></li>').join('') + '</ul></section>' : '')
+    + '<details><summary>Review recognized wording</summary>' + list([...result.recognized, ...result.denied.map(item => 'Negative wording: ' + item)].length ? [...result.recognized, ...result.denied.map(item => 'Negative wording: ' + item)] : ['No specific clinical details were recognized.']) + '<p>Recognition can be incomplete. Topic similarity is not a probability of disease or a measure of scan benefit.</p></details>'
+    + '<p class="rule-reference"><a href="clinical-method.html" target="_blank" rel="noopener">Read the decision method</a> · Rule ' + escapeHtml(result.rule) + ' · ' + escapeHtml(result.version) + '</p>';
+  responsible.textContent = 'Educational guidance based on the details entered. Confirm the full patient assessment, imaging suitability and interpretation needs before prescribing a scan.';
+}
+
+function resetCaseAnswers() {
+  document.querySelectorAll('input[name="case-reason"]').forEach(input => { input.checked = false; });
 }
 
 function revealScenarioResult() {
   const title = document.getElementById('recommendationTitle');
   title.setAttribute('tabindex', '-1');
-  title.focus({ preventScroll: true });
-  if (window.matchMedia('(max-width: 980px)').matches) {
-    document.getElementById('recommendationBox').scrollIntoView({ behavior: 'auto', block: 'start' });
-  }
+  navigateCasePanel(document.getElementById('recommendationBox'), title);
+}
+
+// Keep scrolling and keyboard focus together. Use the same path on every screen size.
+function navigateCasePanel(panel, focusTarget) {
+  focusTarget.focus({ preventScroll: true });
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  panel.scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth', block: 'start' });
+}
+
+function editCurrentCase() {
+  navigateCasePanel(document.getElementById('caseInputPanel'), document.getElementById('scenarioInput'));
+}
+
+function startNewCase() {
+  document.getElementById('scenarioInput').value = '';
+  resetCaseAnswers();
+  analyzeScenario();
+  editCurrentCase();
 }
 
 function tabForHash(hash) {
@@ -1592,7 +1673,6 @@ function setActiveTab(tabName, options = {}) {
   const panels = Array.from(document.querySelectorAll('[data-tab-panel]'));
   const activeName = panels.some(panel => panel.dataset.tabPanel === tabName) ? tabName : 'home';
   window.CBCTAnalytics?.section(activeName);
-  document.body.classList.toggle('planner-is-active', activeName === 'estimator');
   const group = ['fov-resolution', 'navigation', 'artifacts'].includes(activeName) ? 'guides' : activeName === 'cdt' ? 'citations' : activeName;
   panels.forEach(panel => { panel.hidden = panel.dataset.tabPanel !== activeName; });
   document.querySelectorAll('.tab').forEach(tab => {
@@ -1746,24 +1826,61 @@ if (typeof window !== 'undefined') {
   renderEvidenceHighlights();
   renderEvidenceCards();
 
-  document.querySelectorAll('[data-case], #scanShare, #referredCount, #panCount, #panFee, #cbctFee').forEach(input => {
-    input.addEventListener('input', updateCalculator);
-    input.addEventListener('change', updateCalculator);
+  document.querySelectorAll('#calculatorForm [data-case]').forEach(input => {
+    const reviseCounts = () => {
+      document.getElementById('scanResults').hidden = true;
+      updateCalculator();
+    };
+    input.addEventListener('input', reviseCounts);
+    input.addEventListener('change', reviseCounts);
+  });
+  ['input', 'change'].forEach(event => document.getElementById('cbctFee').addEventListener(event, updateCalculator));
+  document.getElementById('calculatorForm').addEventListener('submit', event => {
+    event.preventDefault();
+    updateCalculator();
+    // A hidden optional fee must not prevent the visitor from reviewing revised counts.
+    const invalidCount = [...document.querySelectorAll('#calculatorForm [data-case]')].find(input => !input.checkValidity());
+    if (invalidCount) { invalidCount.reportValidity(); return; }
+    document.getElementById('scanResults').hidden = false;
+    navigateCasePanel(document.getElementById('scanResults'), document.getElementById('scanResultsTitle'));
+  });
+  document.getElementById('editScanCounts').addEventListener('click', () => {
+    navigateCasePanel(document.getElementById('scanInputs'), document.getElementById('scanInputsTitle'));
   });
 
   document.getElementById('analyzeScenario').addEventListener('click', () => {
     analyzeScenario();
     if (document.getElementById('scenarioInput').value.trim()) revealScenarioResult();
+    else editCurrentCase();
   });
-  document.getElementById('clearScenario').addEventListener('click', () => {
-    document.getElementById('scenarioInput').value = '';
+  document.getElementById('clearScenario').addEventListener('click', startNewCase);
+  document.getElementById('newScenario').addEventListener('click', startNewCase);
+  document.getElementById('scenarioInput').addEventListener('input', () => {
+    resetCaseAnswers();
+    document.getElementById('caseFollowups').hidden = true;
+    document.getElementById('caseClarification').hidden = true;
+    document.getElementById('caseUpdateNotice').hidden = false;
+    document.getElementById('recommendationBox').dataset.guidanceStatus = 'needs_details';
+    document.getElementById('recommendationTitle').textContent = 'Case changed—update the guidance';
+    document.getElementById('recommendationText').textContent = 'Select Review CBCT guidance to assess the revised description. Previous follow-up answers have been cleared.';
+    ['alignmentDetails', 'matchedIndications', 'responsibleUse'].forEach(id => document.getElementById(id).replaceChildren());
+  });
+  const reasonOptions = document.getElementById('caseReasons');
+  // Render once; case-specific ordering moves existing labels and preserves checked state.
+  Object.entries(clinicalGuidance.reasons).forEach(([value, reason]) => {
+    const label = document.createElement('label');
+    const input = document.createElement('input');
+    const text = document.createElement('span');
+    input.type = 'radio'; input.name = 'case-reason'; input.value = value;
+    input.id = 'case-reason-' + value;
+    text.textContent = reason.label;
+    label.append(input, text); reasonOptions.append(label);
+  });
+  reasonOptions.addEventListener('change', () => {
     analyzeScenario();
+    revealScenarioResult();
   });
-  document.getElementById('editScenario').addEventListener('click', () => {
-    const input = document.getElementById('scenarioInput');
-    input.closest('.panel').scrollIntoView({ behavior: 'auto', block: 'start' });
-    input.focus({ preventScroll: true });
-  });
+  document.getElementById('editScenario').addEventListener('click', editCurrentCase);
 
   updateCalculator();
   analyzeScenario();
@@ -1777,6 +1894,7 @@ if (typeof window !== 'undefined') {
   };
   document.querySelectorAll('[data-scenario-example]').forEach(button => button.addEventListener('click', () => {
     document.getElementById('scenarioInput').value = examples[button.dataset.scenarioExample];
+    resetCaseAnswers();
     analyzeScenario();
     revealScenarioResult();
   }));

@@ -1,5 +1,5 @@
 const assert = require('assert');
-const { evidenceMap, studies, calculateDecisionImpact } = require('../script.js');
+const { evidenceMap, studies, calculatePracticePlan } = require('../script.js');
 
 const evidenceEntries = Object.values(evidenceMap);
 const percentEvidence = evidenceEntries.filter(item => item.displayPercent !== 'No direct % used');
@@ -35,21 +35,11 @@ evidenceEntries.forEach(item => {
   );
 });
 
-const impact = calculateDecisionImpact([
-  {
-    adjusted: 10,
-    item: { planRate: 0.5, diagnosisRate: 0.2 }
-  },
-  {
-    adjusted: 4,
-    item: { planRate: 0, diagnosisRate: 0.25 }
-  }
-]);
-
-assert.strictEqual(impact.planImpact, 5);
-assert.strictEqual(impact.diagnosisImpact, 3);
-assert.strictEqual(impact.primaryImpact, 6);
-assert.strictEqual(Math.ceil(impact.primaryImpact) * 3, 18);
+const impact = calculatePracticePlan({ pain: 10, implant: 4 });
+assert.strictEqual(impact.totalScans, 14);
+assert.strictEqual(impact.studyCases, 10);
+assert.strictEqual(impact.unestimatedCases, 4);
+assert.strictEqual(impact.studyIllustration, 8.6);
 
 const accuracyItems = evidenceEntries.filter(item => item.accuracy);
 assert.deepStrictEqual(

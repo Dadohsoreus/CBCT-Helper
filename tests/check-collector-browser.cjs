@@ -31,7 +31,7 @@ const root = process.cwd();
     await page.locator('[data-scenario-example="implant"]').click();
     await page.waitForTimeout(30000);
     await page.locator('a.tab[data-tab="estimator"]').click();
-    await page.locator('#scanShare').fill('47');
+    await page.locator('[data-case="pain"]').fill('47');
     await page.waitForTimeout(5000);
     await page.locator('a.tab[data-tab="clinical"]').click();
     await page.waitForTimeout(3000);

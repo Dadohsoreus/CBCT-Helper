@@ -1,6 +1,6 @@
 (function (root) {
   'use strict';
-  const labels = { home: 'Home', clinical: 'Clinical cases', guides: 'Scan guides', estimator: 'Practice planner', 'fov-resolution': 'Field of view & resolution', navigation: 'Image review', artifacts: 'Artifact examples', cdt: 'CDT reference', citations: 'About & references' };
+  const labels = { home: 'Home', clinical: 'Clinical cases', guides: 'Scan guides', estimator: 'Estimate scan volume', 'fov-resolution': 'Field of view & resolution', navigation: 'Image review', artifacts: 'Artifact examples', cdt: 'CDT reference', citations: 'About & references' };
   function median(values) {
     if (!values.length) return 0;
     const sorted = [...values].sort((a, b) => a - b), mid = Math.floor(sorted.length / 2);

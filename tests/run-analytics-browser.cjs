@@ -35,8 +35,8 @@ const server = http.createServer(async (req,res)=>{
     assert.match(await page.locator('#setupNote').innerText(),/Two-factor verification is required/);
     await page.goto(base+'/privacy.html');assert.match(await page.locator('#analyticsPreferenceStatus').innerText(),/is excluded/);assert.ok(await page.locator('#analyticsPreference').isEnabled());
     const measurement=[];page.on('request',request=>{if(request.url().includes('/collect'))measurement.push(request.url());});
-    await page.goto(base+'/index.html#clinical-scenarios');await page.locator('[data-scenario-example="implant"]').click();assert.match(await page.locator('#recommendationTitle').innerText(),/Related topic/);
-    await page.locator('#menuToggle').click();await page.locator('a.tab[data-tab="estimator"]').click();await page.locator('#scanShare').fill('50');assert.ok(await page.locator('#calculatorForm').isVisible());assert.equal(measurement.length,0);assert.deepEqual(errors,[]);
+    await page.goto(base+'/index.html#clinical-scenarios');await page.locator('[data-scenario-example="implant"]').click();assert.match(await page.locator('#recommendationTitle').innerText(),/CBCT may be useful/);
+    await page.locator('#menuToggle').click();await page.locator('a.tab[data-tab="estimator"]').click();await page.locator('[data-case=pain]').fill('50');assert.ok(await page.locator('#calculatorForm').isVisible());assert.equal(measurement.length,0);assert.deepEqual(errors,[]);
     console.log('Browser checks passed: responsive dashboard, date ranges, sample CSV, owner exclusion, privacy preference, unchanged tools, zero localhost collection requests, zero page errors.');
   }finally{await browser.close();server.close();}
 })().catch(error=>{console.error(error.message);process.exitCode=1;server.close();});

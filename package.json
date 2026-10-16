@@ -1,7 +1,12 @@
 {
   "scripts": {
     "test:clinical": "node tests/run-clinical-scenarios.js",
+    "test:guidance": "node tests/run-clinical-guidance.js",
+    "test:guidance:audit": "node tests/run-clinical-audit.cjs",
+    "test:guidance:browser": "node tests/run-clinical-guidance-browser.cjs",
     "test:evidence": "node tests/run-evidence-calculator.js",
+    "test:estimator": "node tests/run-scan-estimator.js",
+    "test:estimator:browser": "node tests/run-scan-estimator-browser.cjs",
     "test:stage1": "node tests/run-stage1-regressions.js",
     "test:analytics": "node tests/run-analytics.js",
     "test:analytics:database": "node tests/run-analytics-database.mjs"

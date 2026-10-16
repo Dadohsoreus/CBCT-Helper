@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>How clinical guidance is produced · CBCT Helper</title><link rel="stylesheet" href="styles.css?v=20261014-scan-estimate"></head>
+<body>
+<main class="method-page">
+  <a href="index.html#clinical-scenarios">← Return to Clinical Cases</a>
+  <p class="eyebrow">Method · version 2026-10-14.4</p>
+  <h1>How your case becomes a guidance result.</h1>
+  <p>The case tool applies published recommendations to a limited set of recognized details. The text rules, their order and the conditions described here are software design choices. They have not been independently validated as a clinical decision instrument.</p>
+  <section>
+    <h2>Information used</h2>
+    <p>The tool uses your current description and the main reason you select for wanting additional information. Any details to confirm appear inside the highlighted result box, above the reason choices. Selecting a reason updates the guidance and returns you to the result heading. It recognizes selected terms, common abbreviations and some negative statements. It cannot fully understand an unrestricted clinical narrative.</p>
+    <p>Capitalization, repeated spaces, common contractions and 2-D/3-D spelling are normalized before the text checks. Explicit family-history statements and remote history explicitly marked unrelated are excluded from topic matching; the explanation records that exclusion. This does not mean that medical or family history is irrelevant to the clinician. Other past events remain visible and may prompt clarification of the current question.</p>
+    <p>The starting assumptions are: the patient’s history has been reviewed, the examination is complete, relevant 2D X-rays have been taken and reviewed, and no CBCT has been taken for this question. These are workflow assumptions, not verified facts. The result explanation distinguishes assumptions from reported details. Recognized statements about an incomplete assessment, absent or unreviewed 2D images, sufficient 2D images, or a previous CBCT take priority. Users should correct assumptions in their descriptions.</p>
+    <p>Assuming a 2D review does not establish that those images are inadequate. For a non-implant pathway, if their ability to answer the question is unclear, the tool asks what information remains missing. Implant planning does not require failed 2D imaging. The starting-point notice calls for history and examination first and appropriate initial 2D imaging when needed; it does not instruct users to obtain new 2D images in every case.</p>
+    <p>All case processing takes place in the browser. Descriptions and follow-up answers are not sent to a model, searched online, stored in the analytics database or saved between visits. Usage measurement records tool activity and timing, not case content. Editing the description clears follow-up answers to prevent them carrying into a different case.</p>
+    <p>Apart from the stated starting assumptions, missing information remains unknown. Study percentages, scan-estimator counts, fees and revenue assumptions never contribute to a clinical result. The old wording-match score does not decide the displayed guidance category.</p>
+  </section>
+  <section>
+    <h2>How the selected reason affects the result</h2>
+    <p>The options represent common practical purposes, not a complete list of clinical indications. Selecting a reason never creates a diagnosis, supplies a missing anatomical question or adds a topic to the source library.</p>
+    <p>Choices related to the question recognized in the description appear first. All choices remain available, including “Another reason or not sure yet,” and none is preselected. The order stays the same while answers change; it is based on the description, not on which answer produces a supportive result. It is a navigation aid, not a recommendation to choose a procedure.</p>
+    <ul>
+      <li><strong>Understanding findings, locating a problem, choosing treatment, assessing risk or investigating complications:</strong> these establish a stated potential use for additional information. A supportive result still requires a covered case and the relevant pathway conditions. A complication or nearby-structure risk selection needs corresponding details in the description; a diagnostic-purpose selection with only a planning question needs clarification.</li>
+      <li><strong>Implant planning:</strong> this separate choice requires implant planning in the description and a site measurement or anatomical relationship needed for placement. Selecting it cannot turn unexplained tooth pain into an implant-planning case.</li>
+      <li><strong>Another treatment procedure:</strong> the description must name a proposed procedure and specific information needed to plan it. Recognized procedures include root canal treatment, retreatment, root-end surgery and extraction within the existing source coverage. Past or denied treatment does not establish a new plan. Generic planning language or an inconclusive image alone is insufficient. Unrecognized procedures and mismatches prompt clarification; they do not expand coverage.</li>
+      <li><strong>Healing concerns:</strong> the description must identify a clinical concern. The persistent endodontic disease pathway may apply; other healing questions need clarification or separate guidance. Routine follow-up is not an automatic CBCT indication.</li>
+      <li><strong>Referral:</strong> the tool asks which unanswered finding would change the referral and notes that the receiving clinician may be best placed to select further imaging.</li>
+      <li><strong>Routine screening or baseline imaging, patient request or reassurance, documentation only, or no expected change in care:</strong> these purposes alone produce a “not supported” result. A separate diagnostic or treatment question must be described and assessed separately.</li>
+      <li><strong>Another reason or uncertainty:</strong> the tool asks for the intended decision and does not infer a benefit.</li>
+    </ul>
+    <p>The categories and their routing are this tool’s implementation of patient-selection principles, not a validated questionnaire or a numbered list from a guideline. They use the existing clinical source map; no new clinical indications were added by this interface change.</p>
+  </section>
+  <section>
+    <h2>The checks, in order</h2>
+    <ol>
+      <li><strong>Can this description be assessed?</strong> Empty or excessively long descriptions need revision. A few explicit urgent presentations, such as breathing or swallowing difficulty or significant head-injury symptoms, stop ordinary CBCT guidance and direct the clinician to urgent assessment. This is a limited safety check, not an emergency triage system: an absent notice does not establish that the case is non-urgent. Hypothetical cases, primary dentition or an explicitly different tooth-numbering system need clarification. Numbers otherwise use the Universal permanent-tooth system. More than one tooth number, contradictory key findings, or separate recognized purposes require clarification. This version does not reliably assign every finding to its tooth or time point.</li>
+      <li><strong>Is the selected purpose sufficient on its own?</strong> A screening, reassurance, documentation-only or no-change selection receives a negative purpose result. This does not assess a separate clinical indication that may also be present in the description.</li>
+      <li><strong>Is the question covered?</strong> Recognized topics outside the library receive a coverage notice. An unfamiliar or vague description receives a clarification request. Neither result means CBCT is inappropriate. A practical reason cannot remove this coverage limit.</li>
+      <li><strong>Is there a supported purpose?</strong> Routine screening and sleep-apnea diagnostic requests have dedicated notices. A separate dental question must be described separately.</li>
+      <li><strong>Which pathway applies?</strong> Explicit procedure and condition language selects a pathway. Priority is implant planning, endodontic surgery, third-molar assessment, impaction, resorption, retreatment, root fracture, cracked tooth, trauma, dental-source sinusitis, persistent endodontic symptoms, then unclear tooth symptoms. This is routing order, not clinical urgency or evidence strength.</li>
+      <li><strong>Do the details agree?</strong> Contradictory imaging statements or a stated potential benefit that conflicts with an explicit report of no benefit stop the result. A selection cannot silently override conflicting clinical facts.</li>
+      <li><strong>Do existing images already answer the question?</strong> Reported adequate CBCT or images still needing review take priority. Reported sufficient 2D images or no added benefit prevents a supportive result for that same question.</li>
+      <li><strong>Is a scan already being arranged, or does the text describe a past plan?</strong> A recognized existing order prompts coordination with the requesting clinician. Past trauma, completed surgery or an earlier plan cannot establish a current imaging question by themselves. General words such as “size” or “width” do not count as site measurements without relevant anatomical wording.</li>
+      <li><strong>Are the application conditions established?</strong> A supportive result uses the stated history, exam and 2D-review assumptions unless the description contradicts them. It also requires a recognized relevant question and potential effect on care. Reported pending clinical testing still needs attention. Missing criteria produce targeted questions. Other pathways with no imaging available prompt consideration of initial lower-exposure assessment.</li>
+    </ol>
+    <p>The result displays the selected pathway, the details used, their origin (description, selected answer or default assumption), the rule identifier, version and source links. A selected answer fills a gap; it does not verify the underlying clinical facts.</p>
+  </section>
+  <section>
+    <h2>What the outcomes mean</h2>
+    <table><thead><tr><th>Outcome</th><th>Meaning</th></tr></thead><tbody>
+      <tr><th>Guidance supports consideration</th><td>The recognized details satisfy this software pathway. This does not establish a diagnosis, prescribe a scan, determine exposure settings or guarantee benefit.</td></tr>
+      <tr><th>Confirm details first</th><td>A covered question was recognized, but conditions still need confirmation. The recommendation remains visible beside the missing details.</td></tr>
+      <tr><th>Review existing images</th><td>The description reports an existing CBCT. Its usefulness for the current question takes priority over another scan.</td></tr>
+      <tr><th>Purpose not supported as described</th><td>A specific reason prevents support for the stated purpose, such as routine screening or an explicit report that no additional information is needed. This does not exclude a different justified question.</td></tr>
+      <tr><th>Clarification needed</th><td>The description is ambiguous, conflicting, spans different contexts, or does not identify a question reliably.</td></tr>
+      <tr><th>Outside current coverage</th><td>The tool recognized a topic it cannot assess. This is a library limitation, not an assessment of the published evidence for that condition.</td></tr>
+    </tbody></table>
+  </section>
+  <section>
+    <h2>Source map</h2>
+    <p>The principal source is the <a href="https://health.ri.gov/sites/g/files/xkgbur1006/files/2026-01/ADA-AAOMR-patient-selection.pdf" target="_blank" rel="noopener">2026 ADA/AAOMR patient-selection recommendations</a> (<a href="https://doi.org/10.1016/j.adaj.2025.10.013">journal DOI</a>). The authors describe these as consensus recommendations informed by evidence and expert input. They are not individual-study outcome predictions.</p>
+    <table><thead><tr><th>Pathway or check</th><th>Source location</th></tr></thead><tbody>
+      <tr><th>Patient selection and existing images</th><td>Box 1, 1.2; introductory principles</td></tr>
+      <tr><th>Implant planning</th><td>Box 2, 7.1.1; 7.2.2–7.2.3</td></tr>
+      <tr><th>Unclear symptoms, resorption, endodontic sinusitis</th><td>Table 1, initial assessment</td></tr>
+      <tr><th>Retreatment, persistent disease, endodontic surgery</th><td>Table 1, treatment planning and difficult treatment</td></tr>
+      <tr><th>Root-fracture question</th><td>Table 1, diagnosing vertical and crown-to-root fractures</td></tr>
+      <tr><th>Dental trauma</th><td>Table 1, dentoalveolar trauma; Box 1, 1.4</td></tr>
+      <tr><th>Impacted tooth localization</th><td>Box 3, 4.2 (pediatric context); Box 2, 4.2–4.5. Adult non-third-molar cases need individual assessment; the tool does not generalize a pediatric recommendation to all adults.</td></tr>
+      <tr><th>Third-molar anatomical risk</th><td>Box 2, 4.4–4.5. Other extractions do not automatically inherit this pathway.</td></tr>
+      <tr><th>Sleep-apnea diagnostic request</th><td><a href="https://aasm.org/resources/clinicalguidelines/diagnostic-testing-osa.pdf" target="_blank" rel="noopener">AASM 2017 adult OSA diagnostic guideline</a>, recommendations 1–2. Used to explain the diagnostic boundary, not to evaluate airway dimensions or pediatric sleep disorders.</td></tr>
+      <tr><th>Priority assessment notices</th><td><a href="https://www.acutedentalproblems.sdcep.org.uk/guidance/management-of-oral-conditions/common-oral-conditions/acute-apical-abscess/" target="_blank" rel="noopener">SDCEP: acute apical abscess, initial management</a>; <a href="https://www.nice.org.uk/guidance/ng232/chapter/recommendations#pre-hospital-assessment-advice-and-referral-to-hospital" target="_blank" rel="noopener">NICE NG232, 1.2.3–1.2.4</a>. These UK clinical references support stopping ordinary dental scan guidance for recognized urgent symptoms. Follow local emergency pathways; the tool does not select emergency imaging or prescribe treatment.</td></tr>
+    </tbody></table>
+    <p>The 2025 AAE/AAOMR update is linked in the site’s references for further reading. Its full text was not available for detailed verification during this update, so no numbered rule is attributed to it here.</p>
+  </section>
+  <section>
+    <h2>Review and limits</h2>
+    <p>Software mapping updated on October 14, 2026; the ADA’s patient-selection overview was rechecked for the starting-point wording. This is a source-mapped software review; independent clinician review remains pending. Automated cases check behavior—including denials, missing context and repeat imaging—but do not establish clinical accuracy or safety across unrestricted inputs.</p>
+    <p>The parser can miss synonyms, abbreviations, negation, time changes and tooth relationships. It does not inspect images, verify diagnoses or assess all patient-specific considerations. A normal 2D report alone is not treated as proof that a clinical question is answered. No result is a probability or a diagnostic confidence percentage.</p>
+    <p>General TMJ, jaw pathology, orthodontic, periodontal and implant follow-up or complication recommendations require separate reviewed pathways before being added. An implant complication cannot inherit an endodontic complication pathway. A source update should be accompanied by revised rule mapping and tests, followed by clinical review.</p>
+    <p>Apical periodontitis in an endodontic case is distinguished from general periodontal disease. Implant planning with a recognized age below 18, or explicit child/adolescent wording, prompts review of source applicability. That age boundary is a software coverage choice, not a clinical threshold for implant treatment. The tool does not evaluate growth, treatment timing or pediatric implant exceptions.</p>
+    <p>The October 14 language audit added synthetic cases covering shorthand, conversational descriptions, background details, missing assessments, prior scans, past plans and purpose changes. This regression set tests defined software expectations; it is not an independent clinical validation set and its pass rate is not a clinical accuracy percentage. Source applicability, uncommon wording, mixed histories and patient-specific considerations still need clinician review.</p>
+  </section>
+</main>
+</body>
+</html>
