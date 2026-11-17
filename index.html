@@ -5,13 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="CBCT education for general dentistry: clinical guidance, scan-review guides, and scan-volume estimates.">
   <title>CBCT Helper | Dan Alman CBCT Education</title>
-  <link rel="stylesheet" href="styles.css?v=20261014-scan-estimate">
+  <link rel="stylesheet" href="styles.css?v=20261117-contact">
 </head>
 <body>
   <a class="skip-link" href="#main-content">Skip to content</a>
   <header class="site-header">
     <div class="brand-wrap">
       <a href="#home" data-tab-link class="brand-link" aria-label="CBCT Helper home"><img src="header-logo-xray.png" alt="" class="brand-logo"><div class="header-copy"><span class="brand-name">CBCT Helper</span><p>Dan Alman CBCT Education</p></div></a>
+      <a href="#feedback" class="tab feedback-link" data-tab="feedback">Feedback</a>
       <button type="button" id="menuToggle" class="menu-toggle" aria-expanded="false" aria-controls="siteNav">Menu</button>
     </div>
     <nav class="tabs" id="siteNav" aria-label="Main navigation">
@@ -19,6 +20,8 @@
       <a href="#clinical-scenarios" class="tab" data-tab="clinical">Clinical cases</a>
       <a href="#scan-guides" class="tab" data-tab="guides">Scan guides</a>
       <a href="#calculator" class="tab" data-tab="estimator">Estimate scan volume</a>
+      <a href="#contact" class="tab" data-tab="contact">Talk about CBCT</a>
+      <a href="#resources" class="tab" data-tab="resources">Carestream Dental Resources</a>
       <a href="#citations" class="tab" data-tab="citations">About &amp; references</a>
     </nav>
   </header>
@@ -37,6 +40,57 @@
         <a class="task-card" href="#cdt" data-tab-link><span class="task-marker" aria-hidden="true">06</span><h2>CDT code reference</h2><p>Find common CBCT-related codes and their reference descriptions.</p><span class="task-action">View code reference <span aria-hidden="true">→</span></span></a>
       </div>
       <p class="home-note">Educational support for clinicians. Imaging decisions require the full patient history, examination, and existing imaging. <a href="#about-tool" data-tab-link>How this tool works</a></p>
+    </section>
+    <section id="feedback" class="section outreach-section" data-tab-panel="feedback" hidden>
+      <div class="section-head"><div><h1>Send feedback</h1><p class="lede">Questions, requests, problems, suggestions — I’d love to hear what’s on your mind.</p></div></div>
+      <form class="panel outreach-form" data-outreach="feedback" method="post">
+        <label>Your feedback<textarea name="message" rows="4" maxlength="4000" required aria-describedby="feedbackHint"></textarea></label>
+        <p id="feedbackHint" class="field-hint">Please leave out patient information.</p>
+        <label>Email address<input name="email" type="email" autocomplete="email" maxlength="254" required></label>
+        <div class="outreach-pair">
+          <label><span>Name <small>(optional)</small></span><input name="name" autocomplete="name" maxlength="100"></label>
+          <label><span>Phone <small>(optional)</small></span><input name="phone" type="tel" autocomplete="tel" maxlength="40"></label>
+        </div>
+        <label class="form-trap" aria-hidden="true">Leave this empty<input name="website" tabindex="-1" autocomplete="off"></label>
+        <div class="outreach-actions"><button type="submit" disabled>Send feedback</button><a href="privacy.html#contact-privacy">How your details are used</a></div>
+        <p class="form-status" role="status" aria-live="polite"></p>
+        <noscript>Enable JavaScript to send feedback.</noscript>
+      </form>
+    </section>
+    <section id="contact" class="section outreach-section" data-tab-panel="contact" hidden>
+      <div class="section-head"><div><h1>Talk about CBCT</h1><p class="lede">Interested in CBCT for your practice? Leave your details and I’ll follow up. Available to people in the United States.</p></div></div>
+      <form class="panel outreach-form" data-outreach="lead" method="post">
+        <label>Your location<select name="state" autocomplete="address-level1" required><option value="">Choose your state or territory</option><option value="outside">Outside the United States</option></select></label>
+        <p class="location-note" hidden>Contact requests are available in the U.S. You can still <a href="#feedback" data-tab-link>send feedback</a> from anywhere.</p>
+        <div class="outreach-pair">
+          <label>Name<input name="name" autocomplete="name" maxlength="100" required></label>
+          <label>Email address<input name="email" type="email" autocomplete="email" maxlength="254" required></label>
+          <label><span>Practice <small>(optional)</small></span><input name="practice" autocomplete="organization" maxlength="160"></label>
+          <label><span>Phone <small>(optional)</small></span><input name="phone" type="tel" autocomplete="tel" maxlength="40"></label>
+        </div>
+        <label><span>What would you like to discuss? <small>(optional)</small></span><textarea name="message" rows="3" maxlength="4000" aria-describedby="contactHint"></textarea></label>
+        <p id="contactHint" class="field-hint">Please leave out patient information.</p>
+        <label class="form-trap" aria-hidden="true">Leave this empty<input name="website" tabindex="-1" autocomplete="off"></label>
+        <div class="outreach-actions"><button type="submit" disabled>Request contact</button><a href="privacy.html#contact-privacy">How your details are used</a></div>
+        <p class="form-status" role="status" aria-live="polite"></p>
+        <noscript>Enable JavaScript to request contact.</noscript>
+      </form>
+    </section>
+    <section id="resources" class="section resources-section" data-tab-panel="resources" hidden>
+      <div class="section-head"><h1>Carestream Dental Resources</h1></div>
+      <div class="resource-groups">
+        <div><h2>Training &amp; webinars</h2>
+          <a class="resource-row" href="https://www.carestreamdental.com/cdi"><strong>Carestream Dental Institute</strong><span>Sign in for product training and self-paced courses.</span></a>
+          <a class="resource-row" href="https://www.gotostage.com/channel/aec0e274ac8743e392f95e7037f184d9"><strong>Carestream Dental webinars</strong><span>Browse upcoming webinars and watch recorded sessions.</span></a>
+        </div>
+        <div><h2>On YouTube</h2>
+          <a class="resource-row" href="https://www.youtube.com/user/CarestreamDental"><strong>Carestream Dental</strong><span>Explore products and demonstrations on the official channel.</span></a>
+          <a class="resource-row" href="https://www.youtube.com/@digitalimagingdan"><strong>Dan Alman · Carestream Dental Learning</strong><span>Watch my imaging tutorials and practical CBCT walkthroughs.</span></a>
+        </div>
+      </div>
+      <div class="future-resources"><h2>Customer downloads &amp; explainers</h2><p>I’ll add my CS 9600 chinrest overlay STL and more how-to videos here as they’re ready.</p>
+        <!-- Add customer downloads and video links here as resource-row anchors when available. -->
+      </div>
     </section>
     <section id="clinical-scenarios" class="section" data-tab-panel="clinical" hidden>
       <div class="section-head"><div><p class="eyebrow">Clinical cases</p><h1>Review a clinical case.</h1><p class="lede">See when published guidance supports CBCT, why it may help, and which details still need review.</p></div></div>
@@ -437,8 +491,9 @@
   </footer>
 
   <script src="analytics-config.js?v=20261012-live"></script>
-  <script src="analytics-client.js?v=20261013-clinical"></script>
+  <script src="analytics-client.js?v=20261117-contact"></script>
   <script src="clinical-guidance.js?v=20261014-4"></script>
   <script src="script.js?v=20261014-scan-estimate"></script>
+  <script type="module" src="forms/contact.mjs"></script>
 </body>
 </html>

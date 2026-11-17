@@ -1,0 +1,13 @@
+{
+  "name": "cbct-helper-forms",
+  "account_id": "4ff93d01fc0e19e5e8403388cdb743c6",
+  "main": "worker.mjs",
+  "compatibility_date": "2026-11-01",
+  "workers_dev": true,
+  "ratelimits": [{
+    "name": "FORM_LIMITER",
+    "namespace_id": "1002",
+    "simple": { "limit": 5, "period": 60 }
+  }],
+  "observability": { "enabled": false }
+}

@@ -29,8 +29,8 @@
       settle,
       visible(value) { settle(); running = value; },
       section(name) {
-        if (!SECTIONS.includes(name)) return;
         settle();
+        if (!SECTIONS.includes(name)) { current = null; return; }
         if (name !== current) { current = name; state.views[name] = Math.min(200, (state.views[name] || 0) + 1); }
       },
       action(name) { if (ACTIONS.includes(name)) state.actions[name] = Math.min(2000, (state.actions[name] || 0) + 1); },
@@ -102,9 +102,8 @@
   }
   root.CBCTAnalytics = {
     section(name) {
-      if (!SECTIONS.includes(name)) return;
-      currentSection = name;
-      if (active) { meter.section(name); syncVisibility(); flush(); }
+      currentSection = SECTIONS.includes(name) ? name : null;
+      if (active) { meter.section(currentSection); syncVisibility(); flush(); }
     },
     action(name) { if (active && ACTIONS.includes(name)) { meter.action(name); flush(); } },
     exclude(value) {
