@@ -54,7 +54,8 @@ export default {
     if (request.method !== 'POST') return reply(405);
     if (request.headers.get('Content-Type')?.split(';')[0].trim() !== 'application/json') return reply(415);
     if (type === 'lead' && !usCountries.has(request.cf?.country)) return reply(422);
-    if (!env.NOTIFICATION_EMAIL || !env.FORM_LIMITER) return reply(503);
+    const alias = env.FORMSUBMIT_ALIAS?.trim();
+    if (!/^[a-f0-9]{32}$/i.test(alias || '') || !env.FORM_LIMITER) return reply(503);
     const ip = request.headers.get('CF-Connecting-IP');
     if (!ip) return reply(400);
     try {
@@ -73,15 +74,8 @@ export default {
     if (data.phone) mail.Phone = data.phone;
     if (data.state) mail.Location = usLocations[data.state] + ', United States';
     if (data.message) mail.Message = data.message;
-    try {
-      const sent = await fetch('https://formsubmit.co/ajax/' + encodeURIComponent(env.NOTIFICATION_EMAIL), {
-        method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json',
-          Origin: 'https://cbcthelper.com', Referer: 'https://cbcthelper.com/' },
-        body: JSON.stringify(mail), redirect: 'error', signal: AbortSignal.timeout(45000)
-      });
-      if (!sent.ok) return reply(503);
-      const receipt = await sent.json();
-      return reply(receipt.success === true || receipt.success === 'true' ? 204 : 503);
-    } catch { return reply(503); }
+    // FormSubmit's AJAX endpoint accepts the visitor's browser request. Only release
+    // the fixed destination and normalized fields after the eligibility checks.
+    return Response.json({ alias, mail }, { headers });
   }
 };
